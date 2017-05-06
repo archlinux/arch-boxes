@@ -53,7 +53,7 @@
     "post-processors": [
         {
             "type": "vagrant",
-            "output": "Arch-Linux-x86_64-{{ .Provider }}-{{isotime '1970-01-01'}}.box"
+            "output": "Arch-Linux-x86_64-{{ .Provider }}-{{isotime \"1970-01-01\"}}.box"
         }
     ]
 }

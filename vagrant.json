@@ -1,0 +1,60 @@
+{
+    "variables": {
+        "iso_url": "https://downloads.archlinux.de/iso/2017.05.01/archlinux-2017.05.01-x86_64.iso",
+        "iso_checksum_type": "sha1",
+        "iso_checksum": "91a195bf1395694151fc3f7f766e9d1233e2aed9"
+    },
+    "builders": [
+        {
+            "type": "virtualbox-iso",
+            "boot_wait": "10s",
+            "http_directory": "http",
+            "disk_size": 20480,
+            "guest_os_type": "ArchLinux",
+            "iso_checksum": "{{user `iso_checksum`}}",
+            "iso_checksum_type": "{{user `iso_checksum_type`}}",
+            "iso_url": "{{user `iso_url`}}",
+            "ssh_username": "vagrant",
+            "ssh_password": "vagrant",
+            "ssh_port": 22,
+            "ssh_wait_timeout": "10000s",
+            "shutdown_command": "systemctl poweroff",
+            "vboxmanage": [
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--memory",
+                    "1024"
+                ],
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--cpus",
+                    "2"
+                ]
+            ],
+            "boot_command": [
+                "<enter><wait10><wait10><wait10><wait10>",
+                "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-chroot}.sh'<enter><wait>",
+                "bash install.sh < install-chroot.sh && systemctl reboot<enter>"
+            ]
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "scripts": [
+                "scripts/postinstall.sh",
+                "scripts/virtualbox.sh",
+                "scripts/zerodisk.sh"
+            ],
+            "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'"
+        }
+    ],
+    "post-processors": [
+        {
+            "type": "vagrant",
+            "output": "Arch-Linux-x86_64-{{ .Provider }}-{{isotime '1970-01-01'}}.box"
+        }
+    ]
+}

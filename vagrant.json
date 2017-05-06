@@ -10,7 +10,7 @@
             "boot_wait": "10s",
             "http_directory": "http",
             "disk_size": 20480,
-            "guest_os_type": "ArchLinux",
+            "guest_os_type": "ArchLinux_64",
             "iso_checksum": "{{user `iso_checksum`}}",
             "iso_checksum_type": "{{user `iso_checksum_type`}}",
             "iso_url": "{{user `iso_url`}}",

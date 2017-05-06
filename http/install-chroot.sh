@@ -28,7 +28,8 @@ chmod 0600 /home/vagrant/.ssh/authorized_keys
 # setup unpredictable kernel names
 ln -s /dev/null /etc/systemd/network/99-default.link
 
-cat <<EOF > /etc/systemd/networkd/eth0.network
+# setup network
+cat <<EOF > /etc/systemd/network/eth0.network
 [Match]
 Name=eth0
 

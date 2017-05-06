@@ -4,12 +4,8 @@ set -e
 set -x
 
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
-hostnamectl set-hostname "archlinux"
 sed -i -e 's/^#\(en_US.UTF-8\)/\1/' /etc/locale.gen
 locale-gen
-localectl set-locale "LANG=en_US.UTF-8"
-localectl set-keymap "us"
-localectl set-xx1-keymap "us"
 
 # setting vagrant user credentials
 echo -e 'vagrant\nvagrant' | passwd
@@ -28,6 +24,17 @@ install --directory --owner=vagrant --group=vagrant --mode=0700 /home/vagrant/.s
 curl --output /home/vagrant/.ssh/authorized_keys --location https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub
 chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys
 chmod 0600 /home/vagrant/.ssh/authorized_keys
+
+# setup unpredictable kernel names
+ln -s /dev/null /etc/systemd/network/99-default.link
+
+cat <<EOF > /etc/systemd/networkd/eth0.network
+[Match]
+Name=eth0
+
+[Network]
+DHCP=ipv4
+EOF
 
 # enabling important services
 systemctl enable sshd

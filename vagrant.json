@@ -45,6 +45,7 @@
         {
             "type": "shell",
             "scripts": [
+                "provision/postinstall.sh",
                 "provision/virtualbox.sh",
                 "provision/cleanup.sh"
             ],

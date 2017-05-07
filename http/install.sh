@@ -25,6 +25,9 @@ mkswap "${device}1"
 mkfs.btrfs -L "rootfs" "${device}2"
 mount "${device}2" /mnt
 
+cp /etc/pacman.d/mirrorlist /tmp/mirrorlist.backup
+sed -i 's/^#Server/Server/' /tmp/mirrorlist.backup
+rankmirrors -vn 6 /tmp/mirrorlist.backup > /etc/pacman.d/mirrorlist
 pacstrap /mnt base grub openssh sudo
 swapon "${device}1"
 genfstab -p /mnt >> /mnt/etc/fstab

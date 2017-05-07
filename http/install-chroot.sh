@@ -37,9 +37,6 @@ Name=eth0
 DHCP=ipv4
 EOF
 
-systemctl start systemd-resolved
-ln -sf /var/run/systemd/resolve/resolv.conf /etc/resolv.conf
-
 # enabling important services
 systemctl enable sshd
 systemctl enable systemd-networkd

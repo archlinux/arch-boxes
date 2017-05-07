@@ -9,3 +9,6 @@ localectl set-locale "LANG=en_US.UTF-8"
 localectl set-keymap "us"
 localectl set-x11-keymap "us"
 timedatectl set-ntp true
+
+#setting link to systemd-resolved
+ln -sf /var/run/systemd/resolve/resolv.conf /etc/resolv.conf

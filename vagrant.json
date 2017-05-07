@@ -77,7 +77,18 @@
                 "provision/virtualbox.sh",
                 "provision/cleanup.sh"
             ],
-            "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'"
+            "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'",
+            "only": ["virtualbox-iso"]
+        },
+        {
+            "type": "shell",
+            "scripts": [
+                "provision/postinstall.sh",
+                "provision/qemu.sh",
+                "provision/cleanup.sh"
+            ],
+            "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'",
+            "only": ["qemu"]
         }
     ],
     "post-processors": [

@@ -65,6 +65,11 @@
                     "-smp",
                     "{{user `cpus`}}"
                 ]
+            ],
+            "boot_command": [
+                "<enter><wait10><wait10><wait10><wait10>",
+                "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-chroot}.sh'<enter><wait>",
+                "bash install.sh < install-chroot.sh && systemctl reboot<enter>"
             ]
         }
 

@@ -12,6 +12,15 @@ echo -e 'vagrant\nvagrant' | passwd
 useradd -m -U vagrant
 echo -e 'vagrant\nvagrant' | passwd vagrant
 
+# setting automatic authentication for any action requiring admin rights via Polkit
+cat <<EOF > /etc/polkit-1/rules.d/49-nopasswd_global.rules
+polkit.addRule(function(action, subject) {
+    if (subject.isInGroup("vagrant")) {
+        return polkit.Result.YES;
+    }
+});
+EOF
+
 # setting sudo for vagrant user
 cat <<EOF > /etc/sudoers.d/vagrant
 Defaults:vagrant !requiretty

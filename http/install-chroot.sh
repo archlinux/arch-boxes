@@ -6,6 +6,7 @@ set -x
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 sed -i -e 's/^#\(en_US.UTF-8\)/\1/' /etc/locale.gen
 locale-gen
+echo 'LANG=en_US.UTF-8' > /etc/locale.conf
 
 # setting vagrant user credentials
 echo -e 'vagrant\nvagrant' | passwd

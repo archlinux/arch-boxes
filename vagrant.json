@@ -24,6 +24,7 @@
             "ssh_wait_timeout": "10000s",
             "shutdown_command": "sudo systemctl poweroff",
             "guest_additions_mode": "disable",
+            "headless": "{{user `headless`}}",
             "vboxmanage": [
                 [
                     "modifyvm",
@@ -56,6 +57,7 @@
             "ssh_port": 22,
             "ssh_wait_timeout": "10000s",
             "shutdown_command": "sudo systemctl poweroff",
+            "headless": "{{user `headless`}}",
             "qemuargs": [
                 [
                     "-m",

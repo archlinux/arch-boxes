@@ -101,6 +101,7 @@
     "post-processors": [
         {
             "type": "vagrant",
+            "keep_input_artifact": true,
             "output": "Arch-Linux-x86_64-{{ .Provider }}-{{isotime \"2006-01-02\"}}.box"
         }
     ]

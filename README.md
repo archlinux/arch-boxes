@@ -12,6 +12,7 @@ You'll need the following dependencies:
 * vagrant (for vagrant images)
 * qemu (for libvirt provider support)
 * virtualbox (for virtualbox support)
+* VMware Workstation Pro (for vmware support)
 
 ## How to start the build process
 
@@ -30,6 +31,7 @@ On any other System:
 
 * virtualbox-iso
 * qemu/libvirt
+* vmware-iso
 
 ## post-processors
 

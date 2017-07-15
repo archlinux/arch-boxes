@@ -73,6 +73,26 @@
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-chroot}.sh'<enter><wait>",
                 "bash install.sh < install-chroot.sh && systemctl reboot<enter>"
             ]
+        }, {
+            "type": "vmware-iso",
+            "boot_wait": "10s",
+            "http_directory": "http",
+            "disk_size": "{{user `disk_size`}}",
+            "iso_checksum": "{{user `iso_checksum`}}",
+            "iso_checksum_type": "{{user `iso_checksum_type`}}",
+            "iso_url": "{{user `iso_url`}}",
+            "ssh_username": "vagrant",
+            "ssh_password": "vagrant",
+            "ssh_port": 22,
+            "ssh_wait_timeout": "10000s",
+            "shutdown_command": "sudo systemctl poweroff",
+            "headless": "{{user `headless`}}",
+            "vmx_data": {"memsize": "{{user `memory`}}"},
+            "boot_command": [
+                "<enter><wait10><wait10><wait10><wait10>",
+                "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-chroot}.sh'<enter><wait>",
+                "bash install.sh < install-chroot.sh && systemctl reboot<enter>"
+            ]
         }
 
     ],
@@ -96,6 +116,16 @@
             ],
             "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'",
             "only": ["qemu"]
+        },
+        {
+            "type": "shell",
+            "scripts": [
+                "provision/postinstall.sh",
+                "provision/vmware.sh",
+                "provision/cleanup.sh"
+            ],
+            "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'",
+            "only": ["vmware-iso"]
         }
     ],
     "post-processors": [

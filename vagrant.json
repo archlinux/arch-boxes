@@ -7,7 +7,8 @@
         "memory": "1024",
         "cpus": "2",
         "headless": "true",
-        "atlas_token": "PLACEHOLDER"
+        "atlas_token": "PLACEHOLDER",
+        "write_zeroes": ""
     },
     "builders": [
         {
@@ -127,6 +128,13 @@
             ],
             "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'",
             "only": ["vmware-iso"]
+        },
+        {
+            "type": "shell",
+            "scripts": [
+                "provision/write_zeroes.sh"
+            ],
+            "execute_command": "if [ ! -z \"{{user `write_zeroes`}}\" ]; echo 'vagrant'|sudo -S sh '{{.Path}}'; fi"
         }
     ],
     "post-processors": [

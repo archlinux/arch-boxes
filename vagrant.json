@@ -1,6 +1,6 @@
 {
     "variables": {
-        "iso_url": "https://downloads.archlinux.de/iso/2017.07.01/archlinux-2017.07.01-x86_64.iso",
+        "iso_url": "https://downloads.archlinux.de/iso/{{isotime \"2006.01\"}}.01/archlinux-{{isotime \"2006.01\"}}.01-x86_64.iso",
         "iso_checksum_type": "sha1",
         "iso_checksum": "dd03d811211c332d29155069d8e4bb2306c70f33",
         "disk_size": "20480",

@@ -2,7 +2,7 @@
     "variables": {
         "iso_url": "https://downloads.archlinux.de/iso/{{isotime \"2006.01\"}}.01/archlinux-{{isotime \"2006.01\"}}.01-x86_64.iso",
         "iso_checksum_type": "sha1",
-        "iso_checksum": "dd03d811211c332d29155069d8e4bb2306c70f33",
+        "iso_checksum": "cf313676153420ae76ed4397af8343b7c10439dc",
         "disk_size": "20480",
         "memory": "1024",
         "cpus": "2",

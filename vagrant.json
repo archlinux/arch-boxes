@@ -134,7 +134,7 @@
             "scripts": [
                 "provision/write_zeroes.sh"
             ],
-            "execute_command": "if [ ! -z \"{{user `write_zeroes`}}\" ]; echo 'vagrant'|sudo -S sh '{{.Path}}'; fi"
+            "execute_command": "if [ ! -z \"{{user `write_zeroes`}}\" ]; then echo 'vagrant'|sudo -S sh '{{.Path}}'; fi"
         }
     ],
     "post-processors": [

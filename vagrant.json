@@ -2,7 +2,7 @@
     "variables": {
         "iso_url": "https://downloads.archlinux.de/iso/{{isotime \"2006.01\"}}.01/archlinux-{{isotime \"2006.01\"}}.01-x86_64.iso",
         "iso_checksum_type": "sha1",
-        "iso_checksum": "cf313676153420ae76ed4397af8343b7c10439dc",
+        "iso_checksum": "bb609f8dfb7ece06ba3cdc355b627aab763639d3",
         "disk_size": "20480",
         "memory": "1024",
         "cpus": "2",
@@ -138,31 +138,33 @@
         }
     ],
     "post-processors": [
-        {
-            "type": "vagrant",
-            "keep_input_artifact": true,
-            "output": "Arch-Linux-x86_64-{{ .Provider }}-{{isotime \"2006-01-02\"}}.box"
-        },
-        {
-            "type": "vagrant-cloud",
-            "only": ["virtualbox-iso"],
-            "access_token": "{{user `atlas_token`}}",
-            "box_tag": "archlinux/archlinux",
-            "version": "{{isotime \"2006.01.02\"}}"
-        },
-        {
-            "type": "vagrant-cloud",
-            "only": ["qemu"],
-            "access_token": "{{user `atlas_token`}}",
-            "box_tag": "archlinux/archlinux",
-            "version": "{{isotime \"2006.01.02\"}}"
-        },
-        {
-            "type": "vagrant-cloud",
-            "only": ["vmware-iso"],
-            "access_token": "{{user `atlas_token`}}",
-            "box_tag": "archlinux/archlinux",
-            "version": "{{isotime \"2006.01.02\"}}"
-        }
+        [
+            {
+                "type": "vagrant",
+                "keep_input_artifact": true,
+                "output": "Arch-Linux-x86_64-{{ .Provider }}-{{isotime \"2006-01-02\"}}.box"
+            },
+            {
+                "type": "vagrant-cloud",
+                "only": ["virtualbox-iso"],
+                "access_token": "{{user `atlas_token`}}",
+                "box_tag": "archlinux/archlinux",
+                "version": "{{isotime \"2006.01.02\"}}"
+            },
+            {
+                "type": "vagrant-cloud",
+                "only": ["qemu"],
+                "access_token": "{{user `atlas_token`}}",
+                "box_tag": "archlinux/archlinux",
+                "version": "{{isotime \"2006.01.02\"}}"
+            },
+            {
+                "type": "vagrant-cloud",
+                "only": ["vmware-iso"],
+                "access_token": "{{user `atlas_token`}}",
+                "box_tag": "archlinux/archlinux",
+                "version": "{{isotime \"2006.01.02\"}}"
+            }
+        ]
     ]
 }

@@ -1,0 +1,21 @@
+language: generic
+dist: trusty
+sudo: false
+
+env:
+  matrix:
+  - DIST=trusty
+  global:
+  - PACKER_ZIP="packer_1.0.4_linux_amd64.zip"
+  - PACKER_URL="https://releases.hashicorp.com/packer/1.0.4/packer_1.0.4_linux_amd64.zip"
+
+install:
+- wget "${PACKER_URL}"
+- unzip "${PACKER_ZIP}"
+
+script:
+- ./packer --version
+- ./packer validate vagrant.json
+
+notifications:
+  - email: false

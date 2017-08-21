@@ -6,6 +6,7 @@ env:
   matrix:
   - DIST=trusty
   global:
+    # 20170821: as of writing there is no 'latest' (hashicorp/packer/issues/5265)
   - PACKER_ZIP="packer_1.0.4_linux_amd64.zip"
   - PACKER_URL="https://releases.hashicorp.com/packer/1.0.4/packer_1.0.4_linux_amd64.zip"
 

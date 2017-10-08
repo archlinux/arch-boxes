@@ -9,7 +9,7 @@
         "headless": "true",
         "atlas_token": "PLACEHOLDER",
         "write_zeroes": "",
-        "boot_wait": "30s"
+        "boot_wait": "60s"
     },
     "builders": [
         {

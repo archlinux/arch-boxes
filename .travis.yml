@@ -8,7 +8,7 @@ env:
   global:
     # 20170821: as of writing there is no 'latest' (hashicorp/packer/issues/5265)
   - PACKER_ZIP="packer_1.0.4_linux_amd64.zip"
-  - PACKER_URL="https://releases.hashicorp.com/packer/1.0.4/packer_1.0.4_linux_amd64.zip"
+  - PACKER_URL="https://releases.hashicorp.com/packer/1.2.1/packer_1.2.1_linux_amd64.zip"
 
 install:
 - wget "${PACKER_URL}"
@@ -16,7 +16,7 @@ install:
 
 script:
 - ./packer --version
-- ./packer validate  -var "iso_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/archlinux-$(date +'%Y.%m').01-x86_64.iso" -var "iso_checksum_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m'.01/sha1sums.txt"  vagrant.json
+- ./packer validate  -var "iso_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/archlinux-$(date +'%Y.%m').01-x86_64.iso" -var "iso_checksum_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/sha1sums.txt"  vagrant.json
 
 notifications:
   - email: false

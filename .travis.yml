@@ -16,7 +16,7 @@ install:
 
 script:
 - ./packer --version
-- ./packer validate  -var 'iso_url=https://downloads.archlinux.de/iso/2017.09.01/archlinux-2017.09.01-x86_64.iso' -var 'iso_checksum_url=https://downloads.archlinux.de/iso/2017.09.01/sha1sums.txt'  vagrant.json
+- ./packer validate  -var "iso_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/archlinux-$(date +'%Y.%m').01-x86_64.iso" -var "iso_checksum_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m'.01/sha1sums.txt"  vagrant.json
 
 notifications:
   - email: false

@@ -1,0 +1,13 @@
+{
+    "iso_url": "https://mirror.rackspace.com/archlinux/iso/latest/archlinux-2018.04.01-x86_64.iso",
+    "iso_checksum_url": "https://mirror.rackspace.com/archlinux/iso/latest/sha1sums.txt",
+    "iso_checksum_type": "sha1",
+    "disk_size": "20480",
+    "memory": "1024",
+    "cpus": "2",
+    "headless": "true",
+    "atlas_token": "PLACEHOLDER",
+    "write_zeroes": "",
+    "boot_wait": "60s"
+
+}

@@ -44,30 +44,12 @@ Edit the `local.json` before you start the build. set the right
 `iso_url` and the right `iso_checksum_url`. Then you can start the build
 for virtualbox only with the following command:
 
-On Arch Linux:
-
-`packer-io build -only=virtualbox-iso -var-file=local.json vagrant.json`
-
-On any other system:
-
 `packer build -only=virtualbox-iso -var-file=local.json vagrant.json`
-
-**Note** this is because of the name conflict with the AUR-Helpertool
-`packer` on Arch Linux.
 
 ## how to start the build process for official builds
 The official builds are done on our Arch Linux Buildserver.
 
-On Arch Linux:
-
-`packer-io build vagrant.json`
-
-On any other system:
-
 `packer build vagrant.json`
-
-**Note:** this is because of the name conflict with the AUR-Helpertool
-`packer` on Arch linux.
 
 ## providers
 
@@ -90,11 +72,5 @@ other option is to disable KVM support for all other providers except
 one.
 
 Start `packer` with `-parallel=false`:
-
-On Arch Linux:
-
-`packer-io build -parallel=false vagrant.json`
-
-On any other system:
 
 `packer build -parallel=false vagrant.json`

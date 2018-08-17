@@ -47,10 +47,31 @@ Name=eth0
 DHCP=ipv4
 EOF
 
+# Setup pacman-init.service for clean pacman keyring initialization
+cat <<EOF > /etc/systemd/system/pacman-init.service
+[Unit]
+Description=Initializes Pacman keyring
+Wants=haveged.service
+After=haveged.service
+ConditionFirstBoot=yes
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/pacman-key --init
+ExecStart=/usr/bin/pacman-key --populate archlinux
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 # enabling important services
+systemctl daemon-reload
 systemctl enable sshd
+systemctl enable haveged
 systemctl enable systemd-networkd
 systemctl enable systemd-resolved
+systemctl enable pacman-init.service
 
 grub-install "$device"
 sed -i -e 's/^GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=1/' /etc/default/grub

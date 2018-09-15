@@ -7,12 +7,24 @@ env:
   - DIST=trusty
   global:
     # 20170821: as of writing there is no 'latest' (hashicorp/packer/issues/5265)
-  - PACKER_ZIP="packer_1.2.1_linux_amd64.zip"
-  - PACKER_URL="https://releases.hashicorp.com/packer/1.2.1/packer_1.2.1_linux_amd64.zip"
+  - PACKER_CURRENT_VERSION="$(curl -s https://checkpoint-api.hashicorp.com/v1/check/packer | jq -r -M '.current_version')"
+  - PACKER_URL="https://releases.hashicorp.com/packer/$PACKER_CURRENT_VERSION/packer_${PACKER_CURRENT_VERSION}_linux_amd64.zip"
+  - PACKER_SHA256="https://releases.hashicorp.com/packer/$PACKER_CURRENT_VERSION/packer_${PACKER_CURRENT_VERSION}_SHA256SUMS"
+  - PACKER_SHA256_SIG="https://releases.hashicorp.com/packer/$PACKER_CURRENT_VERSION/packer_${PACKER_CURRENT_VERSION}_SHA256SUMS.sig"
+  - HASHICORP_FINGERPRINT=91a6e7f85d05c65630bef18951852d87348ffc4c
+  - HASHICORP_KEY="https://keybase.io/hashicorp/pgp_keys.asc?fingerprint=${HASHICORP_FINGERPRINT}"
 
 install:
-- wget "${PACKER_URL}"
-- unzip "${PACKER_ZIP}"
+- wget ${PACKER_URL}
+- wget ${PACKER_SHA256}
+- wget ${PACKER_SHA256_SIG}
+- wget -O hashicorp.key ${HASHICORP_KEY}
+- gpg --with-fingerprint --with-colons hashicorp.key | grep ${HASHICORP_FINGERPRINT^^}
+- gpg --import hashicorp.key
+- gpg --verify packer_${PACKER_CURRENT_VERSION}_SHA256SUMS.sig packer_${PACKER_CURRENT_VERSION}_SHA256SUMS
+- grep linux_amd64 packer_${PACKER_CURRENT_VERSION}_SHA256SUMS > packer_SHA256SUM_linux_amd64
+- sha256sum --check --status packer_SHA256SUM_linux_amd64
+- unzip packer_${PACKER_CURRENT_VERSION}_linux_amd64.zip
 
 script:
 - ./packer --version

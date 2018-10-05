@@ -6,7 +6,6 @@ set -x
 # setting hostname, locales, etc
 hostnamectl set-hostname "archlinux"
 localectl set-keymap "us"
-localectl set-x11-keymap "us"
 timedatectl set-ntp true
 
 #setting link to systemd-resolved

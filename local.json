@@ -1,5 +1,5 @@
 {
-    "iso_url": "https://mirror.rackspace.com/archlinux/iso/latest/archlinux-2018.04.01-x86_64.iso",
+    "iso_url": "https://mirror.rackspace.com/archlinux/iso/latest/archlinux-2018.10.01-x86_64.iso",
     "iso_checksum_url": "https://mirror.rackspace.com/archlinux/iso/latest/sha1sums.txt",
     "iso_checksum_type": "sha1",
     "disk_size": "20480",

@@ -29,10 +29,10 @@ Here is an overview over all variables you can set in `vagrant.json` or
 * `memory`: this specifies the size of the RAM in bytes.
 * `cpus`: this specifies the number of cores for your VM.
 * `headless`: this sets GUI on or off.
-* `atlas_token`: here you can specify the atlas token for uploading your
-  box to the vagrantcloud. If you don't have any atlas token you can
-  ignore this variable. But then don't be suprised when the process
-  fails. The boxes are build, they just haven't been uploaded.
+* `vagrant_cloud_token`: here you can specify the vagrant cloud token for 
+  uploading your box to the vagrantcloud. If you don't have a vagrant cloud 
+  token you can ignore this variable. Without a token the boxes will be
+  built, but the upload step step will fail.
 * `write_zeroes`: this variable is empty. if you set any string in this
   variable it will fill the box with zeros to reduce the size. **DO NOT
   use this if you are running a SSD. It will harm your SSDs lifetime**

@@ -7,7 +7,7 @@
         "memory": "1024",
         "cpus": "2",
         "headless": "true",
-        "atlas_token": "PLACEHOLDER",
+        "vagrant_cloud_token": "PLACEHOLDER",
         "write_zeroes": "",
         "boot_wait": "60s"
     },
@@ -148,21 +148,21 @@
             {
                 "type": "vagrant-cloud",
                 "only": ["virtualbox-iso"],
-                "access_token": "{{user `atlas_token`}}",
+                "access_token": "{{user `vagrant_cloud_token`}}",
                 "box_tag": "archlinux/archlinux",
                 "version": "{{isotime \"2006.01.02\"}}"
             },
             {
                 "type": "vagrant-cloud",
                 "only": ["qemu"],
-                "access_token": "{{user `atlas_token`}}",
+                "access_token": "{{user `vagrant_cloud_token`}}",
                 "box_tag": "archlinux/archlinux",
                 "version": "{{isotime \"2006.01.02\"}}"
             },
             {
                 "type": "vagrant-cloud",
                 "only": ["vmware-iso"],
-                "access_token": "{{user `atlas_token`}}",
+                "access_token": "{{user `vagrant_cloud_token`}}",
                 "box_tag": "archlinux/archlinux",
                 "version": "{{isotime \"2006.01.02\"}}"
             }

@@ -29,7 +29,7 @@ install:
 script:
 - ./packer --version
 - # ./packer validate  -var "iso_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/archlinux-$(date +'%Y.%m').01-x86_64.iso" -var "iso_checksum_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/sha1sums.txt"  vagrant.json
-- jq 'del(."vagrant-cloud")' vagrant.json | packer validate  -var "iso_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/archlinux-$(date +'%Y.%m').01-x86_64.iso" -var "iso_checksum_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/sha1sums.txt" -
+- jq ".\"post-processors\"[0] |= map(select(."type" != \"vagrant-cloud\"))" | packer validate  -var "iso_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/archlinux-$(date +'%Y.%m').01-x86_64.iso" -var "iso_checksum_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/sha1sums.txt" -
 
 notifications:
   - email: false

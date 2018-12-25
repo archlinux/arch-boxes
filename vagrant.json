@@ -90,8 +90,7 @@
             "ssh_wait_timeout": "10000s",
             "shutdown_command": "sudo systemctl poweroff",
             "headless": "{{user `headless`}}",
-            "memory": "{{user `memory`}}",
-            "cpus": "{{user `cpus`}}",
+            "vmx_data": {"memsize": "{{user `memory`}}"},
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-chroot}.sh'<enter><wait>",

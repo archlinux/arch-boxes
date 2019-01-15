@@ -7,7 +7,7 @@
         "memory": "1024",
         "cpus": "2",
         "headless": "true",
-        "atlas_token": "PLACEHOLDER",
+        "vagrant_cloud_token": "PLACEHOLDER",
         "write_zeroes": "",
         "boot_wait": "60s"
     },
@@ -90,7 +90,8 @@
             "ssh_wait_timeout": "10000s",
             "shutdown_command": "sudo systemctl poweroff",
             "headless": "{{user `headless`}}",
-            "vmx_data": {"memsize": "{{user `memory`}}"},
+            "memory": "{{user `memory`}}",
+            "cpus": "{{user `cpus`}}",
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-chroot}.sh'<enter><wait>",
@@ -148,21 +149,21 @@
             {
                 "type": "vagrant-cloud",
                 "only": ["virtualbox-iso"],
-                "access_token": "{{user `atlas_token`}}",
+                "access_token": "{{user `vagrant_cloud_token`}}",
                 "box_tag": "archlinux/archlinux",
                 "version": "{{isotime \"2006.01.02\"}}"
             },
             {
                 "type": "vagrant-cloud",
                 "only": ["qemu"],
-                "access_token": "{{user `atlas_token`}}",
+                "access_token": "{{user `vagrant_cloud_token`}}",
                 "box_tag": "archlinux/archlinux",
                 "version": "{{isotime \"2006.01.02\"}}"
             },
             {
                 "type": "vagrant-cloud",
                 "only": ["vmware-iso"],
-                "access_token": "{{user `atlas_token`}}",
+                "access_token": "{{user `vagrant_cloud_token`}}",
                 "box_tag": "archlinux/archlinux",
                 "version": "{{isotime \"2006.01.02\"}}"
             }

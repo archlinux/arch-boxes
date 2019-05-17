@@ -14,6 +14,7 @@ You'll need the following dependencies:
 * qemu (for libvirt provider support)
 * virtualbox (for virtualbox support)
 * VMware Workstation Pro (for vmware support)
+* jq (for preprocessing packer json files at runtime if you choose)
 
 ## variables
 Here is an overview over all variables you can set in `vagrant.json` or
@@ -43,6 +44,16 @@ Here is an overview over all variables you can set in `vagrant.json` or
 Edit the `local.json` before you start the build. set the right
 `iso_url` and the right `iso_checksum_url`. Then you can start the build
 for virtualbox only with the following command:
+
+```bash
+jq '.["post-processors"][0] |= map(select(.type == "vagrant"))' vagrant.json > vagrant_local.json \
+&& packer build -only=virtualbox-iso -var-file=local.json vagrant_local.json \
+&& rm vagrant_local.json
+```
+
+`jq` is used to preprocess `vagrant.json` so that only the `vagrant` post-processor is triggered, thus skipping publishing build artifacts to Vagrant cloud. The reason `jq` isn't being piped into packer is because it's more stable to fully unbuffer into a temporary file (`vagrant_local.json`), then pass that file into the packer build, then remove it.
+
+If you want to build and publish to Vagrant cloud, then run the following command:
 
 `packer build -only=virtualbox-iso -var-file=local.json vagrant.json`
 

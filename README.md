@@ -57,7 +57,11 @@ If you want to build and publish to Vagrant cloud, then run the following comman
 
 `packer build -only=virtualbox-iso -var-file=local.json vagrant.json`
 
-On Windows, add the built box to vagrant with the following command, except fix the date at the end:
+When packer outputs `Waiting for SSH to become available...`, then the VM is ready to accept an RDP connection. A few lines above that line should be the RDP URL. Copy-paste that URL into your favorite RDP client (Windows already comes with a decent one called `Windows Desktop Connection`), and open that connection. Now you're watching packer's boot commands execute.
+
+TODO: Document how to use a text-only command line RDP client for Windows that can be run from Git Bash.
+
+Add the built box to vagrant with the following command, except fix the date at the end:
 
 `vagrant box add --name archlinux_base 'Arch-Linux-x86_64-virtualbox-2019-05-17.box'`
 

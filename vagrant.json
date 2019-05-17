@@ -44,6 +44,10 @@
             ],
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
+                "useradd -m -d /home/vagrant -g root vagrant || /bin/true<enter><wait>",
+                "echo vagrant:vagrant | chpasswd<enter><wait>",
+                "echo 'vagrant ALL=(ALL) ALL' | EDITOR='tee -a' visudo<enter><wait>",
+                "systemctl enable sshd<enter><wait>",
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-chroot}.sh'<enter><wait>",
                 "bash install.sh < install-chroot.sh && systemctl reboot<enter>"
             ]
@@ -73,6 +77,10 @@
             ],
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
+                "useradd -m -d /home/vagrant -g root vagrant || /bin/true<enter><wait>",
+                "echo vagrant:vagrant | chpasswd<enter><wait>",
+                "echo 'vagrant ALL=(ALL) ALL' | EDITOR='tee -a' visudo<enter><wait>",
+                "systemctl enable sshd<enter><wait>",
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-chroot}.sh'<enter><wait>",
                 "bash install.sh < install-chroot.sh && systemctl reboot<enter>"
             ]
@@ -94,6 +102,10 @@
             "cpus": "{{user `cpus`}}",
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
+                "useradd -m -d /home/vagrant -g root vagrant || /bin/true<enter><wait>",
+                "echo vagrant:vagrant | chpasswd<enter><wait>",
+                "echo 'vagrant ALL=(ALL) ALL' | EDITOR='tee -a' visudo<enter><wait>",
+                "systemctl enable sshd<enter><wait>",
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-chroot}.sh'<enter><wait>",
                 "bash install.sh < install-chroot.sh && systemctl reboot<enter>"
             ]

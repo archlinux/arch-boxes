@@ -46,7 +46,9 @@ Edit the `local.json` before you start the build. set the right
 for virtualbox only with the following command:
 
 ```bash
-jq '.["post-processors"][0] |= map(select(.type == "vagrant"))' vagrant.json > vagrant_local.json \
+jq --join-output '.["post-processors"][0] |= map(select(.type == "vagrant"))' vagrant.json \
+| tr -d '\r' \
+> vagrant_local.json \
 && packer build -only=virtualbox-iso -var-file=local.json vagrant_local.json \
 && rm vagrant_local.json
 ```

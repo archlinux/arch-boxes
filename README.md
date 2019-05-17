@@ -57,6 +57,10 @@ If you want to build and publish to Vagrant cloud, then run the following comman
 
 `packer build -only=virtualbox-iso -var-file=local.json vagrant.json`
 
+On Windows, add the built box to vagrant with the following command, except fix the date at the end:
+
+`vagrant box add --name archlinux_base 'Arch-Linux-x86_64-virtualbox-2019-05-17.box'`
+
 ## how to start the build process for official builds
 The official builds are done on our Arch Linux Buildserver.
 

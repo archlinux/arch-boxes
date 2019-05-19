@@ -53,13 +53,17 @@ jq --join-output '.["post-processors"][0] |= map(select(.type == "vagrant"))' va
 && rm vagrant_local.json
 ```
 
+In [Cmder](https://cmder.net/) on Windows, which is persnickety with quotation marks, that command would be the following:
+
+`jq --join-output ".[\"post-processors\"][0] |= map(select(.type == \"vagrant\"))" vagrant.json | tr -d "\r" > vagrant_local.json && packer build -only=virtualbox-iso -var-file=local.json vagrant_local.json && rm vagrant_local.json`
+
 `jq` is used to preprocess `vagrant.json` so that only the `vagrant` post-processor is triggered, thus skipping publishing build artifacts to Vagrant cloud. The reason `jq` isn't being piped into packer is because it's more stable to fully unbuffer into a temporary file (`vagrant_local.json`), then pass that file into the packer build, then remove it.
 
 If you want to build and publish to Vagrant cloud, then run the following command:
 
 `packer build -only=virtualbox-iso -var-file=local.json vagrant.json`
 
-When packer outputs `Waiting for SSH to become available...`, then the VM is ready to accept an RDP connection. A few lines above that line should be the RDP URL. Copy-paste that URL into your favorite RDP client (Windows already comes with a decent one called `Windows Desktop Connection`), and open that connection. Now you're watching packer's boot commands execute.
+When packer outputs `Waiting for SSH to become available...`, then the VM is ready to accept an RDP connection. A few lines above that line should be the RDP URL. Copy-paste that URL into your favorite RDP client (Windows already comes with a decent one called `Windows Desktop Connection`), and open that connection. Now you're watching packer's boot commands execute. If your RDP client can't connect, then open `VirtualBox`, select the packer VM, and click the `Show` button.
 
 TODO: Document how to use a text-only command line RDP client for Windows that can be run from Git Bash.
 

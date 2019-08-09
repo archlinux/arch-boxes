@@ -18,7 +18,11 @@ CWD = '/srv/arch-boxes/arch-boxes'
 ISO_PATH = '/srv/ftp/iso/latest/archlinux-' + datetime.datetime.now().strftime(
     "%Y.%m") + '.01-x86_64.iso'
 ISO_CHECKSUM_PATH = '/srv/ftp/iso/latest/sha1sums.txt'
-
+PACKER_CMD_TEMPLATE = [
+    "/usr/bin/packer", "build", "parallel=false", "-var",
+    "'headless=true'", "-var", "'write_zeroes=yes'",
+    "-except=vmware-iso", "vagrant.json"
+]
 
 def main():
     are_resources_present()
@@ -27,12 +31,7 @@ def main():
         release_version = data['current_version']['version']
         release_providers = data['current_version']['providers']
         if not is_latest(release_version):
-            subprocess.call([
-                "/usr/bin/packer", "build", "parallel=false", "-var",
-                "'headless=true'", "-var", "'write_zeroes=yes'",
-                "-except=vmware-iso", "vagrant.json"
-            ],
-                            cwd=CWD)
+            subprocess.call(PACKER_CMD_TEMPLATE, cwd=CWD)
         else:
             if not all_released(release_providers):
                 determine_missing_release(release_providers)
@@ -45,22 +44,18 @@ def are_resources_present():
         sys.exit(1)
 
 
+def build_packer_call(provider):
+    provider_map = {
+        "virtualbox": "virtualbox",
+        "libvirt": "qemu"
+    }
+    packer = PACKER_CMD_TEMPLATE
+    packer[7] += ","
+    packer[7] += provider_map[provider]
+    return packer
+        
 def determine_missing_release(release_providers):
-    if release_providers[0]['name'] == 'virtualbox':
-        subprocess.call([
-            "/usr/bin/packer", "build", "parallel=false", "-var",
-            "'headless=true'", "-var", "'write_zeroes=yes'",
-            "-except=vmware-iso,virtualbox", "vagrant.json"
-        ],
-                        cwd=CWD)
-    elif release_providers[0]['name'] == 'libvirt':
-        subprocess.call([
-            "/usr/bin/packer", "build", "parallel=false", "-var",
-            "'headless=true'", "-var", "'write_zeroes=yes'",
-            "-except=vmware-iso,qemu", "vagrant.json"
-        ],
-                        cwd=CWD)
-
+    subprocess.call(release_providers[0]['name'], cwd=CWD)
 
 def is_latest(release_version):
     release_month = int(release_version.split(".")[1])

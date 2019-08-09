@@ -49,7 +49,7 @@ def build_packer_call(provider):
         "virtualbox": "virtualbox",
         "libvirt": "qemu"
     }
-    packer = PACKER_CMD_TEMPLATE
+    packer = PACKER_CMD_TEMPLATE.copy()
     packer[7] += ","
     packer[7] += provider_map[provider]
     return packer

@@ -12,10 +12,11 @@ import subprocess
 import os.path
 
 API_URL = 'https://app.vagrantup.com/api/v1/box/archlinux/archlinux'
-THIS_MONTH = int(datetime.datetime.now().strftime("%m"))
+NOW = datetime.datetime.now()
+THIS_MONTH = int(NOW.strftime("%m"))
 LEN_RELEASES = 2
 CWD = '/srv/arch-boxes/arch-boxes'
-ISO_PATH = '/srv/ftp/iso/latest/archlinux-' + datetime.datetime.now().strftime(
+ISO_PATH = '/srv/ftp/iso/latest/archlinux-' + NOW.strftime(
     "%Y.%m") + '.01-x86_64.iso'
 ISO_CHECKSUM_PATH = '/srv/ftp/iso/latest/sha1sums.txt'
 PACKER_CMD_TEMPLATE = [

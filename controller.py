@@ -64,17 +64,11 @@ def determine_missing_release(release_providers):
 
 def is_latest(release_version):
     release_month = int(release_version.split(".")[1])
-    if THIS_MONTH > release_month:
-        return False
-    else:
-        return True
+    return THIS_MONTH <= release_month
 
 
 def all_released(release_providers):
-    if LEN_RELEASES > len(release_providers):
-        return False
-    else:
-        return True
+    return LEN_RELEASES <= len(release_providers)
 
 
 if __name__ == '__main__':

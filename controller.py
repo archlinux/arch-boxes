@@ -4,17 +4,12 @@
 # Author: Christian Rebischke <chris.rebischke@archlinux.org>
 # This file is licensed under GPLv3
 
-try:
-    import urllib.request
-    import json
-    import datetime
-    import sys
-    import subprocess
-    import os.path
-
-except ImportError:
-    print('Error: Missing dependencies')
-    sys.exit(1)
+import urllib.request
+import json
+import datetime
+import sys
+import subprocess
+import os.path
 
 API_URL = 'https://app.vagrantup.com/api/v1/box/archlinux/archlinux'
 THIS_MONTH = int(datetime.datetime.now().strftime("%m"))

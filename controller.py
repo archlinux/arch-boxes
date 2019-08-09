@@ -19,13 +19,13 @@ ISO_PATH = '/srv/ftp/iso/latest/archlinux-' + datetime.datetime.now().strftime(
     "%Y.%m") + '.01-x86_64.iso'
 ISO_CHECKSUM_PATH = '/srv/ftp/iso/latest/sha1sums.txt'
 PACKER_CMD_TEMPLATE = [
-    "/usr/bin/packer", "build", "parallel=false", "-var",
-    "'headless=true'", "-var", "'write_zeroes=yes'",
-    "-except=vmware-iso", "vagrant.json"
+    "/usr/bin/packer", "build", "parallel=false", "-var", "'headless=true'",
+    "-var", "'write_zeroes=yes'", "-except=vmware-iso", "vagrant.json"
 ]
 
+
 def main():
-    are_resources_present()
+    exit_if_resources_present()
     with urllib.request.urlopen(API_URL) as response:
         data = json.load(response)
         release_version = data['current_version']['version']
@@ -37,25 +37,24 @@ def main():
                 determine_missing_release(release_providers)
 
 
-def are_resources_present():
+def exit_if_resources_present():
     if os.path.exists(ISO_PATH) and os.path.exists(ISO_CHECKSUM_PATH):
         pass
     else:
-        sys.exit(1)
+        sys.exit(0)
 
 
 def build_packer_call(provider):
-    provider_map = {
-        "virtualbox": "virtualbox",
-        "libvirt": "qemu"
-    }
+    provider_map = {"virtualbox": "virtualbox", "libvirt": "qemu"}
     packer = PACKER_CMD_TEMPLATE.copy()
     packer[7] += ","
     packer[7] += provider_map[provider]
     return packer
-        
+
+
 def determine_missing_release(release_providers):
     subprocess.call(build_packer_call(release_providers[0]['name']), cwd=CWD)
+
 
 def is_latest(release_version):
     release_month = int(release_version.split(".")[1])

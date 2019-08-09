@@ -55,7 +55,7 @@ def build_packer_call(provider):
     return packer
         
 def determine_missing_release(release_providers):
-    subprocess.call(release_providers[0]['name'], cwd=CWD)
+    subprocess.call(build_packer_call(release_providers[0]['name']), cwd=CWD)
 
 def is_latest(release_version):
     release_month = int(release_version.split(".")[1])

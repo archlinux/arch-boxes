@@ -40,11 +40,12 @@ Here is an overview over all variables you can set in `vagrant.json` or
   the ISO before entering any command.
 
 ## how to start the build process locally
-Edit the `local.json` before you start the build. set the right
-`iso_url` and the right `iso_checksum_url`. Then you can start the build
+If you want to build the boxes locally without uploading them to the Vagrant
+cloud you need to edit the `local.json` before you start the build. set the
+right `iso_url` and the right `iso_checksum_url`. Then you can start the build
 for virtualbox only with the following command:
 
-`packer build -only=virtualbox-iso -var-file=local.json vagrant.json`
+`packer build -only=virtualbox-iso local.json`
 
 ## how to start the build process for official builds
 The official builds are done on our Arch Linux Buildserver.

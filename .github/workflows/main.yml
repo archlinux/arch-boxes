@@ -1,0 +1,17 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: install packer
+      run:
+        ./generic-ci.sh install
+    - name: verify packer configuration
+      run:
+        ./generic-ci.sh verify

@@ -20,7 +20,7 @@ ISO_PATH = '/srv/ftp/iso/latest/archlinux-' + NOW.strftime(
     "%Y.%m") + '.01-x86_64.iso'
 ISO_CHECKSUM_PATH = '/srv/ftp/iso/latest/sha1sums.txt'
 PACKER_CMD_TEMPLATE = [
-    "/usr/bin/packer", "build", "parallel=false", "-var", "'headless=true'",
+    "/usr/bin/packer", "build", "-parallel=false", "-var", "'headless=true'",
     "-var", "'write_zeroes=yes'", "-except=vmware-iso", "vagrant.json"
 ]
 

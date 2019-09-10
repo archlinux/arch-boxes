@@ -53,6 +53,7 @@ cat <<EOF > /etc/systemd/system/pacman-init.service
 Description=Initializes Pacman keyring
 Wants=haveged.service
 After=haveged.service
+Before=sshd.service
 ConditionFirstBoot=yes
 
 [Service]

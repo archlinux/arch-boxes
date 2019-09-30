@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 case $1 in
 
@@ -16,7 +17,7 @@ case $1 in
     gpg --with-fingerprint --with-colons hashicorp.key | grep ${HASHICORP_FINGERPRINT^^}
     gpg --import hashicorp.key
     gpg --verify "packer_${PACKER_CURRENT_VERSION}_SHA256SUMS.sig" "packer_${PACKER_CURRENT_VERSION}_SHA256SUMS"
-    grep "linux_amd64 packer_${PACKER_CURRENT_VERSION}_SHA256SUMS" >packer_SHA256SUM_linux_amd64
+    grep linux_amd64 "packer_${PACKER_CURRENT_VERSION}_SHA256SUMS" > packer_SHA256SUM_linux_amd64
     sha256sum --check --status packer_SHA256SUM_linux_amd64
     unzip "packer_${PACKER_CURRENT_VERSION}_linux_amd64.zip"
     ;;

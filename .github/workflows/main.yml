@@ -1,12 +1,12 @@
-name: CI
+name: Github-Actions
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
-  build:
+  vagrant-validation:
 
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v1
     - name: install packer

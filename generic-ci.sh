@@ -3,7 +3,7 @@ set -x
 
 case $1 in
 
-  install)
+  install-packer)
     PACKER_CURRENT_VERSION="$(curl -s https://checkpoint-api.hashicorp.com/v1/check/packer | jq -r -M '.current_version')"
     PACKER_URL="https://releases.hashicorp.com/packer/$PACKER_CURRENT_VERSION/packer_${PACKER_CURRENT_VERSION}_linux_amd64.zip"
     PACKER_SHA256="https://releases.hashicorp.com/packer/$PACKER_CURRENT_VERSION/packer_${PACKER_CURRENT_VERSION}_SHA256SUMS"
@@ -20,11 +20,46 @@ case $1 in
     grep linux_amd64 "packer_${PACKER_CURRENT_VERSION}_SHA256SUMS" > packer_SHA256SUM_linux_amd64
     sha256sum --check --status packer_SHA256SUM_linux_amd64
     unzip "packer_${PACKER_CURRENT_VERSION}_linux_amd64.zip"
+    ./packer --version
     ;;
 
-  verify)
-    ./packer --version
+  install-shfmt)
+    curl -L https://github.com/mvdan/sh/releases/download/v2.6.4/shfmt_v2.6.4_linux_amd64 -o shfmt
+    chmod +x ./shfmt
+    ;;
+
+  install-yapf)
+    pip3 install yapf --user
+    ;;
+
+  install-flake8)
+    pip3 install flake8 --user
+    ;;
+
+  verify-official)
     jq ".\"post-processors\"[0] |= map(select(.\"type\" != \"vagrant-cloud\"))" vagrant.json | ./packer validate -var "iso_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/archlinux-$(date +'%Y.%m').01-x86_64.iso" -var "iso_checksum_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/sha1sums.txt" -
+    ;;
+
+  verify-local)
+    jq ".\"post-processors\"[0] |= map(select(.\"type\" != \"vagrant-cloud\"))" local.json | ./packer validate -var "iso_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/archlinux-$(date +'%Y.%m').01-x86_64.iso" -var "iso_checksum_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/sha1sums.txt" -
+    ;;
+
+  # We use + instead of \; here because find doesn't pass
+  # the exit code through when used with \;
+  shellcheck)
+    find . -iname "*.sh" -exec shellcheck {} +
+    ;;
+
+  shfmt)
+    find . -iname "*.sh" -exec ./shfmt -i 2 -ci -d {} +
+    ;;
+
+  yapf)
+    find . -iname "*.py" -exec python3 -m yapf -d {} +
+    ;;
+
+  flake8)
+    find . -iname "*.py" -exec python3 -m flake8 {} +
     ;;
 
   *)

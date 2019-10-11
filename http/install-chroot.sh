@@ -6,7 +6,7 @@ set -x
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 sed -i -e 's/^#\(en_US.UTF-8\)/\1/' /etc/locale.gen
 locale-gen
-echo 'LANG=en_US.UTF-8' > /etc/locale.conf
+echo 'LANG=en_US.UTF-8' >/etc/locale.conf
 
 # setting vagrant user credentials
 echo -e 'vagrant\nvagrant' | passwd
@@ -14,7 +14,7 @@ useradd -m -U vagrant
 echo -e 'vagrant\nvagrant' | passwd vagrant
 
 # setting automatic authentication for any action requiring admin rights via Polkit
-cat <<EOF > /etc/polkit-1/rules.d/49-nopasswd_global.rules
+cat <<EOF >/etc/polkit-1/rules.d/49-nopasswd_global.rules
 polkit.addRule(function(action, subject) {
     if (subject.isInGroup("vagrant")) {
         return polkit.Result.YES;
@@ -23,7 +23,7 @@ polkit.addRule(function(action, subject) {
 EOF
 
 # setting sudo for vagrant user
-cat <<EOF > /etc/sudoers.d/vagrant
+cat <<EOF >/etc/sudoers.d/vagrant
 Defaults:vagrant !requiretty
 vagrant ALL=(ALL) NOPASSWD: ALL
 EOF
@@ -39,7 +39,7 @@ chmod 0600 /home/vagrant/.ssh/authorized_keys
 ln -s /dev/null /etc/systemd/network/99-default.link
 
 # setup network
-cat <<EOF > /etc/systemd/network/eth0.network
+cat <<EOF >/etc/systemd/network/eth0.network
 [Match]
 Name=eth0
 
@@ -48,7 +48,7 @@ DHCP=ipv4
 EOF
 
 # Setup pacman-init.service for clean pacman keyring initialization
-cat <<EOF > /etc/systemd/system/pacman-init.service
+cat <<EOF >/etc/systemd/system/pacman-init.service
 [Unit]
 Description=Initializes Pacman keyring
 Wants=haveged.service
@@ -74,6 +74,6 @@ systemctl enable systemd-networkd
 systemctl enable systemd-resolved
 systemctl enable pacman-init.service
 
-grub-install "$device"
+grub-install
 sed -i -e 's/^GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=1/' /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg

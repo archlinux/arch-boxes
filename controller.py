@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- encoding; utf-8 -*-
+# -*- encoding; utf-8 -*-
 #
 # Author: Christian Rebischke <chris.rebischke@archlinux.org>
 # This file is licensed under GPLv3

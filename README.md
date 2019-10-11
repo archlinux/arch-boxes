@@ -1,5 +1,5 @@
 # arch-boxes
-[![Actions Status](https://github.com/archlinux/arch-boxes/workflows/CI/badge.svg)](https://github.com/archlinux/arch-boxes/actions)
+[![Actions Status](https://github.com/archlinux/arch-boxes/workflows/Github-Actions/badge.svg)](https://github.com/archlinux/arch-boxes/actions)
 
 Arch-boxes provides automated builds of the Arch Linux releases for
 different providers and post-processors. Check the providers or post-processor sections if you want to know

@@ -74,6 +74,13 @@ systemctl enable systemd-networkd
 systemctl enable systemd-resolved
 systemctl enable pacman-init.service
 
+# set up bootloader
 grub-install
 sed -i -e 's/^GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=1/' /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
+
+# slim down image size
+pacman -S --noconfirm --needed btrfs-progs duperemove
+btrfs filesystem defragment -crf /
+duperemove -dhr /
+pacman -Rns btrfs-progs duperemove

@@ -23,7 +23,7 @@ EOF
 
 mkswap "${device}1"
 mkfs.btrfs -L "rootfs" "${device}2"
-mount -o compress=zstd "${device}2" /mnt
+mount -o compress=zstd:15 "${device}2" /mnt
 
 pacstrap /mnt base linux grub openssh sudo polkit haveged btrfs-progs
 swapon "${device}1"

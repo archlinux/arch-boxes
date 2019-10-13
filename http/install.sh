@@ -25,7 +25,7 @@ mkswap "${device}1"
 mkfs.btrfs -L "rootfs" "${device}2"
 mount -o compress=zstd:15 "${device}2" /mnt
 
-pacstrap /mnt base linux grub openssh sudo polkit haveged btrfs-progs
+pacstrap /mnt base linux grub openssh sudo polkit haveged
 swapon "${device}1"
 genfstab -p /mnt >>/mnt/etc/fstab
 swapoff "${device}1"

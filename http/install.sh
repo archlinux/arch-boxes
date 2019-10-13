@@ -22,10 +22,10 @@ size=${swap_size_in_kilobytes}KiB, type=82
 EOF
 
 mkswap "${device}1"
-mkfs.ext4 -L "rootfs" "${device}2"
-mount "${device}2" /mnt
+mkfs.btrfs -L "rootfs" "${device}2"
+mount -o compress=zstd "${device}2" /mnt
 
-pacstrap /mnt base linux grub openssh sudo polkit haveged
+pacstrap /mnt base linux grub openssh sudo polkit haveged btrfs-progs
 swapon "${device}1"
 genfstab -p /mnt >>/mnt/etc/fstab
 swapoff "${device}1"

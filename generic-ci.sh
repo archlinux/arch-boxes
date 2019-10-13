@@ -10,10 +10,10 @@ case $1 in
     PACKER_SHA256_SIG="https://releases.hashicorp.com/packer/$PACKER_CURRENT_VERSION/packer_${PACKER_CURRENT_VERSION}_SHA256SUMS.sig"
     HASHICORP_FINGERPRINT=91a6e7f85d05c65630bef18951852d87348ffc4c
     HASHICORP_KEY="https://keybase.io/hashicorp/pgp_keys.asc?fingerprint=${HASHICORP_FINGERPRINT}"
-    wget "${PACKER_URL}"
-    wget "${PACKER_SHA256}"
-    wget "${PACKER_SHA256_SIG}"
-    wget -O hashicorp.key "${HASHICORP_KEY}"
+    curl -LO "${PACKER_URL}"
+    curl -LO "${PACKER_SHA256}"
+    curl -LO "${PACKER_SHA256_SIG}"
+    wget -Lo hashicorp.key "${HASHICORP_KEY}"
     gpg --with-fingerprint --with-colons hashicorp.key | grep ${HASHICORP_FINGERPRINT^^}
     gpg --import hashicorp.key
     gpg --verify "packer_${PACKER_CURRENT_VERSION}_SHA256SUMS.sig" "packer_${PACKER_CURRENT_VERSION}_SHA256SUMS"
@@ -24,7 +24,7 @@ case $1 in
     ;;
 
   install-shfmt)
-    curl -L https://github.com/mvdan/sh/releases/download/v2.6.4/shfmt_v2.6.4_linux_amd64 -o shfmt
+    curl -Lo shfmt https://github.com/mvdan/sh/releases/download/v2.6.4/shfmt_v2.6.4_linux_amd64
     chmod +x ./shfmt
     ;;
 

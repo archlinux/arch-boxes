@@ -81,6 +81,6 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 # slim down image size
 pacman -S --noconfirm --needed btrfs-progs duperemove
-btrfs filesystem defragment -crf /
+btrfs filesystem defragment -czstd -rf /
 duperemove -dhr /
 pacman -Rns btrfs-progs duperemove

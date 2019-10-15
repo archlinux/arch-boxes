@@ -83,4 +83,4 @@ grub-mkconfig -o /boot/grub/grub.cfg
 pacman -S --noconfirm --needed btrfs-progs duperemove
 btrfs filesystem defragment -czstd -rf /
 duperemove -dhr /
-pacman -Rns btrfs-progs duperemove
+pacman -Rns --noconfirm btrfs-progs duperemove

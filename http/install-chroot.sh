@@ -74,6 +74,10 @@ systemctl enable systemd-networkd
 systemctl enable systemd-resolved
 systemctl enable pacman-init.service
 
-grub-install
+if [ -b "/dev/sda" ]; then
+  grub-install /dev/sda
+elif [ -b "/dev/vda" ]; then
+  grub-install /dev/vda
+fi
 sed -i -e 's/^GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=1/' /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg

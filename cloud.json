@@ -12,7 +12,9 @@
     },
     "builders": [
         {
+	    "name": "Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.img",
             "type": "qemu",
+	    "output_directory": "release",
             "boot_wait": "{{user `boot_wait`}}",
             "http_directory": "http",
             "disk_size": "{{user `disk_size`}}",
@@ -37,7 +39,7 @@
             ],
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
-                "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-chroot}.sh'<enter><wait>",
+                "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-cloud}.sh'<enter><wait>",
                 "bash install.sh < install-cloud.sh && systemctl reboot<enter>"
             ]
         }
@@ -63,17 +65,19 @@
     ],
     "post-processors": [
         [
-            {
+	   {
                 "type": "checksum",
 		"checksum_types": [
 			"sha256"
 		],
-                "output": "Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.img"
+                "output": "Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.SHA256"
             },
 	    {
 		"type": "shell-local",
 		"inline": [
-			"gpg --sign --detach-sign Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.img"
+			"mv release/packer-Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.img release/Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.img",
+			"sed -i 's/packer-//' Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.SHA256",
+			"gpg --sign --detach-sign Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.SHA256"
 		]
 	    }
 	]

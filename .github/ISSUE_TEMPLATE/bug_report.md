@@ -34,6 +34,7 @@ If applicable, add screenshots to help explain your problem.
  - Host Modules Version: [e.g. 6.0.10-1]
  - Output of `id` command: [this is for checking if your user is part of group `vboxusers`]
  - Output of `uname -a`: [e.g. Linux motoko 5.2.11.a-1-hardened #1 SMP PREEMPT Tue Sep 3 00:13:50 CEST 2019 x86_64 GNU/Linux]
+ - Vagrant Plugins: [do you use any plugins? if so, please name them here]
 
 **Additional context**
 Add any other context about the problem here.

@@ -12,8 +12,7 @@ import subprocess
 import os.path
 
 API_URL = 'https://app.vagrantup.com/api/v1/box/archlinux/archlinux'
-NOW = datetime.datetime.now()
-THIS_MONTH = int(NOW.strftime("%m"))
+NOW = datetime.date.today()
 LEN_RELEASES = 2
 CWD = '/srv/arch-boxes/arch-boxes'
 ISO_PATH = '/srv/ftp/iso/latest/archlinux-' + NOW.strftime(
@@ -58,8 +57,12 @@ def determine_missing_release(release_providers):
 
 
 def is_latest(release_version):
-    release_month = int(release_version.split(".")[1])
-    return THIS_MONTH <= release_month
+    # we need to use .date() here, otherwise the compare is going to fail
+    release = datetime.datetime.strptime(release_version, "%Y.%m.%d").date()
+    # set the day to 1, because we only want to check for month and year
+    release = release.replace(day=1)
+    current_release = NOW.replace(day=1)
+    return current_release <= release
 
 
 def all_released(release_providers):

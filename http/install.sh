@@ -25,7 +25,7 @@ mkswap "${device}1"
 mkfs.ext4 -L "rootfs" "${device}2"
 mount "${device}2" /mnt
 
-pacstrap /mnt base linux grub openssh sudo polkit haveged
+pacstrap /mnt base linux grub openssh sudo polkit haveged netctl
 swapon "${device}1"
 genfstab -p /mnt >>/mnt/etc/fstab
 swapoff "${device}1"

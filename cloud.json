@@ -1,6 +1,6 @@
 {
     "variables": {
-        "iso_url": "https://mirror.pkgbuild.com/iso/latest/archlinux-2019.10.01-x86_64.iso",
+        "iso_url": "https://mirror.pkgbuild.com/iso/latest/archlinux-{{isotime \"2006.01\"}}.01-x86_64.iso",
         "iso_checksum_url": "https://mirror.pkgbuild.com/iso/latest/sha1sums.txt",
         "iso_checksum_type": "sha1",
         "disk_size": "20480",

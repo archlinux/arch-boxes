@@ -40,18 +40,6 @@
                     "{{.Name}}",
                     "--cpus",
                     "{{user `cpus`}}"
-                ],
-                [
-                    "modifyvm",
-                    "{{.Name}}",
-                    "--graphicscontroller",
-                    "vmsvga"
-                ],
-                [
-                    "modifyvm",
-                    "{{.Name}}",
-                    "--vram",
-                    "10"
                 ]
             ],
             "boot_command": [

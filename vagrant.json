@@ -40,6 +40,18 @@
                     "{{.Name}}",
                     "--cpus",
                     "{{user `cpus`}}"
+                ],
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--graphicscontroller",
+                    "vmsvga"
+                ],
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--vram",
+                    "10"
                 ]
             ],
             "boot_command": [
@@ -143,6 +155,14 @@
         [
             {
                 "type": "vagrant",
+                "only": ["virtualbox-iso"],
+                "keep_input_artifact": false,
+                "output": "Arch-Linux-x86_64-{{ .Provider }}-{{isotime \"2006-01-02\"}}.box",
+                "vagrantfile_template": "templates/virtualbox.Vagrantfile"
+            },
+            {
+                "type": "vagrant",
+                "except": ["virtualbox-iso"],
                 "keep_input_artifact": false,
                 "output": "Arch-Linux-x86_64-{{ .Provider }}-{{isotime \"2006-01-02\"}}.box"
             },

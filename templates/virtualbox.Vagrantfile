@@ -5,7 +5,7 @@ $msg = <<MSG
 --------------------------------------------------------------------
 This box uses Virtualbox > 6.0 standards for graphic controller, if
 you use X11 please install xf86-video-vmware or bypass the usage of
-vmsvga with the following lines in you Vagrantfile:
+vmsvga with the following lines in your Vagrantfile:
 
 config.vm.provider "virtualbox" do |vb|
   vb.customize ['modifyvm', :id, '--graphicscontroller', 'vboxvga']

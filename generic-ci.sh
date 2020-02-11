@@ -24,8 +24,10 @@ case $1 in
     ;;
 
   install-shfmt)
-    curl -Lo shfmt https://github.com/mvdan/sh/releases/download/v2.6.4/shfmt_v2.6.4_linux_amd64
+    SHFMT_VERSION="$(curl -s https://api.github.com/repos/mvdan/sh/releases/latest | jq -r -M '.tag_name')"
+    curl -Lo shfmt https://github.com/mvdan/sh/releases/download/"${SHFMT_VERSION}"/shfmt_"${SHFMT_VERSION}"_linux_amd64
     chmod +x ./shfmt
+    ./shfmt --version
     ;;
 
   install-yapf)

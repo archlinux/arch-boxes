@@ -1,7 +1,7 @@
 {
     "variables": {
 
-    "iso_url": "https://mirror.pkgbuild.com/iso/latest/archlinux-2019.10.01-x86_64.iso",
+    "iso_url": "https://mirror.pkgbuild.com/iso/latest/{{isotime \"2006.01\"}}.01-x86_64.iso",
     "iso_checksum_url": "https://mirror.pkgbuild.com/iso/latest/sha1sums.txt",
     "iso_checksum_type": "sha1",
     "disk_size": "20480",
@@ -24,7 +24,7 @@
             "ssh_username": "vagrant",
             "ssh_password": "vagrant",
             "ssh_port": 22,
-            "ssh_wait_timeout": "10000s",
+            "ssh_timeout": "10000s",
             "shutdown_command": "sudo systemctl poweroff",
             "guest_additions_mode": "disable",
             "headless": "{{user `headless`}}",
@@ -58,7 +58,7 @@
             "ssh_username": "vagrant",
             "ssh_password": "vagrant",
             "ssh_port": 22,
-            "ssh_wait_timeout": "10000s",
+            "ssh_timeout": "10000s",
             "shutdown_command": "sudo systemctl poweroff",
             "headless": "{{user `headless`}}",
             "qemuargs": [
@@ -87,7 +87,7 @@
             "ssh_username": "vagrant",
             "ssh_password": "vagrant",
             "ssh_port": 22,
-            "ssh_wait_timeout": "10000s",
+            "ssh_timeout": "10000s",
             "shutdown_command": "sudo systemctl poweroff",
             "headless": "{{user `headless`}}",
             "memory": "{{user `memory`}}",

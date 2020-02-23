@@ -60,6 +60,23 @@ ExecStart=/usr/bin/pacman-key --populate archlinux
 WantedBy=multi-user.target
 EOF
 
+# Add service for running reflector on first boot
+cat <<EOF >/etc/systemd/system/reflector-init.service
+[Unit]
+Description=Initializes mirrors for the VM
+After=network.target
+Wants=network.target
+ConditionFirstBoot=yes
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=reflector --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 # enabling important services
 systemctl daemon-reload
 systemctl enable sshd
@@ -67,6 +84,7 @@ systemctl enable haveged
 systemctl enable systemd-networkd
 systemctl enable systemd-resolved
 systemctl enable pacman-init.service
+systemctl enable reflector-init.service
 
 if [ -b "/dev/sda" ]; then
   grub-install /dev/sda

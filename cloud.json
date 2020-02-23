@@ -39,8 +39,8 @@
             ],
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
-                "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-cloud}.sh'<enter><wait>",
-                "bash install.sh < install-cloud.sh && systemctl reboot<enter>"
+                "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-cloud}.sh'<enter><wait>",
+                "bash install.sh < <(cat install-{cloud,common}.sh) && systemctl reboot<enter>"
             ]
         }
     ],

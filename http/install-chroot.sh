@@ -35,9 +35,6 @@ curl --output /home/vagrant/.ssh/authorized_keys --location https://raw.github.c
 chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys
 chmod 0600 /home/vagrant/.ssh/authorized_keys
 
-# setup unpredictable kernel names
-ln -s /dev/null /etc/systemd/network/99-default.link
-
 # setup network
 cat <<EOF >/etc/systemd/network/eth0.network
 [Match]
@@ -98,4 +95,6 @@ elif [ -b "/dev/vda" ]; then
   grub-install /dev/vda
 fi
 sed -i -e 's/^GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=1/' /etc/default/grub
+# setup unpredictable kernel names
+sed -i -e 's/^GRUB_CMDLINE_LINUX=.*$/GRUB_CMDLINE_LINUX="net.ifnames=0"/' /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg

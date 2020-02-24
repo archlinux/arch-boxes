@@ -39,11 +39,11 @@ case $1 in
     ;;
 
   verify-official)
-    jq ".\"post-processors\"[0] |= map(select(.\"type\" != \"vagrant-cloud\"))" vagrant.json | ./packer validate -var "iso_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/archlinux-$(date +'%Y.%m').01-x86_64.iso" -var "iso_checksum_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/sha1sums.txt" -
+    jq ".\"post-processors\"[0] |= map(select(.\"type\" != \"vagrant-cloud\"))" vagrant.json | ./packer validate -var "iso_checksum_url=https://mirror.pkgbuild.com/iso/latest/sha1sums.txt" -
     ;;
 
   verify-local)
-    jq ".\"post-processors\"[0] |= map(select(.\"type\" != \"vagrant-cloud\"))" local.json | ./packer validate -var "iso_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/archlinux-$(date +'%Y.%m').01-x86_64.iso" -var "iso_checksum_url=https://downloads.archlinux.de/iso/$(date +'%Y.%m').01/sha1sums.txt" -
+    jq ".\"post-processors\"[0] |= map(select(.\"type\" != \"vagrant-cloud\"))" local.json | ./packer validate -
     ;;
 
   # We use + instead of \; here because find doesn't pass

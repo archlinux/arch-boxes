@@ -44,8 +44,8 @@
             ],
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
-                "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-chroot}.sh'<enter><wait>",
-                "bash install.sh < install-chroot.sh && systemctl reboot<enter>"
+                "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-chroot}.sh'<enter><wait>",
+                "bash install.sh <(cat install-{chroot,common}.sh) && systemctl reboot<enter>"
             ]
         }, {
             "type": "qemu",
@@ -73,8 +73,8 @@
             ],
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
-                "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-chroot}.sh'<enter><wait>",
-                "bash install.sh < install-chroot.sh && systemctl reboot<enter>"
+                "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-chroot}.sh'<enter><wait>",
+                "bash install.sh <(cat install-{chroot,common}.sh) && systemctl reboot<enter>"
             ]
         }, {
             "type": "vmware-iso",
@@ -94,8 +94,8 @@
             "cpus": "{{user `cpus`}}",
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
-                "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-chroot}.sh'<enter><wait>",
-                "bash install.sh < install-chroot.sh && systemctl reboot<enter>"
+                "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-chroot}.sh'<enter><wait>",
+                "bash install.sh <(cat install-{chroot,common}.sh) && systemctl reboot<enter>"
             ]
         }
 

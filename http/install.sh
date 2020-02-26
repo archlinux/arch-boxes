@@ -25,9 +25,13 @@ mkswap "${device}1"
 mkfs.ext4 -L "rootfs" "${device}2"
 mount "${device}2" /mnt
 
-pacstrap /mnt base linux grub openssh sudo polkit haveged netctl python reflector
+if [ -n "${MIRROR}" ]; then
+  echo "Server = ${MIRROR}" >/etc/pacman.d/mirrorlist
+fi
+pacstrap -M /mnt base linux grub openssh sudo polkit haveged netctl python reflector
 swapon "${device}1"
 genfstab -p /mnt >>/mnt/etc/fstab
 swapoff "${device}1"
 
+arch-chroot /mnt /usr/bin/sed -i 's/^#Server/Server/' /etc/pacman.d/mirrorlist
 arch-chroot /mnt /bin/bash

@@ -8,7 +8,8 @@
         "cpus": "2",
         "headless": "true",
         "write_zeroes": "",
-        "boot_wait": "60s"
+        "boot_wait": "60s",
+        "mirror": ""
     },
     "builders": [
         {
@@ -40,7 +41,7 @@
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-cloud}.sh'<enter><wait>",
-                "bash install.sh < <(cat install-{cloud,common}.sh) && systemctl reboot<enter>"
+                "MIRROR='{{user `mirror`}}' bash install.sh < <(cat install-{cloud,common}.sh) && systemctl reboot<enter>"
             ]
         }
     ],

@@ -31,7 +31,6 @@ else
   pacman -Sy reflector
   reflector --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
 fi
-
 pacstrap -M /mnt base linux grub openssh sudo polkit haveged netctl python reflector
 swapon "${device}1"
 genfstab -p /mnt >>/mnt/etc/fstab

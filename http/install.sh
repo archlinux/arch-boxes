@@ -27,6 +27,9 @@ mount "${device}2" /mnt
 
 if [ -n "${MIRROR}" ]; then
   echo "Server = ${MIRROR}" >/etc/pacman.d/mirrorlist
+else
+  pacman -Sy reflector
+  reflector --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
 fi
 pacstrap -M /mnt base linux grub openssh sudo polkit haveged netctl python reflector
 swapon "${device}1"

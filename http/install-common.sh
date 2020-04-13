@@ -61,8 +61,9 @@ EOF
 cat <<EOF >/etc/systemd/system/reflector-init.service
 [Unit]
 Description=Initializes mirrors for the VM
-After=network.target
-Wants=network.target
+After=network-online.target
+Wants=network-online.target
+Before=sshd.service
 ConditionFirstBoot=yes
 
 [Service]

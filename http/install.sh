@@ -33,7 +33,7 @@ else
 fi
 pacstrap -M /mnt base linux grub openssh sudo polkit haveged netctl python reflector
 swapon "${device}1"
-genfstab -p /mnt >>/mnt/etc/fstab
+genfstab -pU /mnt >>/mnt/etc/fstab
 swapoff "${device}1"
 
 arch-chroot /mnt /usr/bin/sed -i 's/^#Server/Server/' /etc/pacman.d/mirrorlist

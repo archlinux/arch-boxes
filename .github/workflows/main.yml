@@ -17,6 +17,9 @@ jobs:
     - name: verify vagrant.json
       run: ./generic-ci.sh verify-official
 
+    - name: verify cloud.json
+      run: ./generic-ci.sh verify-cloud
+
   python-syntax-validation:
     runs-on: ubuntu-latest
 

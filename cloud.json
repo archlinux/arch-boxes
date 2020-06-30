@@ -2,7 +2,6 @@
     "variables": {
         "iso_url": "https://mirror.pkgbuild.com/iso/latest/archlinux-{{isotime \"2006.01\"}}.01-x86_64.iso",
         "iso_checksum_url": "https://mirror.pkgbuild.com/iso/latest/sha1sums.txt",
-        "iso_checksum_type": "sha1",
         "disk_size": "20480",
         "memory": "1024",
         "cpus": "2",
@@ -19,8 +18,7 @@
             "boot_wait": "{{user `boot_wait`}}",
             "http_directory": "http",
             "disk_size": "{{user `disk_size`}}",
-            "iso_checksum_url": "{{user `iso_checksum_url`}}",
-            "iso_checksum_type": "{{user `iso_checksum_type`}}",
+            "iso_checksum": "file:{{user `iso_checksum_url`}}",
             "iso_url": "{{user `iso_url`}}",
             "ssh_username": "arch",
             "ssh_password": "arch",
@@ -66,19 +64,19 @@
     ],
     "post-processors": [
         [
-           {
+            {
                 "type": "checksum",
                 "checksum_types": [
-                        "sha256"
+                    "sha256"
                 ],
                 "output": "Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.SHA256"
             },
             {
                 "type": "shell-local",
                 "inline": [
-                        "mv release/packer-Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.img release/Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.img",
-                        "sed -i 's/packer-//' Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.SHA256",
-                        "gpg --sign --detach-sign Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.SHA256"
+                    "mv release/packer-Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.img release/Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.img",
+                    "sed -i 's/packer-//' Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.SHA256",
+                    "gpg --sign --detach-sign Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.SHA256"
                 ]
             }
         ]

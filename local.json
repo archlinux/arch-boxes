@@ -1,16 +1,14 @@
 {
     "variables": {
-
-    "iso_url": "https://mirror.pkgbuild.com/iso/latest/archlinux-{{isotime \"2006.01\"}}.01-x86_64.iso",
-    "iso_checksum_url": "https://mirror.pkgbuild.com/iso/latest/sha1sums.txt",
-    "iso_checksum_type": "sha1",
-    "disk_size": "20480",
-    "memory": "1024",
-    "cpus": "2",
-    "headless": "true",
-    "write_zeroes": "",
-    "boot_wait": "60s",
-    "mirror": ""
+        "iso_url": "https://mirror.pkgbuild.com/iso/latest/archlinux-{{isotime \"2006.01\"}}.01-x86_64.iso",
+        "iso_checksum_url": "https://mirror.pkgbuild.com/iso/latest/sha1sums.txt",
+        "disk_size": "20480",
+        "memory": "1024",
+        "cpus": "2",
+        "headless": "true",
+        "write_zeroes": "",
+        "boot_wait": "60s",
+        "mirror": ""
     },
     "builders": [
         {
@@ -19,8 +17,7 @@
             "http_directory": "http",
             "disk_size": "{{user `disk_size`}}",
             "guest_os_type": "ArchLinux_64",
-            "iso_checksum_url": "{{user `iso_checksum_url`}}",
-            "iso_checksum_type": "{{user `iso_checksum_type`}}",
+            "iso_checksum": "file:{{user `iso_checksum_url`}}",
             "iso_url": "{{user `iso_url`}}",
             "ssh_username": "vagrant",
             "ssh_password": "vagrant",
@@ -48,13 +45,13 @@
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-chroot}.sh'<enter><wait>",
                 "MIRROR='{{user `mirror`}}' bash install.sh < <(cat install-{chroot,common}.sh) && systemctl reboot<enter>"
             ]
-        }, {
+        },
+        {
             "type": "qemu",
             "boot_wait": "{{user `boot_wait`}}",
             "http_directory": "http",
             "disk_size": "{{user `disk_size`}}",
-            "iso_checksum_url": "{{user `iso_checksum_url`}}",
-            "iso_checksum_type": "{{user `iso_checksum_type`}}",
+            "iso_checksum": "file:{{user `iso_checksum_url`}}",
             "iso_url": "{{user `iso_url`}}",
             "ssh_username": "vagrant",
             "ssh_password": "vagrant",
@@ -77,13 +74,13 @@
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-chroot}.sh'<enter><wait>",
                 "MIRROR='{{user `mirror`}}' bash install.sh < <(cat install-{chroot,common}.sh) && systemctl reboot<enter>"
             ]
-        }, {
+        },
+        {
             "type": "vmware-iso",
             "boot_wait": "{{user `boot_wait`}}",
             "http_directory": "http",
             "disk_size": "{{user `disk_size`}}",
-            "iso_checksum_url": "{{user `iso_checksum_url`}}",
-            "iso_checksum_type": "{{user `iso_checksum_type`}}",
+            "iso_checksum": "file:{{user `iso_checksum_url`}}",
             "iso_url": "{{user `iso_url`}}",
             "ssh_username": "vagrant",
             "ssh_password": "vagrant",
@@ -99,7 +96,6 @@
                 "MIRROR='{{user `mirror`}}' bash install.sh < <(cat install-{chroot,common}.sh) && systemctl reboot<enter>"
             ]
         }
-
     ],
     "provisioners": [
         {
@@ -110,7 +106,9 @@
                 "provision/cleanup.sh"
             ],
             "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'",
-            "only": ["virtualbox-iso"]
+            "only": [
+                "virtualbox-iso"
+            ]
         },
         {
             "type": "shell",
@@ -120,7 +118,9 @@
                 "provision/cleanup.sh"
             ],
             "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'",
-            "only": ["qemu"]
+            "only": [
+                "qemu"
+            ]
         },
         {
             "type": "shell",
@@ -130,7 +130,9 @@
                 "provision/cleanup.sh"
             ],
             "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'",
-            "only": ["vmware-iso"]
+            "only": [
+                "vmware-iso"
+            ]
         },
         {
             "type": "shell",

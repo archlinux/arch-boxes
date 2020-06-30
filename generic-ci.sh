@@ -46,6 +46,10 @@ case $1 in
     ./packer validate local.json
     ;;
 
+  verify-cloud)
+    ./packer validate cloud.json
+    ;;
+
   # We use + instead of \; here because find doesn't pass
   # the exit code through when used with \;
   shellcheck)

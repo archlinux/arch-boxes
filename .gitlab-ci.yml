@@ -1,0 +1,11 @@
+default:
+  image: "archlinux:latest"
+  tags:
+    - secure # DO NOT REMOVE
+
+before_script:
+  - pacman -Syu --needed --noconfirm qemu-headless virtualbox packer
+
+packer:
+  script:
+    packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=no' -except=vmware-iso local.json

@@ -1,7 +1,8 @@
 default:
   image: "archlinux:latest"
   tags:
-    - secure # DO NOT REMOVE
+    - secure-kvm
+    - secure-virtualbox
 
 before_script:
   - pacman -Syu --needed --noconfirm qemu-headless virtualbox packer

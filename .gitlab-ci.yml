@@ -9,4 +9,4 @@ before_script:
 
 packer:
   script:
-    packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=no' -except=vmware-iso local.json
+    packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=yes' -except=vmware-iso local.json

@@ -5,8 +5,36 @@ default:
     - secure-virtualbox
 
 before_script:
-  - pacman -Syu --needed --noconfirm qemu-headless virtualbox packer
+  - pacman -Syu --needed --noconfirm qemu-headless virtualbox packer shfmt shellcheck yapf flake8
 
-packer:
+shellcheck:
+  script:
+    find . -iname "*.sh" -exec shellcheck {} +
+
+shfmt:
+  script:
+    find . -iname "*.sh" -exec ./shfmt -i 2 -ci -d {} +
+
+yapf:
+  script:
+    find . -iname "*.py" -exec python3 -m yapf -d {} +
+
+flake8:
+  script:
+    find . -iname "*.py" -exec python3 -m flake8 {} +
+
+validate-packer:
+  script:
+    packer validate -var "iso_checksum_url=https://mirror.pkgbuild.com/iso/latest/sha1sums.txt" -except=vagrant-cloud vagrant.json
+
+validate-local:
+  script:
+    packer validate local.json
+
+validate-cloud:
+  script:
+    packer validate cloud.json
+
+build:
   script:
     packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=yes' -except=vmware-iso local.json

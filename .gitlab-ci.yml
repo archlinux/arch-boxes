@@ -2,43 +2,39 @@ default:
   image: "archlinux:latest"
 
 stages:
-  - shfmt
-  - shellcheck
-  - yapf
-  - flake8
-  - validate-packer
+  - lint
   - build
 
 shellcheck:
-  stage: shellcheck
+  stage: lint
   before_script:
     - pacman -Syu --needed --noconfirm shellcheck
   script:
     find . -iname "*.sh" -exec shellcheck {} +
 
 shfmt:
-  stage: shfmt
+  stage: lint
   before_script:
     - pacman -Syu --needed --noconfirm shfmt
   script:
     find . -iname "*.sh" -exec shfmt -i 2 -ci -d {} +
 
 yapf:
-  stage: yapf
+  stage: lint
   before_script:
     - pacman -Syu --needed --noconfirm yapf
   script:
     find . -iname "*.py" -exec python3 -m yapf -d {} +
 
 flake8:
-  stage: flake8
+  stage: lint
   before_script:
     - pacman -Syu --needed --noconfirm flake8
   script:
     find . -iname "*.py" -exec python3 -m flake8 {} +
 
 validate-packer:
-  stage: validate-packer
+  stage: lint
   before_script:
     - pacman -Syu --needed --noconfirm packer
   script:

@@ -7,52 +7,51 @@ stages:
   - yapf
   - flake8
   - validate-packer
-  - validate-local
-  - validate-cloud
   - build
-
-before_script:
-  - pacman -Syu --needed --noconfirm qemu-headless virtualbox packer shfmt shellcheck yapf flake8
 
 shellcheck:
   stage: shellcheck
+  before_script:
+    - pacman -Syu --needed --noconfirm shellcheck
   script:
     find . -iname "*.sh" -exec shellcheck {} +
 
 shfmt:
   stage: shfmt
+  before_script:
+    - pacman -Syu --needed --noconfirm shfmt
   script:
     find . -iname "*.sh" -exec shfmt -i 2 -ci -d {} +
 
 yapf:
   stage: yapf
+  before_script:
+    - pacman -Syu --needed --noconfirm yapf
   script:
     find . -iname "*.py" -exec python3 -m yapf -d {} +
 
 flake8:
   stage: flake8
+  before_script:
+    - pacman -Syu --needed --noconfirm flake8
   script:
     find . -iname "*.py" -exec python3 -m flake8 {} +
 
 validate-packer:
   stage: validate-packer
+  before_script:
+    - pacman -Syu --needed --noconfirm packer
   script:
-    packer validate -var "iso_checksum_url=https://mirror.pkgbuild.com/iso/latest/sha1sums.txt" -except=vagrant-cloud vagrant.json
-
-validate-local:
-  stage: validate-local
-  script:
-    packer validate local.json
-
-validate-cloud:
-  stage: validate-cloud
-  script:
-    packer validate cloud.json
+    - packer validate -var "iso_checksum_url=https://mirror.pkgbuild.com/iso/latest/sha1sums.txt" -except=vagrant-cloud vagrant.json
+    - packer validate local.json
+    - packer validate cloud.json
 
 build:
   stage: build
   tags:
     - secure-kvm
     - secure-virtualbox
+  before_script:
+    - pacman -Syu --needed --noconfirm qemu-headless virtualbox
   script:
     packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=yes' -except=vmware-iso local.json

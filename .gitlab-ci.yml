@@ -52,6 +52,6 @@ build:
     - secure-kvm
     - secure-virtualbox
   before_script:
-    - pacman -Syu --needed --noconfirm qemu-headless virtualbox
+    - pacman -Syu --needed --noconfirm qemu-headless virtualbox packer
   script:
     packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=yes' -except=vmware-iso local.json

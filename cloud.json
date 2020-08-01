@@ -18,6 +18,7 @@
             "boot_wait": "{{user `boot_wait`}}",
             "http_directory": "http",
             "disk_size": "{{user `disk_size`}}",
+            "disk_discard": "unmap",
             "iso_checksum": "file:{{user `iso_checksum_url`}}",
             "iso_url": "{{user `iso_url`}}",
             "ssh_username": "arch",

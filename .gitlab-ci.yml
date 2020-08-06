@@ -52,6 +52,10 @@ build:
     - pacman -Syu --needed --noconfirm qemu-headless virtualbox packer
   script:
     packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=yes' -except=vmware-iso local.json
+  artifacts:
+    paths:
+      - "*.box"
+    expire_in: 3h
 
 publish:
   stage: publish

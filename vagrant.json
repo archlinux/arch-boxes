@@ -1,7 +1,7 @@
 {
     "variables": {
-        "iso_url": "file:///srv/ftp/iso/latest/archlinux-{{isotime \"2006.01\"}}.01-x86_64.iso",
-        "iso_checksum_url": "file:///srv/ftp/iso/latest/sha1sums.txt",
+        "iso_url": "https://mirror.pkgbuild.com/iso/latest/archlinux-{{isotime \"2006.01\"}}.01-x86_64.iso",
+        "iso_checksum_url": "https://mirror.pkgbuild.com/iso/latest/sha1sums.txt",
         "disk_size": "20480",
         "memory": "1024",
         "cpus": "2",

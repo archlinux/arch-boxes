@@ -4,8 +4,6 @@
 - [Vagrant Cloud](https://app.vagrantup.com/archlinux/boxes/archlinux)
 - [Browse latest QEMU build artifacts](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/browse?job=build:qemu)
 - [Browse latest VirtualBox build artifacts](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/browse?job=build:virtualbox)
-- [Download latest QEMU QCOW2 image](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/raw/output-qemu/packer-qemu?job=build:qemu)
-- [Download latest VirtualBox disk image](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/download?job=build%3Avirtualbox)
 
 Arch-boxes provides automated builds of the Arch Linux releases for
 different providers and post-processors. Check the providers or post-processor sections if you want to know

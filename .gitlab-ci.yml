@@ -57,7 +57,7 @@ build:
       - "*.box"
       - "output-qemu"
       - "output-virtualbox-iso"
-    expire_in: 3h
+    expire_in: 2d
   resource_group: vm-build
 
 publish:

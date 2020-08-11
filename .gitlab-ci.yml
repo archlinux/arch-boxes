@@ -53,7 +53,7 @@ build:qemu:
     - packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=yes' -only=qemu local.json
   artifacts:
     paths:
-      - "Arch-Linux-x86_64-qemu-*.box"
+      - "Arch-Linux-x86_64-libvirt-*.box"
       - "output-qemu"
     expire_in: 2d
   resource_group: vm-build

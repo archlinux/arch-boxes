@@ -52,6 +52,7 @@ build:qemu:
   script:
     - packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=yes' -only=qemu local.json
   artifacts:
+    name: "qemu"
     paths:
       - "Arch-Linux-x86_64-libvirt-*.box"
       - "output-qemu"
@@ -67,6 +68,7 @@ build:virtualbox:
   script:
     - packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=yes' -only=virtualbox-iso local.json
   artifacts:
+    name: "virtualbox"
     paths:
       - "Arch-Linux-x86_64-virtualbox-*.box"
       - "output-virtualbox-iso"

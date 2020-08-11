@@ -55,7 +55,6 @@ build:qemu:
     name: "qemu"
     paths:
       - "Arch-Linux-x86_64-libvirt-*.box"
-      - "output-qemu"
     expire_in: 2d
   resource_group: vm-build
 
@@ -71,7 +70,6 @@ build:virtualbox:
     name: "virtualbox"
     paths:
       - "Arch-Linux-x86_64-virtualbox-*.box"
-      - "output-virtualbox-iso"
     expire_in: 2d
   resource_group: vm-build
 

@@ -146,7 +146,7 @@
         [
             {
                 "type": "vagrant",
-                "keep_input_artifact": true,
+                "keep_input_artifact": false,
                 "output": "Arch-Linux-x86_64-{{ .Provider }}-{{isotime \"2006-01-02\"}}.box"
             }
         ]

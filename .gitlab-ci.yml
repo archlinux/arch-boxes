@@ -55,6 +55,8 @@ build:
   artifacts:
     paths:
       - "*.box"
+      - "output-qemu"
+      - "output-virtualbox-iso"
     expire_in: 3h
   resource_group: vm-build
 

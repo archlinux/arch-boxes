@@ -83,7 +83,7 @@ publish:
   before_script:
     - pacman -Syu --needed --noconfirm qemu-headless virtualbox packer
   script:
-    - packer build -parallel-builds=1 -var "vagrant_cloud_token=$VAGRANT_API_TOKEN" -var 'headless=true' -var 'write_zeroes=yes' -except=vmware-iso vagrant.json
+    - packer build -force -parallel-builds=1 -var "vagrant_cloud_token=$VAGRANT_API_TOKEN" -var 'headless=true' -var 'write_zeroes=yes' -except=vmware-iso vagrant.json
   only:
     variables:
       - $SCHEDULED_PUBLISH == "TRUE"

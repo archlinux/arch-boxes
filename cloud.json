@@ -76,7 +76,7 @@
                 "type": "shell-local",
                 "inline": [
                     "mv release/packer-Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.img release/Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.img",
-                    "sed -i 's/packer-//' Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.SHA256"
+                    "sed -i 's/packer-//' release/Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.SHA256"
                 ]
             },
             {

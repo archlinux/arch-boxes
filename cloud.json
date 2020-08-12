@@ -69,13 +69,20 @@
                 "checksum_types": [
                     "sha256"
                 ],
-                "output": "Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.SHA256"
+                "output": "release/Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.SHA256"
             },
             {
+                "name": "rename",
                 "type": "shell-local",
                 "inline": [
                     "mv release/packer-Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.img release/Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.img",
-                    "sed -i 's/packer-//' Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.SHA256",
+                    "sed -i 's/packer-//' Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.SHA256"
+                ]
+            },
+            {
+                "name": "sign",
+                "type": "shell-local",
+                "inline": [
                     "gpg --sign --detach-sign Arch-Linux-cloudimg-amd64-{{isotime \"2006-01-02\"}}.SHA256"
                 ]
             }

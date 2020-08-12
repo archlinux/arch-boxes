@@ -43,7 +43,22 @@ validate-packer:
     - packer validate local.json
     - packer validate cloud.json
 
-build:qemu:
+build:cloud-qemu:
+  stage: build
+  tags:
+    - secure-kvm
+  before_script:
+    - pacman -Syu --needed --noconfirm packer qemu-headless
+  script:
+    - packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=yes' -except=sign cloud.json
+  artifacts:
+    name: "cloud-qemu"
+    paths:
+      - "release/Arch-Linux-x86_64-cloudimg-*.img"
+    expire_in: 2d
+  resource_group: vm-build
+
+build:vagrant-qemu:
   stage: build
   tags:
     - secure-kvm
@@ -52,13 +67,12 @@ build:qemu:
   script:
     - packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=yes' -only=qemu local.json
   artifacts:
-    name: "qemu"
     paths:
       - "Arch-Linux-x86_64-libvirt-*.box"
-    expire_in: 2d
+    expire_in: 3h
   resource_group: vm-build
 
-build:virtualbox:
+build:vagrant-virtualbox:
   stage: build
   tags:
     - secure-virtualbox
@@ -67,10 +81,9 @@ build:virtualbox:
   script:
     - packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=yes' -only=virtualbox-iso local.json
   artifacts:
-    name: "virtualbox"
     paths:
       - "Arch-Linux-x86_64-virtualbox-*.box"
-    expire_in: 2d
+    expire_in: 3h
   resource_group: vm-build
 
 publish:

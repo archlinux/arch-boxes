@@ -83,6 +83,8 @@ publish:
   script:
     - packer build -force -parallel-builds=1 -var "vagrant_cloud_token=$VAGRANT_API_TOKEN" -var 'headless=true' -var 'write_zeroes=yes' -except=vmware-iso vagrant.json
   only:
+    refs:
+      - release
     variables:
       - $SCHEDULED_PUBLISH == "TRUE"
   resource_group: vm-build

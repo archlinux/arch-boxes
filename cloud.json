@@ -8,6 +8,7 @@
         "headless": "true",
         "write_zeroes": "",
         "boot_wait": "60s",
+        "accelerator": "",
         "mirror": ""
     },
     "builders": [
@@ -26,6 +27,7 @@
             "ssh_timeout": "10000s",
             "shutdown_command": "sudo systemctl poweroff",
             "headless": "{{user `headless`}}",
+            "accelerator": "{{user `accelerator`}}",
             "qemuargs": [
                 [
                     "-m",

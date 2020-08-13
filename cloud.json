@@ -13,7 +13,7 @@
     },
     "builders": [
         {
-            "name": "Arch-Linux-cloudimg-x86_64-{{isotime \"2006-01-02\"}}.img",
+            "name": "Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.img",
             "type": "qemu",
             "output_directory": "release",
             "boot_wait": "{{user `boot_wait`}}",
@@ -71,21 +71,21 @@
                 "checksum_types": [
                     "sha256"
                 ],
-                "output": "release/Arch-Linux-cloudimg-x86_64-{{isotime \"2006-01-02\"}}.SHA256"
+                "output": "release/Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.SHA256"
             },
             {
                 "name": "rename",
                 "type": "shell-local",
                 "inline": [
-                    "mv release/packer-Arch-Linux-cloudimg-x86_64-{{isotime \"2006-01-02\"}}.img release/Arch-Linux-cloudimg-x86_64-{{isotime \"2006-01-02\"}}.img",
-                    "sed -i 's/packer-//' release/Arch-Linux-cloudimg-x86_64-{{isotime \"2006-01-02\"}}.SHA256"
+                    "mv release/packer-Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.img release/Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.img",
+                    "sed -i 's/packer-//' release/Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.SHA256"
                 ]
             },
             {
                 "name": "sign",
                 "type": "shell-local",
                 "inline": [
-                    "gpg --sign --detach-sign Arch-Linux-cloudimg-x86_64-{{isotime \"2006-01-02\"}}.SHA256"
+                    "gpg --sign --detach-sign Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.SHA256"
                 ]
             }
         ]

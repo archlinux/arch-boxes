@@ -34,7 +34,7 @@ build:cloud-qemu:
   before_script:
     - pacman -Syu --needed --noconfirm packer qemu-headless
   script:
-    - packer build -parallel-builds=1 -var 'write_zeroes=yes' -except=sign cloud.json
+    - packer build -var 'write_zeroes=yes' -except=sign cloud.json
   artifacts:
     name: "cloud-qemu"
     paths:
@@ -46,7 +46,7 @@ build:vagrant-qemu:
   before_script:
     - pacman -Syu --needed --noconfirm packer qemu-headless
   script:
-    - packer build -parallel-builds=1 -var 'write_zeroes=yes' -only=qemu local.json
+    - packer build -var 'write_zeroes=yes' -only=qemu local.json
 
 publish:
   stage: publish

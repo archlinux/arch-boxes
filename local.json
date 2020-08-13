@@ -10,7 +10,7 @@
         "write_zeroes": "",
         "boot_wait": "60s",
         "accelerator": "",
-        "mirror": ""
+        "mirror": "https://mirror.pkgbuild.com/$repo/os/$arch"
     },
     "builders": [
         {

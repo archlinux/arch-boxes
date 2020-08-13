@@ -22,19 +22,10 @@ size=${swap_size_in_kilobytes}KiB, type=82
 EOF
 
 mkswap "${device}1"
-mkfs.ext4 -L "rootfs" "${device}2"
-mount "${device}2" /mnt
+mkfs.btrfs -L "rootfs" "${device}2"
+mount -o compress-force=zstd "${device}2" /mnt
 
-if [ -n "${MIRROR}" ]; then
-  echo "Server = ${MIRROR}" >/etc/pacman.d/mirrorlist
-else
-  pacman -Sy --noconfirm reflector
-  reflector --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
-fi
-pacstrap -M /mnt base linux grub openssh sudo polkit haveged netctl python reflector
-swapon "${device}1"
-genfstab -pU /mnt >>/mnt/etc/fstab
-swapoff "${device}1"
+echo "Server = ${MIRROR}" >/etc/pacman.d/mirrorlist
+pacstrap -M /mnt base linux grub openssh sudo polkit haveged netctl python
 
-arch-chroot /mnt /usr/bin/sed -i 's/^#Server/Server/' /etc/pacman.d/mirrorlist
 arch-chroot /mnt /bin/bash

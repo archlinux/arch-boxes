@@ -25,7 +25,8 @@ mkswap "${device}1"
 mkfs.btrfs -L "rootfs" "${device}2"
 mount -o compress-force=zstd "${device}2" /mnt
 
-echo "Server = ${MIRROR}" >/etc/pacman.d/mirrorlist
+echo "Server = ${MIRROR}" > /etc/pacman.d/mirrorlist
 pacstrap -M /mnt base linux grub openssh sudo polkit haveged netctl python
+echo "Server = ${MIRROR}" > /mnt/etc/pacman.d/mirrorlist
 
 arch-chroot /mnt /bin/bash

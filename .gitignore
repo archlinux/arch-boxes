@@ -3,3 +3,4 @@ packer_cache/
 *.swp
 output-*
 .vscode
+release/

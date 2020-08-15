@@ -34,7 +34,7 @@ build:cloud-qemu:
   before_script:
     - pacman -Syu --needed --noconfirm packer qemu-headless
   script:
-    - packer build -var 'write_zeroes=yes' -except=sign cloud.json
+    - packer build -except=sign cloud.json
   artifacts:
     name: "cloud-qemu"
     paths:
@@ -46,7 +46,7 @@ build:vagrant-qemu:
   before_script:
     - pacman -Syu --needed --noconfirm packer qemu-headless
   script:
-    - packer build -var 'write_zeroes=yes' -only=qemu local.json
+    - packer build -only=qemu local.json
 
 publish:
   stage: publish
@@ -56,7 +56,7 @@ publish:
   before_script:
     - pacman -Syu --needed --noconfirm qemu-headless virtualbox packer
   script:
-    - packer build -parallel-builds=1 -var "vagrant_cloud_token=$VAGRANT_API_TOKEN" -var 'write_zeroes=yes' -except=vmware-iso vagrant.json
+    - packer build -parallel-builds=1 -var "vagrant_cloud_token=$VAGRANT_API_TOKEN" -except=vmware-iso vagrant.json
   only:
     variables:
       - $SCHEDULED_PUBLISH == "TRUE"

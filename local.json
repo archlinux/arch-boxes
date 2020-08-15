@@ -5,7 +5,6 @@
         "iso_checksum_url": "https://mirror.pkgbuild.com/iso/latest/sha1sums.txt",
         "disk_size": "20480",
         "headless": "true",
-        "write_zeroes": "",
         "boot_wait": "60s",
         "accelerator": "",
         "mirror": "https://mirror.pkgbuild.com/$repo/os/$arch"
@@ -135,7 +134,7 @@
             "scripts": [
                 "provision/write_zeroes.sh"
             ],
-            "execute_command": "if [ ! -z \"{{user `write_zeroes`}}\" ]; then echo 'vagrant'|sudo -S sh '{{.Path}}'; fi"
+            "execute_command": "'vagrant'|sudo -S sh '{{.Path}}'"
         }
     ],
     "post-processors": [

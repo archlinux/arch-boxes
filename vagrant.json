@@ -5,7 +5,6 @@
         "disk_size": "20480",
         "headless": "true",
         "vagrant_cloud_token": "PLACEHOLDER",
-        "write_zeroes": "",
         "boot_wait": "60s",
         "mirror": ""
     },
@@ -120,7 +119,7 @@
             "scripts": [
                 "provision/write_zeroes.sh"
             ],
-            "execute_command": "if [ ! -z \"{{user `write_zeroes`}}\" ]; then echo 'vagrant'|sudo -S sh '{{.Path}}'; fi"
+            "execute_command": "'vagrant'|sudo -S sh '{{.Path}}'"
         }
     ],
     "post-processors": [

@@ -59,6 +59,8 @@
         },
         {
             "type": "vmware-iso",
+            "cpus": 2,
+            "memory": 1024,
             "boot_wait": "{{user `boot_wait`}}",
             "http_directory": "http",
             "disk_size": "{{user `disk_size`}}",
@@ -70,8 +72,6 @@
             "ssh_timeout": "10000s",
             "shutdown_command": "sudo systemctl poweroff",
             "headless": "{{user `headless`}}",
-            "memory": "{{user `memory`}}",
-            "cpus": "{{user `cpus`}}",
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-chroot}.sh'<enter><wait>",

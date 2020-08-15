@@ -1,7 +1,8 @@
 default:
   image: "archlinux:latest"
-  variables:
-    PACKER_LOG: 1
+
+variables:
+  PACKER_LOG: 1
 
 stages:
   - lint

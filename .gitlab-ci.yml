@@ -1,5 +1,7 @@
 default:
   image: "archlinux:latest"
+  variables:
+    PACKER_LOG=1
 
 stages:
   - lint
@@ -31,6 +33,8 @@ validate-packer:
 
 build:cloud-qemu:
   stage: build
+  tags:
+    - ipv6
   before_script:
     - pacman -Syu --needed --noconfirm packer qemu-headless
   script:
@@ -43,6 +47,8 @@ build:cloud-qemu:
 
 build:vagrant-qemu:
   stage: build
+  tags:
+    - ipv6
   before_script:
     - pacman -Syu --needed --noconfirm packer qemu-headless
   script:

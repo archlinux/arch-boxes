@@ -19,7 +19,7 @@ swap_size_in_mebibytes=$((memory_size_in_mebibytes * 2))
 sgdisk -g --clear -n 1:0:+10M $device -c 1:boot -t 1:ef02
 sgdisk -n 2:0:+${swap_size_in_mebibytes}M $device -c 2:swap -t 2:8200
 sgdisk -n 3:0:0 $device -c 3:root
-sync
+partprobe
 
 mkswap /dev/disk/by-partlabel/swap
 mkfs.btrfs /dev/disk/by-partlabel/root

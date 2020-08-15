@@ -32,6 +32,8 @@ validate-packer:
     - packer validate local.json
     - packer validate cloud.json
 
+# Note: We explicitly need the `ipv6` tag here because otherwise we'd get random
+# gpg/pacman-key issues.
 build:cloud-qemu:
   stage: build
   tags:
@@ -58,8 +60,8 @@ build:vagrant-qemu:
 publish:
   stage: publish
   tags:
-    - secure-kvm
-    - secure-virtualbox
+    - ipv6
+    - secure
   before_script:
     - pacman -Syu --needed --noconfirm qemu-headless virtualbox packer
   script:

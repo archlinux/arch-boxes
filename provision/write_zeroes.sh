@@ -3,6 +3,7 @@
 set -e
 set -x
 
+exit 0
 # Make sure unwritten data has been flushed beforehand
 sync
 # Write zeros to improve virtual disk compaction.

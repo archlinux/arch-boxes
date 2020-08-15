@@ -53,7 +53,7 @@
             "scripts": [
                 "provision/write_zeroes.sh"
             ],
-            "execute_command": "'arch'|sudo -S sh '{{.Path}}'"
+            "execute_command": "echo 'arch'|sudo -S sh '{{.Path}}'"
         }
     ],
     "post-processors": [

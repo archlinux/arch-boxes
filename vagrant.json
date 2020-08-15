@@ -6,7 +6,8 @@
         "headless": "true",
         "vagrant_cloud_token": "PLACEHOLDER",
         "boot_wait": "60s",
-        "mirror": ""
+        "accelerator": "",
+        "mirror": "https://mirror.pkgbuild.com/$repo/os/$arch"
     },
     "builders": [
         {
@@ -56,27 +57,6 @@
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-chroot}.sh'<enter><wait>",
                 "MIRROR='{{user `mirror`}}' bash install.sh < <(cat install-{chroot,common}.sh) && systemctl reboot<enter>"
             ]
-        },
-        {
-            "type": "vmware-iso",
-            "cpus": 2,
-            "memory": 1024,
-            "boot_wait": "{{user `boot_wait`}}",
-            "http_directory": "http",
-            "disk_size": "{{user `disk_size`}}",
-            "iso_checksum": "file:{{user `iso_checksum_url`}}",
-            "iso_url": "{{user `iso_url`}}",
-            "ssh_username": "vagrant",
-            "ssh_password": "vagrant",
-            "ssh_port": 22,
-            "ssh_timeout": "2000s",
-            "shutdown_command": "sudo systemctl poweroff",
-            "headless": "{{user `headless`}}",
-            "boot_command": [
-                "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
-                "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-chroot}.sh'<enter><wait>",
-                "MIRROR='{{user `mirror`}}' bash install.sh < <(cat install-{chroot,common}.sh) && systemctl reboot<enter>"
-            ]
         }
     ],
     "provisioners": [
@@ -103,23 +83,12 @@
             "only": [
                 "qemu"
             ]
-        },
-        {
-            "type": "shell",
-            "scripts": [
-                "provision/postinstall.sh",
-                "provision/vmware.sh",
-                "provision/cleanup.sh"
-            ],
-            "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'",
-            "only": [
-                "vmware-iso"
-            ]
         }
     ],
     "post-processors": [
         [
             {
+                "name": "publish",
                 "type": "vagrant",
                 "keep_input_artifact": false,
                 "output": "Arch-Linux-x86_64-{{ .Provider }}-{{isotime \"2006-01-02\"}}.box"
@@ -137,15 +106,6 @@
                 "type": "vagrant-cloud",
                 "only": [
                     "qemu"
-                ],
-                "access_token": "{{user `vagrant_cloud_token`}}",
-                "box_tag": "archlinux/archlinux",
-                "version": "{{isotime \"2006.01.02\"}}"
-            },
-            {
-                "type": "vagrant-cloud",
-                "only": [
-                    "vmware-iso"
                 ],
                 "access_token": "{{user `vagrant_cloud_token`}}",
                 "box_tag": "archlinux/archlinux",

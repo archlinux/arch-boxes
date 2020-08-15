@@ -29,7 +29,6 @@ validate-packer:
     - pacman -Syu --needed --noconfirm packer
   script:
     - packer validate -var "iso_checksum_url=https://mirror.pkgbuild.com/iso/latest/sha1sums.txt" -except=vagrant-cloud vagrant.json
-    - packer validate local.json
     - packer validate cloud.json
 
 # Note: We explicitly need the `ipv6` tag here because otherwise we'd get random
@@ -43,7 +42,7 @@ build:cloud-qemu:
   script:
     - packer build -except=sign cloud.json
   artifacts:
-    name: "cloud-qemu"
+    name: "qcow2"
     paths:
       - "release/Arch-Linux-x86_64-cloudimg-*.qcow2"
     expire_in: 2d
@@ -55,7 +54,7 @@ build:vagrant-qemu:
   before_script:
     - pacman -Syu --needed --noconfirm packer qemu-headless
   script:
-    - packer build -only=qemu local.json
+    - packer build -only=qemu -except publish vagrant.json
 
 publish:
   stage: publish
@@ -65,7 +64,7 @@ publish:
   before_script:
     - pacman -Syu --needed --noconfirm qemu-headless virtualbox packer
   script:
-    - packer build -parallel-builds=1 -var "vagrant_cloud_token=$VAGRANT_API_TOKEN" -except=vmware-iso vagrant.json
+    - packer build -var "vagrant_cloud_token=$VAGRANT_API_TOKEN" vagrant.json
   only:
     variables:
       - $SCHEDULED_PUBLISH == "TRUE"

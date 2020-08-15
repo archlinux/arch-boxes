@@ -26,6 +26,7 @@
             "ssh_port": 22,
             "ssh_timeout": "2000s",
             "shutdown_command": "sudo systemctl poweroff",
+            "vnc_bind_address": "0.0.0.0",
             "headless": "{{user `headless`}}",
             "accelerator": "{{user `accelerator`}}",
             "disk_compression": true,

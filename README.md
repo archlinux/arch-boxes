@@ -37,9 +37,6 @@ Here is an overview over all variables you can set in `vagrant.json` or
   uploading your box to the vagrantcloud. If you don't have a vagrant cloud
   token you can ignore this variable. Without a token the boxes will be
   built, but the upload step step will fail.
-* `write_zeroes`: this variable is empty. if you set any string in this
-  variable it will fill the box with zeros to reduce the size. *NOTE: This
-  may overly tax your SSD's lifetime.*
 * `boot_wait`: this specifies the time packer should wait for booting up
   the ISO before entering any command.
 

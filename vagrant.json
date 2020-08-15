@@ -115,13 +115,6 @@
             "only": [
                 "vmware-iso"
             ]
-        },
-        {
-            "type": "shell",
-            "scripts": [
-                "provision/write_zeroes.sh"
-            ],
-            "execute_command": "'vagrant'|sudo -S sh '{{.Path}}'"
         }
     ],
     "post-processors": [

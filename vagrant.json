@@ -60,6 +60,8 @@
             "ssh_timeout": "10000s",
             "shutdown_command": "sudo systemctl poweroff",
             "headless": "{{user `headless`}}",
+            "accelerator": "{{user `accelerator`}}",
+            "disk_compression": true,
             "qemuargs": [
                 [
                     "-m",

@@ -3,8 +3,6 @@
         "iso_url": "https://mirror.pkgbuild.com/iso/latest/archlinux-{{isotime \"2006.01\"}}.01-x86_64.iso",
         "iso_checksum_url": "https://mirror.pkgbuild.com/iso/latest/sha1sums.txt",
         "disk_size": "20480",
-        "memory": "1024",
-        "cpus": "2",
         "headless": "true",
         "write_zeroes": "",
         "boot_wait": "60s",
@@ -15,6 +13,8 @@
         {
             "name": "Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.img",
             "type": "qemu",
+            "cpus": 2,
+            "memory": 1024,
             "output_directory": "release",
             "boot_wait": "{{user `boot_wait`}}",
             "http_directory": "http",
@@ -24,21 +24,11 @@
             "ssh_username": "arch",
             "ssh_password": "arch",
             "ssh_port": 22,
-            "ssh_timeout": "10000s",
+            "ssh_timeout": "2000s",
             "shutdown_command": "sudo systemctl poweroff",
             "headless": "{{user `headless`}}",
             "accelerator": "{{user `accelerator`}}",
             "disk_compression": true,
-            "qemuargs": [
-                [
-                    "-m",
-                    "{{user `memory`}}"
-                ],
-                [
-                    "-smp",
-                    "{{user `cpus`}}"
-                ]
-            ],
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-cloud}.sh'<enter><wait>",

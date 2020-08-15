@@ -4,8 +4,6 @@
         "iso_url": "https://mirror.pkgbuild.com/iso/latest/archlinux-{{isotime \"2006.01\"}}.01-x86_64.iso",
         "iso_checksum_url": "https://mirror.pkgbuild.com/iso/latest/sha1sums.txt",
         "disk_size": "20480",
-        "memory": "1024",
-        "cpus": "2",
         "headless": "true",
         "write_zeroes": "",
         "boot_wait": "60s",
@@ -15,6 +13,8 @@
     "builders": [
         {
             "type": "virtualbox-iso",
+            "cpus": 2,
+            "memory": 1024,
             "boot_wait": "{{user `boot_wait`}}",
             "http_directory": "http",
             "disk_size": "{{user `disk_size`}}",
@@ -50,6 +50,8 @@
         },
         {
             "type": "qemu",
+            "cpus": 2,
+            "memory": 1024,
             "boot_wait": "{{user `boot_wait`}}",
             "http_directory": "http",
             "disk_size": "{{user `disk_size`}}",
@@ -63,16 +65,6 @@
             "headless": "{{user `headless`}}",
             "accelerator": "{{user `accelerator`}}",
             "disk_compression": true,
-            "qemuargs": [
-                [
-                    "-m",
-                    "{{user `memory`}}"
-                ],
-                [
-                    "-smp",
-                    "{{user `cpus`}}"
-                ]
-            ],
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-chroot}.sh'<enter><wait>",

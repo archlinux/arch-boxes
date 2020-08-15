@@ -10,7 +10,7 @@
     },
     "builders": [
         {
-            "name": "Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.img",
+            "name": "Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2",
             "type": "qemu",
             "cpus": 2,
             "memory": 1024,
@@ -69,7 +69,7 @@
                 "name": "rename",
                 "type": "shell-local",
                 "inline": [
-                    "mv release/packer-Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.img release/Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.img",
+                    "mv release/packer-Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2 release/Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2",
                     "sed -i 's/packer-//' release/Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.SHA256"
                 ]
             },

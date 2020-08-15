@@ -13,21 +13,19 @@ else
 fi
 export device
 
-memory_size_in_kilobytes=$(free | awk '/^Mem:/ { print $2 }')
-swap_size_in_kilobytes=$((memory_size_in_kilobytes * 2))
-sfdisk "$device" <<EOF
-label: dos
-size=${swap_size_in_kilobytes}KiB, type=82
-                                   type=83, bootable
-EOF
+memory_size_in_mebibytes=$(free -m | awk '/^Mem:/ { print $2 }')
+swap_size_in_mebibytes=$((memory_size_in_mebibytes * 2))
 
-mkswap "${device}1"
-mkfs.btrfs -L "rootfs" "${device}2"
-mount -o compress-force=zstd "${device}2" /mnt
+sgdisk -g --clear -n 1:0:+10M $device -c 1:boot -t 1:ef02
+sgdisk -n 2:0:+${swap_size_in_mebibytes}M $device -c 2:swap -t 2:8200
+sgdisk -n 3:0:0 $device -c 3:root
+sync
+
+mkswap /dev/disk/by-partlabel/swap
+mkfs.btrfs /dev/disk/by-partlabel/root
+mount -o compress-force=zstd PARTLABEL=root /mnt
 
 echo "Server = ${MIRROR}" >/etc/pacman.d/mirrorlist
-pacman-key --init
-pacman-key --populate archlinux
-pacstrap /mnt base linux grub openssh sudo polkit haveged netctl python
+pacstrap /mnt base linux grub openssh sudo polkit haveged netctl python btrfs-progs
 
 arch-chroot /mnt /bin/bash

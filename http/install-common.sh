@@ -38,15 +38,51 @@ Name=eth0
 DHCP=ipv4
 EOF
 
+# Setup pacman-init.service for clean pacman keyring initialization
+cat <<EOF >/etc/systemd/system/pacman-init.service
+[Unit]
+Description=Initializes Pacman keyring
+Wants=haveged.service
+After=haveged.service
+Before=sshd.service
+ConditionFirstBoot=yes
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/pacman-key --init
+ExecStart=/usr/bin/pacman-key --populate archlinux
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Add service for running reflector on first boot
+cat <<EOF >/etc/systemd/system/reflector-init.service
+[Unit]
+Description=Initializes mirrors for the VM
+After=network-online.target
+Wants=network-online.target
+Before=sshd.service
+ConditionFirstBoot=yes
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=reflector --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 # enabling important services
 systemctl daemon-reload
 systemctl enable sshd
 systemctl enable haveged
 systemctl enable systemd-networkd
 systemctl enable systemd-resolved
-
-pacman-key --init
-pacman-key --populate archlinux
+systemctl enable pacman-init.service
+systemctl enable reflector-init.service
 
 if [ -b "/dev/sda" ]; then
   grub-install /dev/sda

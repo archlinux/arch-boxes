@@ -26,6 +26,6 @@ mkfs.btrfs /dev/disk/by-partlabel/root
 mount -o compress-force=zstd PARTLABEL=root /mnt
 
 echo "Server = ${MIRROR}" >/etc/pacman.d/mirrorlist
-pacstrap /mnt base linux grub openssh sudo polkit haveged netctl python btrfs-progs
+pacstrap /mnt base linux grub openssh sudo polkit haveged netctl python btrfs-progs reflector
 
 arch-chroot /mnt /bin/bash

@@ -42,7 +42,7 @@ build:cloud-qemu:
   script:
     - packer build -except=sign cloud.json
   artifacts:
-    name: "qcow2"
+    name: "archlinux_x86_64_qcow2"
     paths:
       - "Arch-Linux-x86_64-cloudimg-*.*"
     expire_in: 2d

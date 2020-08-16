@@ -47,6 +47,15 @@ build:cloud-qemu:
       - "Arch-Linux-x86_64-cloudimg-*.*"
     expire_in: 2d
 
+build:vagrant-virtualbox:
+  stage: build
+  tags:
+    - ipv6
+  before_script:
+    - pacman -Syu --needed --noconfirm packer qemu-headless
+  script:
+    - packer build -only=virtualbox -except publish vagrant.json
+
 build:vagrant-qemu:
   stage: build
   tags:
@@ -54,7 +63,7 @@ build:vagrant-qemu:
   before_script:
     - pacman -Syu --needed --noconfirm packer qemu-headless
   script:
-    - packer build -only=qemu -except publish vagrant.json
+    - packer build -only=libvirt -except publish vagrant.json
 
 publish:
   stage: publish
@@ -62,7 +71,7 @@ publish:
     - ipv6
     - secure
   before_script:
-    - pacman -Syu --needed --noconfirm qemu-headless virtualbox packer
+    - pacman -Syu --needed --noconfirm qemu-headless packer
   script:
     - packer build -var "vagrant_cloud_token=$VAGRANT_API_TOKEN" vagrant.json
   only:

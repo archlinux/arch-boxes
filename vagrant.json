@@ -11,14 +11,14 @@
     },
     "builders": [
         {
-            "type": "virtualbox-iso",
+            "type": "qemu",
+            "name": "virtualbox",
             "cpus": 2,
             "memory": 1024,
             "boot_wait": "{{user `boot_wait`}}",
             "http_directory": "http",
+            "disk_discard": "unmap",
             "disk_size": "{{user `disk_size`}}",
-            "hard_drive_discard": "true",
-            "guest_os_type": "ArchLinux_64",
             "iso_checksum": "file:{{user `iso_checksum_url`}}",
             "iso_url": "{{user `iso_url`}}",
             "ssh_username": "vagrant",
@@ -26,8 +26,9 @@
             "ssh_port": 22,
             "ssh_timeout": "2000s",
             "shutdown_command": "sudo systemctl poweroff",
-            "guest_additions_mode": "disable",
             "headless": "{{user `headless`}}",
+            "accelerator": "{{user `accelerator`}}",
+            "disk_compression": true,
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-chroot}.sh'<enter><wait>",
@@ -36,6 +37,7 @@
         },
         {
             "type": "qemu",
+            "name": "libvirt",
             "cpus": 2,
             "memory": 1024,
             "boot_wait": "{{user `boot_wait`}}",
@@ -69,7 +71,7 @@
             ],
             "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'",
             "only": [
-                "virtualbox-iso"
+                "virtualbox"
             ]
         },
         {
@@ -81,32 +83,42 @@
             ],
             "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'",
             "only": [
-                "qemu"
+                "libvirt"
             ]
         }
     ],
     "post-processors": [
         [
             {
+                "type": "shell-local",
+                "only": [
+                    "virtualbox"
+                ],
+                "environment_vars": [
+                    "OUTPUT=output-{{build_name}}",
+                    "VM_NAME=packer-{{build_name}}"
+                ],
+                "script": "post-processor/virtualbox.sh"
+            },
+            {
+                "type": "artifice",
+                "only": [
+                    "virtualbox"
+                ],
+                "files": [
+                    "output-{{build_name}}/packer-{{build_name}}.vmdk",
+                    "output-{{build_name}}/box.ovf"
+                ]
+            },
+            {
                 "name": "publish",
                 "type": "vagrant",
                 "keep_input_artifact": false,
-                "output": "Arch-Linux-x86_64-{{ .Provider }}-{{isotime \"2006-01-02\"}}.box"
+                "output": "Arch-Linux-x86_64-{{ .Provider }}-{{isotime \"2006-01-02\"}}.box",
+                "provider_override": "{{build_name}}"
             },
             {
                 "type": "vagrant-cloud",
-                "only": [
-                    "virtualbox-iso"
-                ],
-                "access_token": "{{user `vagrant_cloud_token`}}",
-                "box_tag": "archlinux/archlinux",
-                "version": "{{isotime \"2006.01.02\"}}"
-            },
-            {
-                "type": "vagrant-cloud",
-                "only": [
-                    "qemu"
-                ],
                 "access_token": "{{user `vagrant_cloud_token`}}",
                 "box_tag": "archlinux/archlinux",
                 "version": "{{isotime \"2006.01.02\"}}"

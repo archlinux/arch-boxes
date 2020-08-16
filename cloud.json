@@ -50,18 +50,18 @@
     "post-processors": [
         [
             {
-                "name": "rename",
-                "type": "shell-local",
-                "inline": [
-                    "mv output-qemu/Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2 Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2"
-                ]
-            },
-            {
                 "type": "checksum",
                 "checksum_types": [
                     "sha256"
                 ],
                 "output": "Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.SHA256"
+            },
+            {
+                "name": "rename",
+                "type": "shell-local",
+                "inline": [
+                    "mv output-qemu/Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2 Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2"
+                ]
             },
             {
                 "name": "sign",

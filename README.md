@@ -17,11 +17,10 @@ You'll need the following dependencies:
 * vagrant (for vagrant images)
 * qemu (for libvirt provider support)
 * virtualbox (for virtualbox support)
-* VMware Workstation Pro (for vmware support)
 
 ## Variables
 Here is an overview over all variables you can set in `vagrant.json` or
-`local.json`:
+`cloud.json`:
 
 * `iso_url`: the url to the ISO. This can be an url or a filepath
   beginning with `file://`
@@ -30,29 +29,24 @@ Here is an overview over all variables you can set in `vagrant.json` or
 * `iso_checksum_type`: this specifies the hashing algorithm for the
   checksum.
 * `disk_size`: this specifices the disk size in bytes.
-* `memory`: this specifies the size of the RAM in bytes.
-* `cpus`: this specifies the number of cores for your VM.
 * `headless`: this sets GUI on or off.
 * `vagrant_cloud_token`: here you can specify the vagrant cloud token for
   uploading your box to the vagrantcloud. If you don't have a vagrant cloud
   token you can ignore this variable. Without a token the boxes will be
   built, but the upload step step will fail.
-* `write_zeroes`: this variable is empty. if you set any string in this
-  variable it will fill the box with zeros to reduce the size. *NOTE: This
-  may overly tax your SSD's lifetime.*
 * `boot_wait`: this specifies the time packer should wait for booting up
   the ISO before entering any command.
 
 ## How to start the build process locally
 If you want to build the boxes locally without uploading them to the Vagrant
-cloud you need to edit the `local.json` before you start the build. set the
+cloud you need to edit the `vagrant.json` before you start the build. set the
 right `iso_url` and the right `iso_checksum_url`. Then you can start the build
 for virtualbox only with the following command:
 
-`packer build -only=virtualbox-iso local.json`
+`packer build -only=qemu -except=publish vagrant.json`
 
 ## How to start the build process for official builds
-The official builds are done on our Arch Linux Buildserver.
+The official builds are done in our Arch Linux GitLab CI.
 
 `packer build vagrant.json`
 
@@ -60,7 +54,6 @@ The official builds are done on our Arch Linux Buildserver.
 
 * virtualbox-iso
 * qemu/libvirt
-* vmware-iso
 
 ## Post-processors
 
@@ -106,7 +99,7 @@ Start `packer` with `-parallel=false`:
 
 ```bash
 $ packer build cloud.json
-$ cp release/Arch-Linux-cloudimg-amd64-2020-02-24.img disk.img
+$ cp release/Arch-Linux-cloudimg-amd64-2020-02-24.qcow2 disk.qcow2
 
 # Copied from (with minor changes): https://cloudinit.readthedocs.io/en/latest/topics/datasources/nocloud.html
 $ { echo instance-id: iid-local01; echo local-hostname: cloudimg; } > meta-data
@@ -117,13 +110,13 @@ $ printf "#cloud-config\npassword: passw0rd\nchpasswd: { expire: False }\nssh_pw
 $ genisoimage  -output seed.iso -volid cidata -joliet -rock user-data meta-data
 
 ## create a new qcow image to boot, backed by your original image
-$ qemu-img create -f qcow2 -b disk.img boot-disk.img
+$ qemu-img create -f qcow2 -b disk.qcow2 boot-disk.qcow2
 
 ## boot the image and login as 'arch' with password 'passw0rd'
 ## note, passw0rd was set as password through the user-data above,
 ## there is no password set on these images.
 $ qemu-system-x86_64 -m 256 \
    -net nic -net user,hostfwd=tcp::2222-:22 \
-   -drive file=boot-disk.img,if=virtio \
+   -drive file=boot-disk.qcow2,if=virtio \
    -drive file=seed.iso,if=virtio
 ```

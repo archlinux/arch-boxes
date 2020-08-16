@@ -3,44 +3,31 @@
         "iso_url": "https://mirror.pkgbuild.com/iso/latest/archlinux-{{isotime \"2006.01\"}}.01-x86_64.iso",
         "iso_checksum_url": "https://mirror.pkgbuild.com/iso/latest/sha1sums.txt",
         "disk_size": "20480",
-        "memory": "1024",
-        "cpus": "2",
         "headless": "true",
         "vagrant_cloud_token": "PLACEHOLDER",
-        "write_zeroes": "",
         "boot_wait": "60s",
-        "mirror": ""
+        "accelerator": "",
+        "mirror": "https://mirror.pkgbuild.com/$repo/os/$arch"
     },
     "builders": [
         {
             "type": "virtualbox-iso",
+            "cpus": 2,
+            "memory": 1024,
             "boot_wait": "{{user `boot_wait`}}",
             "http_directory": "http",
             "disk_size": "{{user `disk_size`}}",
+            "hard_drive_discard": "true",
             "guest_os_type": "ArchLinux_64",
             "iso_checksum": "file:{{user `iso_checksum_url`}}",
             "iso_url": "{{user `iso_url`}}",
             "ssh_username": "vagrant",
             "ssh_password": "vagrant",
             "ssh_port": 22,
-            "ssh_timeout": "10000s",
+            "ssh_timeout": "2000s",
             "shutdown_command": "sudo systemctl poweroff",
             "guest_additions_mode": "disable",
             "headless": "{{user `headless`}}",
-            "vboxmanage": [
-                [
-                    "modifyvm",
-                    "{{.Name}}",
-                    "--memory",
-                    "{{user `memory`}}"
-                ],
-                [
-                    "modifyvm",
-                    "{{.Name}}",
-                    "--cpus",
-                    "{{user `cpus`}}"
-                ]
-            ],
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-chroot}.sh'<enter><wait>",
@@ -49,48 +36,22 @@
         },
         {
             "type": "qemu",
+            "cpus": 2,
+            "memory": 1024,
             "boot_wait": "{{user `boot_wait`}}",
             "http_directory": "http",
+            "disk_discard": "unmap",
             "disk_size": "{{user `disk_size`}}",
             "iso_checksum": "file:{{user `iso_checksum_url`}}",
             "iso_url": "{{user `iso_url`}}",
             "ssh_username": "vagrant",
             "ssh_password": "vagrant",
             "ssh_port": 22,
-            "ssh_timeout": "10000s",
+            "ssh_timeout": "2000s",
             "shutdown_command": "sudo systemctl poweroff",
             "headless": "{{user `headless`}}",
-            "qemuargs": [
-                [
-                    "-m",
-                    "{{user `memory`}}"
-                ],
-                [
-                    "-smp",
-                    "{{user `cpus`}}"
-                ]
-            ],
-            "boot_command": [
-                "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
-                "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-chroot}.sh'<enter><wait>",
-                "MIRROR='{{user `mirror`}}' bash install.sh < <(cat install-{chroot,common}.sh) && systemctl reboot<enter>"
-            ]
-        },
-        {
-            "type": "vmware-iso",
-            "boot_wait": "{{user `boot_wait`}}",
-            "http_directory": "http",
-            "disk_size": "{{user `disk_size`}}",
-            "iso_checksum": "file:{{user `iso_checksum_url`}}",
-            "iso_url": "{{user `iso_url`}}",
-            "ssh_username": "vagrant",
-            "ssh_password": "vagrant",
-            "ssh_port": 22,
-            "ssh_timeout": "10000s",
-            "shutdown_command": "sudo systemctl poweroff",
-            "headless": "{{user `headless`}}",
-            "memory": "{{user `memory`}}",
-            "cpus": "{{user `cpus`}}",
+            "accelerator": "{{user `accelerator`}}",
+            "disk_compression": true,
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-chroot}.sh'<enter><wait>",
@@ -122,30 +83,12 @@
             "only": [
                 "qemu"
             ]
-        },
-        {
-            "type": "shell",
-            "scripts": [
-                "provision/postinstall.sh",
-                "provision/vmware.sh",
-                "provision/cleanup.sh"
-            ],
-            "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'",
-            "only": [
-                "vmware-iso"
-            ]
-        },
-        {
-            "type": "shell",
-            "scripts": [
-                "provision/write_zeroes.sh"
-            ],
-            "execute_command": "if [ ! -z \"{{user `write_zeroes`}}\" ]; then echo 'vagrant'|sudo -S sh '{{.Path}}'; fi"
         }
     ],
     "post-processors": [
         [
             {
+                "name": "publish",
                 "type": "vagrant",
                 "keep_input_artifact": false,
                 "output": "Arch-Linux-x86_64-{{ .Provider }}-{{isotime \"2006-01-02\"}}.box"
@@ -163,15 +106,6 @@
                 "type": "vagrant-cloud",
                 "only": [
                     "qemu"
-                ],
-                "access_token": "{{user `vagrant_cloud_token`}}",
-                "box_tag": "archlinux/archlinux",
-                "version": "{{isotime \"2006.01.02\"}}"
-            },
-            {
-                "type": "vagrant-cloud",
-                "only": [
-                    "vmware-iso"
                 ],
                 "access_token": "{{user `vagrant_cloud_token`}}",
                 "box_tag": "archlinux/archlinux",

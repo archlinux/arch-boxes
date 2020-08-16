@@ -3,39 +3,31 @@
         "iso_url": "https://mirror.pkgbuild.com/iso/latest/archlinux-{{isotime \"2006.01\"}}.01-x86_64.iso",
         "iso_checksum_url": "https://mirror.pkgbuild.com/iso/latest/sha1sums.txt",
         "disk_size": "20480",
-        "memory": "1024",
-        "cpus": "2",
         "headless": "true",
-        "write_zeroes": "",
         "boot_wait": "60s",
-        "mirror": ""
+        "accelerator": "",
+        "mirror": "https://mirror.pkgbuild.com/$repo/os/$arch"
     },
     "builders": [
         {
-            "name": "Arch-Linux-cloudimg-x86_64-{{isotime \"2006-01-02\"}}.img",
             "type": "qemu",
-            "output_directory": "release",
+            "cpus": 2,
+            "memory": 1024,
             "boot_wait": "{{user `boot_wait`}}",
             "http_directory": "http",
             "disk_size": "{{user `disk_size`}}",
+            "disk_discard": "unmap",
             "iso_checksum": "file:{{user `iso_checksum_url`}}",
             "iso_url": "{{user `iso_url`}}",
             "ssh_username": "arch",
             "ssh_password": "arch",
             "ssh_port": 22,
-            "ssh_timeout": "10000s",
+            "ssh_timeout": "2000s",
             "shutdown_command": "sudo systemctl poweroff",
+            "vm_name": "Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2",
             "headless": "{{user `headless`}}",
-            "qemuargs": [
-                [
-                    "-m",
-                    "{{user `memory`}}"
-                ],
-                [
-                    "-smp",
-                    "{{user `cpus`}}"
-                ]
-            ],
+            "accelerator": "{{user `accelerator`}}",
+            "disk_compression": true,
             "boot_command": [
                 "<enter><wait10><wait10><wait10><wait10><wait10><enter><enter>",
                 "curl -O 'http://{{.HTTPIP}}:{{.HTTPPort}}/install{,-common,-cloud}.sh'<enter><wait>",
@@ -53,37 +45,29 @@
                 "provision/cleanup.sh"
             ],
             "execute_command": "echo 'arch'|sudo -S sh '{{.Path}}'"
-        },
-        {
-            "type": "shell",
-            "scripts": [
-                "provision/write_zeroes.sh"
-            ],
-            "execute_command": "if [ ! -z \"{{user `write_zeroes`}}\" ]; then echo 'arch'|sudo -S sh '{{.Path}}'; fi"
         }
     ],
     "post-processors": [
         [
             {
+                "name": "rename",
+                "type": "shell-local",
+                "inline": [
+                    "mv output-qemu/Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2 Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2"
+                ]
+            },
+            {
                 "type": "checksum",
                 "checksum_types": [
                     "sha256"
                 ],
-                "output": "release/Arch-Linux-cloudimg-x86_64-{{isotime \"2006-01-02\"}}.SHA256"
-            },
-            {
-                "name": "rename",
-                "type": "shell-local",
-                "inline": [
-                    "mv release/packer-Arch-Linux-cloudimg-x86_64-{{isotime \"2006-01-02\"}}.img release/Arch-Linux-cloudimg-x86_64-{{isotime \"2006-01-02\"}}.img",
-                    "sed -i 's/packer-//' release/Arch-Linux-cloudimg-x86_64-{{isotime \"2006-01-02\"}}.SHA256"
-                ]
+                "output": "Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.SHA256"
             },
             {
                 "name": "sign",
                 "type": "shell-local",
                 "inline": [
-                    "gpg --sign --detach-sign Arch-Linux-cloudimg-x86_64-{{isotime \"2006-01-02\"}}.SHA256"
+                    "gpg --sign --detach-sign Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.SHA256"
                 ]
             }
         ]

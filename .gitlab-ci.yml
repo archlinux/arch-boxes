@@ -1,6 +1,9 @@
 default:
   image: "archlinux:latest"
 
+variables:
+  PACKER_LOG: 1
+
 stages:
   - lint
   - build
@@ -25,65 +28,44 @@ validate-packer:
   before_script:
     - pacman -Syu --needed --noconfirm packer
   script:
-    - packer validate -var "iso_checksum_url=https://mirror.pkgbuild.com/iso/latest/sha1sums.txt" -except=vagrant-cloud vagrant.json
-    - packer validate local.json
+    - packer validate -var "iso_checksum_url=https://mirror.pkgbuild.com/iso/latest/sha1sums.txt" -except=publish vagrant.json
     - packer validate cloud.json
 
+# Note: We explicitly need the `ipv6` tag here because otherwise we'd get random
+# gpg/pacman-key issues.
 build:cloud-qemu:
   stage: build
   tags:
-    - secure-kvm
+    - ipv6
   before_script:
     - pacman -Syu --needed --noconfirm packer qemu-headless
   script:
-    - packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=yes' -except=sign cloud.json
+    - packer build -except=sign cloud.json
   artifacts:
-    name: "cloud-qemu"
+    name: "qcow2"
     paths:
-      - "release/Arch-Linux-x86_64-cloudimg-*.img"
+      - "Arch-Linux-x86_64-cloudimg-*.*"
     expire_in: 2d
-  resource_group: vm-build
 
 build:vagrant-qemu:
   stage: build
   tags:
-    - secure-kvm
+    - ipv6
   before_script:
     - pacman -Syu --needed --noconfirm packer qemu-headless
   script:
-    - packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=yes' -only=qemu local.json
-  artifacts:
-    paths:
-      - "Arch-Linux-x86_64-libvirt-*.box"
-    expire_in: 3h
-  resource_group: vm-build
-
-build:vagrant-virtualbox:
-  stage: build
-  tags:
-    - secure-virtualbox
-  before_script:
-    - pacman -Syu --needed --noconfirm packer virtualbox
-  script:
-    - packer build -parallel-builds=1 -var 'headless=true' -var 'write_zeroes=yes' -only=virtualbox-iso local.json
-  artifacts:
-    paths:
-      - "Arch-Linux-x86_64-virtualbox-*.box"
-    expire_in: 3h
-  resource_group: vm-build
+    - packer build -only=qemu -except publish vagrant.json
 
 publish:
   stage: publish
   tags:
-    - secure-kvm
-    - secure-virtualbox
+    - ipv6
+    - secure
   before_script:
     - pacman -Syu --needed --noconfirm qemu-headless virtualbox packer
   script:
-    - packer build -force -parallel-builds=1 -var "vagrant_cloud_token=$VAGRANT_API_TOKEN" -var 'headless=true' -var 'write_zeroes=yes' -except=vmware-iso vagrant.json
+    - packer build -var "vagrant_cloud_token=$VAGRANT_API_TOKEN" vagrant.json
   only:
-    refs:
-      - release
     variables:
       - $SCHEDULED_PUBLISH == "TRUE"
   resource_group: vm-build

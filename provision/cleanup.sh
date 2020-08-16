@@ -9,3 +9,6 @@ yes | sudo pacman -Scc
 rm /etc/machine-id
 # Remove pacman key ring for re-initialization
 rm -rf /etc/pacman.d/gnupg/
+
+sync
+fstrim --all --verbose

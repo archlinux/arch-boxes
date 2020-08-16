@@ -11,28 +11,14 @@ shellcheck:
   before_script:
     - pacman -Syu --needed --noconfirm shellcheck
   script:
-    find . -iname "*.sh" -exec shellcheck {} +
+    - find . -iname "*.sh" -exec shellcheck {} +
 
 shfmt:
   stage: lint
   before_script:
     - pacman -Syu --needed --noconfirm shfmt
   script:
-    find . -iname "*.sh" -exec shfmt -i 2 -ci -d {} +
-
-yapf:
-  stage: lint
-  before_script:
-    - pacman -Syu --needed --noconfirm yapf
-  script:
-    find . -iname "*.py" -exec python3 -m yapf -d {} +
-
-flake8:
-  stage: lint
-  before_script:
-    - pacman -Syu --needed --noconfirm flake8
-  script:
-    find . -iname "*.py" -exec python3 -m flake8 {} +
+    - find . -iname "*.sh" -exec shfmt -i 2 -ci -d {} +
 
 validate-packer:
   stage: lint

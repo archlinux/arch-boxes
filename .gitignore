@@ -3,4 +3,5 @@ packer_cache/
 *.swp
 output-*
 .vscode
-release/
+*.SHA256
+*.qcow2

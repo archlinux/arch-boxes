@@ -28,7 +28,7 @@ validate-packer:
   before_script:
     - pacman -Syu --needed --noconfirm packer
   script:
-    - packer validate -var "iso_checksum_url=https://mirror.pkgbuild.com/iso/latest/sha1sums.txt" -except=vagrant-cloud vagrant.json
+    - packer validate -var "iso_checksum_url=https://mirror.pkgbuild.com/iso/latest/sha1sums.txt" -except=publish vagrant.json
     - packer validate cloud.json
 
 # Note: We explicitly need the `ipv6` tag here because otherwise we'd get random
@@ -44,7 +44,7 @@ build:cloud-qemu:
   artifacts:
     name: "qcow2"
     paths:
-      - "release/Arch-Linux-x86_64-cloudimg-*.qcow2"
+      - "Arch-Linux-x86_64-cloudimg-*.*"
     expire_in: 2d
 
 build:vagrant-qemu:

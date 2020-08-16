@@ -10,11 +10,9 @@
     },
     "builders": [
         {
-            "name": "Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2",
             "type": "qemu",
             "cpus": 2,
             "memory": 1024,
-            "output_directory": "release",
             "boot_wait": "{{user `boot_wait`}}",
             "http_directory": "http",
             "disk_size": "{{user `disk_size`}}",
@@ -26,7 +24,7 @@
             "ssh_port": 22,
             "ssh_timeout": "2000s",
             "shutdown_command": "sudo systemctl poweroff",
-            "vnc_bind_address": "0.0.0.0",
+            "vm_name": "Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2",
             "headless": "{{user `headless`}}",
             "accelerator": "{{user `accelerator`}}",
             "disk_compression": true,
@@ -52,19 +50,18 @@
     "post-processors": [
         [
             {
+                "name": "rename",
+                "type": "shell-local",
+                "inline": [
+                    "mv output-qemu/Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2 Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2"
+                ]
+            },
+            {
                 "type": "checksum",
                 "checksum_types": [
                     "sha256"
                 ],
-                "output": "release/Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.SHA256"
-            },
-            {
-                "name": "rename",
-                "type": "shell-local",
-                "inline": [
-                    "mv release/packer-Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2 release/Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.qcow2",
-                    "sed -i 's/packer-//' release/Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.SHA256"
-                ]
+                "output": "Arch-Linux-x86_64-cloudimg-{{isotime \"2006-01-02\"}}.SHA256"
             },
             {
                 "name": "sign",

@@ -2,9 +2,7 @@
 [![CI Status](https://gitlab.archlinux.org/archlinux/arch-boxes/badges/master/pipeline.svg)](https://gitlab.archlinux.org/archlinux/arch-boxes/-/pipelines)
 
 - [Vagrant Cloud](https://app.vagrantup.com/archlinux/boxes/archlinux)
-- [Download latest qcow2 image](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/release/download?job=build:cloud-qemu)
-- [Browse latest QEMU build artifacts](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/release/browse?job=build:vagrant-qemu)
-- [Browse latest VirtualBox build artifacts](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/release/browse?job=build:vagrant-virtualbox)
+- [Download latest qcow2 image](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/download?job=build:cloud-qemu)
 
 Arch-boxes provides automated builds of the Arch Linux releases for
 different providers and post-processors. Check the providers or post-processor sections if you want to know

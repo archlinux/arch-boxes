@@ -28,8 +28,7 @@ validate-packer:
   before_script:
     - pacman -Syu --needed --noconfirm packer
   script:
-    - packer validate -var "iso_checksum_url=https://mirror.pkgbuild.com/iso/latest/sha1sums.txt" -except=publish vagrant.json
-    - packer validate cloud.json
+    - packer validate config.json
 
 # Note: We explicitly need the `ipv6` tag here because otherwise we'd get random
 # gpg/pacman-key issues.
@@ -40,7 +39,7 @@ build:cloud-qemu:
   before_script:
     - pacman -Syu --needed --noconfirm packer qemu-headless
   script:
-    - packer build -except=sign cloud.json
+    - packer build -only=cloud -except=sign config.json
   artifacts:
     name: "archlinux_x86_64_qcow2"
     paths:
@@ -54,7 +53,12 @@ build:vagrant-virtualbox:
   before_script:
     - pacman -Syu --needed --noconfirm packer qemu-headless
   script:
-    - packer build -only=virtualbox -except publish vagrant.json
+    - packer build -only=virtualbox config.json
+  artifacts:
+    name: "archlinux_x86_64_virtualbox"
+    paths:
+      - "*.box"
+    expire_in: 2d
 
 build:vagrant-qemu:
   stage: build
@@ -63,7 +67,12 @@ build:vagrant-qemu:
   before_script:
     - pacman -Syu --needed --noconfirm packer qemu-headless
   script:
-    - packer build -only=libvirt -except publish vagrant.json
+    - packer build -only=libvirt config.json
+  artifacts:
+    name: "archlinux_x86_64_libvirt"
+    paths:
+      - "*.box"
+    expire_in: 2d
 
 publish:
   stage: publish
@@ -71,9 +80,15 @@ publish:
     - ipv6
     - secure
   before_script:
-    - pacman -Syu --needed --noconfirm qemu-headless packer
+    - pacman -Syu --needed --noconfirm vagrant
   script:
-    - packer build -var "vagrant_cloud_token=$VAGRANT_API_TOKEN" vagrant.json
+    - vagrant cloud auth login --token $VAGRANT_API_TOKEN
+    - vagrant cloud auth login --check
+    - vagrant cloud box show archlinux/archlinux
+    - LIBVIRT_RELEASE=`ls Arch-Linux-x86_64-libvirt-*.box | awk -F "." '{print $1}'  | awk -F "-" '{print $5"."$6"."$7}'`
+    - VIRTUALBOX_RELEASE=`ls Arch-Linux-x86_64-virtualbox-*.box | awk -F "." '{print $1}'  | awk -F "-" '{print $5"."$6"."$7}'`
+    - vagrant cloud publish archlinux/archlinux $LIBVIRT_RELEASE libvirt Arch-Linux-x86_64-libvirt-*.box --release -f
+    - vagrant cloud publish archlinux/archlinux $VIRTUALBOX_RELEASE virtualbox Arch-Linux-x86_64-virtualbox-*.box --release -f
   only:
     variables:
       - $SCHEDULED_PUBLISH == "TRUE"

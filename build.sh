@@ -133,7 +133,7 @@ function cloud_image() {
 }
 
 function cloud_image_post() {
-  qemu-img convert -f raw -O qcow2 "${1}" "${2}"
+  qemu-img convert -c -f raw -O qcow2 "${1}" "${2}"
   rm "${1}"
 }
 

@@ -1,4 +1,8 @@
 #!/bin/bash
+# build.sh builds the images (cloud image, vagrant boxes)
+
+# nounset: "Treat unset variables and parameters [...] as an error when performing parameter expansion."
+# errexit: "Exit immediately if [...] command exits with a non-zero status."
 set -o nounset -o errexit
 DISK_SIZE="2G"
 IMAGE="image.img"
@@ -22,7 +26,9 @@ cd "${TMPDIR}"
 MOUNT="${PWD}/mount"
 mkdir "${MOUNT}"
 
+# Do some cleanup when the script exits
 function cleanup() {
+  # We want all the commands to run, even if one of them fails.
   set +o errexit
   if [ -n "${LOOPDEV:-}" ]; then
     losetup -d "${LOOPDEV}"
@@ -37,6 +43,7 @@ function cleanup() {
 }
 trap cleanup EXIT
 
+# Create the disk, partitions it, format the partition and mount the filesystem
 function setup_disk() {
   truncate -s "${DISK_SIZE}" "${IMAGE}"
   sgdisk --clear \
@@ -49,6 +56,7 @@ function setup_disk() {
   mount -o compress-force=zstd "${LOOPDEV}p2" "${MOUNT}"
 }
 
+# Install Arch Linux to the filesystem (bootstrap)
 function bootstrap() {
   cat <<EOF >pacman.conf
 [options]
@@ -70,6 +78,7 @@ EOF
   cp mirrorlist "${MOUNT}/etc/pacman.d/"
 }
 
+# Misc "tweaks" done after bootstrapping
 function postinstall() {
   arch-chroot "${MOUNT}" /usr/bin/btrfs subvolume create /swap
   chattr +C "${MOUNT}/swap"
@@ -83,6 +92,7 @@ function postinstall() {
   ln -sf /var/run/systemd/resolve/resolv.conf "${MOUNT}/etc/resolv.conf"
 }
 
+# Cleanup the image and trim it
 function image_cleanup() {
   # Remove machine-id: see https://github.com/archlinux/arch-boxes/issues/25
   rm "${MOUNT}/etc/machine-id"
@@ -94,6 +104,7 @@ function image_cleanup() {
   fstrim --verbose "${MOUNT}"
 }
 
+# Mount image helper (loop device + mount)
 function mount_image() {
   LOOPDEV=$(losetup --find --partscan --show "${1:-${IMAGE}}")
   mount -o compress-force=zstd "${LOOPDEV}p2" "${MOUNT}"
@@ -101,17 +112,20 @@ function mount_image() {
   mount --bind "/var/cache/pacman/pkg" "${MOUNT}/var/cache/pacman/pkg"
 }
 
+# Unmount image helper (umount + detach loop device)
 function unmount_image() {
   umount --recursive "${MOUNT}"
   losetup -d "${LOOPDEV}"
   LOOPDEV=""
 }
 
+# Copy image and mount the copied image
 function copy_and_mount_image() {
   cp -a "${IMAGE}" "${1}"
   mount_image "${1}"
 }
 
+# Compute SHA256, adjust owner to $SUDO_UID:$SUDO_UID and move to output/
 function mv_to_output() {
   sha256sum "${1}" >"${1}.SHA256"
   if [ -n "${SUDO_UID:-}" ]; then
@@ -120,6 +134,7 @@ function mv_to_output() {
   mv "${1}"{,.SHA256} "${OUTPUT}/"
 }
 
+# Helper function: create a new image from the "base" image
 # ${1} - new image file
 # ${2} - final file
 # ${3} - pre
@@ -144,6 +159,7 @@ function cloud_image_post() {
   rm "${1}"
 }
 
+# Create Vagrant box
 function create_box() {
   TYPE="${1}"
   IMAGE_FILE="${2}"

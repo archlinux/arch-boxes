@@ -1,4 +1,8 @@
 #!/bin/bash
+# build-in qemu.sh runs build.sh in a qemu VM running the latest Arch installer iso
+#
+# nounset: "Treat unset variables and parameters [...] as an error when performing parameter expansion."
+# errexit: "Exit immediately if [...] command exits with a non-zero status."
 set -o nounset -o errexit
 MIRROR="https://mirror.pkgbuild.com"
 
@@ -8,12 +12,14 @@ mkdir -p "tmp" "${OUTPUT}"
 TMPDIR="$(mktemp --directory --tmpdir="${PWD}/tmp")"
 cd "${TMPDIR}"
 
+# Do some cleanup when the script exits
 function cleanup() {
   rm -rf "${TMPDIR}"
   jobs -p | xargs --no-run-if-empty kill
 }
 trap cleanup EXIT
 
+# Use local Arch iso or download the latest iso and extract the relevant files
 function prepare_boot() {
   if LOCAL_ISO="$(ls "${ORIG_PWD}/"archlinux-*-x86_64.iso 2>/dev/null)"; then
     echo "Using local iso: ${LOCAL_ISO}"
@@ -30,11 +36,14 @@ function prepare_boot() {
     ISO="${PWD}/${LATEST_ISO}"
   fi
 
+  # We need to extract the kernel and initrd so we can set a custom cmdline:
+  # console=ttyS0, so the kernel and systemd sends output to the serial.
   xorriso -osirrox on -indev "${ISO}" -extract arch/boot/x86_64 .
   ISO_VOLUME_ID="$(xorriso -indev "${ISO}" |& awk -F : '$1 ~ "Volume id" {print $2}' | tr -d "' ")"
 }
 
 function start_qemu() {
+  # Used to communicate with qemu
   mkfifo guest.out guest.in
   # We could use a sparse file but we want to fail early
   fallocate -l 4G scratch-disk.img
@@ -54,13 +63,15 @@ function start_qemu() {
     -serial pipe:guest \
     -nographic || kill "${$}"; } &
 
-  # Send guest.out to fd1 (stdout) and fd10
+  # We want to send the output to both stdout (fd1) and fd10 (used by the expect function)
   exec 3>&1 10< <(tee /dev/fd/3 <guest.out)
 }
 
+# Wait for a specific string from qemu
 function expect() {
   length="${#1}"
   i=0
+  # We can't use ex: grep as we could end blocking forever, if the string isn't followed by a newline
   while IFS= read -r -u 10 -n 1 c; do
     if [ "${1:${i}:1}" = "${c}" ]; then
       i="$((i + 1))"
@@ -73,6 +84,7 @@ function expect() {
   done
 }
 
+# Send string to qemu
 function send() {
   echo -en "${1}" >guest.in
 }

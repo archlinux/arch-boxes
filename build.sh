@@ -94,9 +94,6 @@ function postinstall() {
 
 # Cleanup the image and trim it
 function image_cleanup() {
-  # Remove machine-id: see https://github.com/archlinux/arch-boxes/issues/25
-  rm "${MOUNT}/etc/machine-id"
-
   # Remove pacman key ring for re-initialization
   rm -rf "${MOUNT}/etc/pacman.d/gnupg/"
 

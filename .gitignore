@@ -5,3 +5,5 @@ output-*
 .vscode
 *.SHA256
 *.qcow2
+/tmp/
+/output/

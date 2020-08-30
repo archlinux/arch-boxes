@@ -13,12 +13,10 @@ You'll need the following dependencies:
 
 * packer (for basic usage)
 * vagrant (for vagrant images)
-* qemu (for libvirt provider support)
-* virtualbox (for virtualbox support)
+* qemu
 
 ## Variables
-Here is an overview over all variables you can set in `vagrant.json` or
-`cloud.json`:
+Here is an overview over all variables you can set in `config.json`:
 
 * `iso_url`: the url to the ISO. This can be an url or a filepath
   beginning with `file://`
@@ -28,34 +26,29 @@ Here is an overview over all variables you can set in `vagrant.json` or
   checksum.
 * `disk_size`: this specifices the disk size in bytes.
 * `headless`: this sets GUI on or off.
-* `vagrant_cloud_token`: here you can specify the vagrant cloud token for
-  uploading your box to the vagrantcloud. If you don't have a vagrant cloud
-  token you can ignore this variable. Without a token the boxes will be
-  built, but the upload step step will fail.
 * `boot_wait`: this specifies the time packer should wait for booting up
   the ISO before entering any command.
 
 ## How to start the build process locally
 If you want to build the boxes locally without uploading them to the Vagrant
-cloud you need to edit the `vagrant.json` before you start the build. set the
-right `iso_url` and the right `iso_checksum_url`. Then you can start the build
-for virtualbox only with the following command:
+cloud. You can start the build for virtualbox only with the following command:
 
-`packer build -only=qemu -except=publish vagrant.json`
+`packer build -only=qemu config.json`
 
 ## How to start the build process for official builds
 The official builds are done in our Arch Linux GitLab CI.
 
-`packer build vagrant.json`
+`packer build config.json`
 
 ## Providers
 
-* virtualbox-iso
+* virtualbox
 * qemu/libvirt
 
 ## Post-processors
 
-* vagrant
+* vagrant (*.box)
+* cloud (*.qcow2)
 
 ## Development workflow
 Merge requests and general development shall be made on the `master` branch.
@@ -91,13 +84,13 @@ one.
 
 Start `packer` with `-parallel=false`:
 
-`packer build -parallel=false vagrant.json`
+`packer build -parallel=false config.json`
 
 ### Checking cloud-init support in our qcow2 images:
 
 ```bash
-$ packer build cloud.json
-$ cp release/Arch-Linux-cloudimg-amd64-2020-02-24.qcow2 disk.qcow2
+$ packer build -only=cloud -except=sign config.json
+$ cp Arch-Linux-cloudimg-2020-02-24.qcow2 disk.qcow2
 
 # Copied from (with minor changes): https://cloudinit.readthedocs.io/en/latest/topics/datasources/nocloud.html
 $ { echo instance-id: iid-local01; echo local-hostname: cloudimg; } > meta-data
@@ -105,7 +98,7 @@ $ { echo instance-id: iid-local01; echo local-hostname: cloudimg; } > meta-data
 $ printf "#cloud-config\npassword: passw0rd\nchpasswd: { expire: False }\nssh_pwauth: True\n" > user-data
 
 ## create a disk to attach with some user-data and meta-data (require cdrkit)
-$ genisoimage  -output seed.iso -volid cidata -joliet -rock user-data meta-data
+$ genisoimage -output seed.iso -volid cidata -joliet -rock user-data meta-data
 
 ## create a new qcow image to boot, backed by your original image
 $ qemu-img create -f qcow2 -b disk.qcow2 boot-disk.qcow2

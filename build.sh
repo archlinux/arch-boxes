@@ -219,7 +219,9 @@ postinstall
 arch-chroot "${MOUNT}" grub-install --target=i386-pc "${LOOPDEV}"
 unmount_image
 
-DATE="$(date -I)"
-create_image "cloud-img.img" "Arch-Linux-x86_64-cloudimg-${DATE}.qcow2" cloud_image cloud_image_post
-create_image "vagrant-qemu.img" "Arch-Linux-x86_64-libvirt-${DATE}.box" vagrant_qemu vagrant_qemu_post
-create_image "vagrant-virtualbox.img" "Arch-Linux-x86_64-virtualbox-${DATE}.box" vagrant_qemu vagrant_virtualbox_post
+if [ -z "${BUILD_DATE:-}" ]; then
+  BUILD_DATE="$(date -I)"
+fi
+create_image "cloud-img.img" "Arch-Linux-x86_64-cloudimg-${BUILD_DATE}.qcow2" cloud_image cloud_image_post
+create_image "vagrant-qemu.img" "Arch-Linux-x86_64-libvirt-${BUILD_DATE}.box" vagrant_qemu vagrant_qemu_post
+create_image "vagrant-virtualbox.img" "Arch-Linux-x86_64-virtualbox-${BUILD_DATE}.box" vagrant_qemu vagrant_virtualbox_post

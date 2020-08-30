@@ -29,7 +29,10 @@ build:
   before_script:
     - pacman -Syu --needed --noconfirm qemu-headless libisoburn
   script:
+    - echo "BUILD_DATE=$(date -I)" > build.env
+    - . build.env
     - ./build-in-qemu.sh
+    - mv build.env output/
   artifacts:
     name: "output"
     paths:
@@ -44,13 +47,12 @@ publish:
   before_script:
     - pacman -Syu --needed --noconfirm vagrant
   script:
-    - vagrant cloud auth login --token $VAGRANT_API_TOKEN
+    - . output/build.env
+    - vagrant cloud auth login --token "${VAGRANT_API_TOKEN}"
     - vagrant cloud auth login --check
     - vagrant cloud box show archlinux/archlinux
-    - LIBVIRT_RELEASE=`ls output/Arch-Linux-x86_64-libvirt-*.box | awk -F "." '{print $1}'  | awk -F "-" '{print $5"."$6"."$7}'`
-    - VIRTUALBOX_RELEASE=`ls output/Arch-Linux-x86_64-virtualbox-*.box | awk -F "." '{print $1}'  | awk -F "-" '{print $5"."$6"."$7}'`
-    - vagrant cloud publish archlinux/archlinux $LIBVIRT_RELEASE libvirt output/Arch-Linux-x86_64-libvirt-*.box --release -f
-    - vagrant cloud publish archlinux/archlinux $VIRTUALBOX_RELEASE virtualbox output/Arch-Linux-x86_64-virtualbox-*.box --release -f
+    - vagrant cloud publish archlinux/archlinux "v${BUILD_DATE}" libvirt output/Arch-Linux-x86_64-libvirt-*.box --release -f
+    - vagrant cloud publish archlinux/archlinux "v${BUILD_DATE}" virtualbox output/Arch-Linux-x86_64-virtualbox-*.box --release -f
   only:
     variables:
       - $SCHEDULED_PUBLISH == "TRUE"

@@ -71,6 +71,13 @@ EOF
 }
 
 function postinstall() {
+  arch-chroot "${MOUNT}" /usr/bin/btrfs subvolume create /swap
+  chattr +C "${MOUNT}/swap"
+  chmod 0700 "${MOUNT}/swap"
+  fallocate -l 512M "${MOUNT}/swap/swapfile"
+  mkswap "${MOUNT}/swap/swapfile"
+  echo -e "/swap/swapfile none swap defaults 0 0" >>"${MOUNT}/etc/fstab"
+
   echo "archlinux" >"${MOUNT}/etc/hostname"
   echo "KEYMAP=us" >"${MOUNT}/etc/vconsole.conf"
   ln -sf /var/run/systemd/resolve/resolv.conf "${MOUNT}/etc/resolv.conf"

@@ -156,63 +156,27 @@ function cloud_image_post() {
   rm "${1}"
 }
 
-# Create Vagrant box
-function create_box() {
-  TYPE="${1}"
-  IMAGE_FILE="${2}"
-  OUTPUT_FILE="${3}"
-  mkdir box
-
-  case "${TYPE}" in
-    qemu)
-      cat <<EOF >box/Vagrantfile
-Vagrant.configure("2") do |config|
-  config.vm.provider :libvirt do |libvirt|
-    libvirt.driver = "kvm"
-  end
-end
-EOF
-      VIRTUAL_SIZE="$(grep -o "^[0-9]*" <<<"${DISK_SIZE}")"
-      echo '{"format":"qcow2","provider":"libvirt","virtual_size":'"${VIRTUAL_SIZE}"'}' >box/metadata.json
-      qemu-img convert -f raw -O qcow2 "${IMAGE_FILE}" "box/box.img"
-      ;;
-    virtualbox)
-      # VirtualBox-6.1.12 src/VBox/NetworkServices/Dhcpd/Config.cpp line 276
-      MAC_ADDRESS="080027$(openssl rand -hex 3 | tr '[:lower:]' '[:upper:]')"
-      cat <<EOF >box/Vagrantfile
-Vagrant.configure("2") do |config|
-  config.vm.base_mac = "${MAC_ADDRESS}"
-end
-EOF
-      echo '{"provider":"virtualbox"}' >box/metadata.json
-      cp "${ORIG_PWD}/box.ovf" box/
-      qemu-img convert -f raw -O vmdk "${IMAGE_FILE}" "box/packer-virtualbox.vmdk"
-
-      sed -e "s/MACHINE_UUID/$(uuidgen)/" \
-        -e "s/DISK_UUID/$(uuidgen)/" \
-        -e "s/DISK_CAPACITY/$(qemu-img info --output=json "box/packer-virtualbox.vmdk" | jq '."virtual-size"')/" \
-        -e "s/UNIX/$(date +%s)/" \
-        -e "s/MAC_ADDRESS/${MAC_ADDRESS}/" \
-        -i box/box.ovf
-      ;;
-    *)
-      echo "Unknown box type: ${TYPE}"
-      exit 1
-      ;;
-  esac
-
-  rm "${IMAGE_FILE}"
-  tar --xform 's:^box/::' -czf "${OUTPUT_FILE}" box/*
-  rm -r box
-}
-
 function vagrant_qemu() {
   arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{chroot,common}.sh)
   arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm linux-headers qemu-guest-agent
 }
 
 function vagrant_qemu_post() {
-  create_box "qemu" "${1}" "${2}"
+  # Create vagrant box
+  cat <<EOF >Vagrantfile
+Vagrant.configure("2") do |config|
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.driver = "kvm"
+  end
+end
+EOF
+  VIRTUAL_SIZE="$(grep -o "^[0-9]*" <<<"${DISK_SIZE}")"
+  echo '{"format":"qcow2","provider":"libvirt","virtual_size":'"${VIRTUAL_SIZE}"'}' >metadata.json
+  qemu-img convert -f raw -O qcow2 "${1}" box.img
+  rm "${1}"
+
+  tar -czf "${2}" Vagrantfile metadata.json box.img
+  rm Vagrantfile metadata.json box.img
 }
 
 function vagrant_virtualbox() {
@@ -222,7 +186,28 @@ function vagrant_virtualbox() {
 }
 
 function vagrant_virtualbox_post() {
-  create_box "virtualbox" "${1}" "${2}"
+  # Create vagrant box
+  # VirtualBox-6.1.12 src/VBox/NetworkServices/Dhcpd/Config.cpp line 276
+  MAC_ADDRESS="080027$(openssl rand -hex 3 | tr '[:lower:]' '[:upper:]')"
+  cat <<EOF >Vagrantfile
+Vagrant.configure("2") do |config|
+  config.vm.base_mac = "${MAC_ADDRESS}"
+end
+EOF
+  echo '{"provider":"virtualbox"}' >metadata.json
+  qemu-img convert -f raw -O vmdk "${1}" "packer-virtualbox.vmdk"
+  rm "${1}"
+
+  cp "${ORIG_PWD}/box.ovf" .
+  sed -e "s/MACHINE_UUID/$(uuidgen)/" \
+    -e "s/DISK_UUID/$(uuidgen)/" \
+    -e "s/DISK_CAPACITY/$(qemu-img info --output=json "box/packer-virtualbox.vmdk" | jq '."virtual-size"')/" \
+    -e "s/UNIX/$(date +%s)/" \
+    -e "s/MAC_ADDRESS/${MAC_ADDRESS}/" \
+    -i box.ovf
+
+  tar -czf "${2}" Vagrantfile metadata.json packer-virtualbox.vmdk box.ovf
+  rm Vagrantfile metadata.json packer-virtualbox.vmdk box.ovf
 }
 
 setup_disk

@@ -4,27 +4,24 @@
 # nounset: "Treat unset variables and parameters [...] as an error when performing parameter expansion."
 # errexit: "Exit immediately if [...] command exits with a non-zero status."
 set -o nounset -o errexit
-DISK_SIZE="2G"
-IMAGE="image.img"
+readonly DISK_SIZE="2G"
+readonly IMAGE="image.img"
 # shellcheck disable=SC2016
-MIRROR='https://mirror.pkgbuild.com/$repo/os/$arch'
+readonly MIRROR='https://mirror.pkgbuild.com/$repo/os/$arch'
 
-if [ "$(id -u)" -ne 0 ]; then
-  echo "root is required"
-  exit 1
-fi
+function init() {
+  readonly ORIG_PWD="${PWD}"
+  readonly OUTPUT="${PWD}/output"
+  readonly TMPDIR="$(mktemp --dry-run --directory --tmpdir="${PWD}/tmp")"
+  mkdir -p "${OUTPUT}" "${TMPDIR}"
+  if [ -n "${SUDO_UID:-}" ]; then
+    chown "${SUDO_UID}:${SUDO_GID}" "${OUTPUT}" "${TMPDIR}"
+  fi
+  cd "${TMPDIR}"
 
-ORIG_PWD="${PWD}"
-OUTPUT="${PWD}/output"
-mkdir -p "tmp" "${OUTPUT}"
-if [ -n "${SUDO_UID:-}" ]; then
-  chown "${SUDO_UID}:${SUDO_GID}" "tmp" "${OUTPUT}"
-fi
-TMPDIR="$(mktemp --directory --tmpdir="${PWD}/tmp")"
-cd "${TMPDIR}"
-
-MOUNT="${PWD}/mount"
-mkdir "${MOUNT}"
+  readonly MOUNT="${PWD}/mount"
+  mkdir "${MOUNT}"
+}
 
 # Do some cleanup when the script exits
 function cleanup() {
@@ -170,8 +167,9 @@ Vagrant.configure("2") do |config|
   end
 end
 EOF
-  VIRTUAL_SIZE="$(grep -o "^[0-9]*" <<<"${DISK_SIZE}")"
-  echo '{"format":"qcow2","provider":"libvirt","virtual_size":'"${VIRTUAL_SIZE}"'}' >metadata.json
+  local virtual_size
+  virtual_size="$(grep -o "^[0-9]*" <<<"${DISK_SIZE}")"
+  echo '{"format":"qcow2","provider":"libvirt","virtual_size":'"${virtual_size}"'}' >metadata.json
   qemu-img convert -f raw -O qcow2 "${1}" box.img
   rm "${1}"
 
@@ -188,10 +186,11 @@ function vagrant_virtualbox() {
 function vagrant_virtualbox_post() {
   # Create vagrant box
   # VirtualBox-6.1.12 src/VBox/NetworkServices/Dhcpd/Config.cpp line 276
-  MAC_ADDRESS="080027$(openssl rand -hex 3 | tr '[:lower:]' '[:upper:]')"
+  local mac_address
+  mac_address="080027$(openssl rand -hex 3 | tr '[:lower:]' '[:upper:]')"
   cat <<EOF >Vagrantfile
 Vagrant.configure("2") do |config|
-  config.vm.base_mac = "${MAC_ADDRESS}"
+  config.vm.base_mac = "${mac_address}"
 end
 EOF
   echo '{"provider":"virtualbox"}' >metadata.json
@@ -203,23 +202,31 @@ EOF
     -e "s/DISK_UUID/$(uuidgen)/" \
     -e "s/DISK_CAPACITY/$(qemu-img info --output=json "box/packer-virtualbox.vmdk" | jq '."virtual-size"')/" \
     -e "s/UNIX/$(date +%s)/" \
-    -e "s/MAC_ADDRESS/${MAC_ADDRESS}/" \
+    -e "s/MAC_ADDRESS/${mac_address}/" \
     -i box.ovf
 
   tar -czf "${2}" Vagrantfile metadata.json packer-virtualbox.vmdk box.ovf
   rm Vagrantfile metadata.json packer-virtualbox.vmdk box.ovf
 }
 
-setup_disk
-bootstrap
-postinstall
-# We run it here as it is the easiest solution and we do not want anything to go wrong!
-arch-chroot "${MOUNT}" grub-install --target=i386-pc "${LOOPDEV}"
-unmount_image
+function main() {
+  if [ "$(id -u)" -ne 0 ]; then
+    echo "root is required"
+    exit 1
+  fi
 
-if [ -z "${BUILD_DATE:-}" ]; then
-  BUILD_DATE="$(date -I)"
-fi
-create_image "cloud-img.img" "Arch-Linux-x86_64-cloudimg-${BUILD_DATE}.qcow2" cloud_image cloud_image_post
-create_image "vagrant-qemu.img" "Arch-Linux-x86_64-libvirt-${BUILD_DATE}.box" vagrant_qemu vagrant_qemu_post
-create_image "vagrant-virtualbox.img" "Arch-Linux-x86_64-virtualbox-${BUILD_DATE}.box" vagrant_qemu vagrant_virtualbox_post
+  setup_disk
+  bootstrap
+  postinstall
+  # We run it here as it is the easiest solution and we do not want anything to go wrong!
+  arch-chroot "${MOUNT}" grub-install --target=i386-pc "${LOOPDEV}"
+  unmount_image
+
+  if [ -z "${BUILD_DATE:-}" ]; then
+    BUILD_DATE="$(date -I)"
+  fi
+  create_image "cloud-img.img" "Arch-Linux-x86_64-cloudimg-${BUILD_DATE}.qcow2" cloud_image cloud_image_post
+  create_image "vagrant-qemu.img" "Arch-Linux-x86_64-libvirt-${BUILD_DATE}.box" vagrant_qemu vagrant_qemu_post
+  create_image "vagrant-virtualbox.img" "Arch-Linux-x86_64-virtualbox-${BUILD_DATE}.box" vagrant_qemu vagrant_virtualbox_post
+}
+main

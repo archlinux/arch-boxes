@@ -4,13 +4,16 @@
 # nounset: "Treat unset variables and parameters [...] as an error when performing parameter expansion."
 # errexit: "Exit immediately if [...] command exits with a non-zero status."
 set -o nounset -o errexit
-MIRROR="https://mirror.pkgbuild.com"
+readonly MIRROR="https://mirror.pkgbuild.com"
 
-ORIG_PWD="${PWD}"
-OUTPUT="${PWD}/output"
-mkdir -p "tmp" "${OUTPUT}"
-TMPDIR="$(mktemp --directory --tmpdir="${PWD}/tmp")"
-cd "${TMPDIR}"
+function init() {
+  readonly ORIG_PWD="${PWD}"
+  readonly OUTPUT="${PWD}/output"
+  readonly TMPDIR="$(mktemp --dry-run --directory --tmpdir="${PWD}/tmp")"
+  mkdir -p "${OUTPUT}" "${TMPDIR}"
+
+  cd "${TMPDIR}"
+}
 
 # Do some cleanup when the script exits
 function cleanup() {
@@ -69,8 +72,8 @@ function start_qemu() {
 
 # Wait for a specific string from qemu
 function expect() {
-  length="${#1}"
-  i=0
+  local length="${#1}"
+  local i=0
   # We can't use ex: grep as we could end blocking forever, if the string isn't followed by a newline
   while true; do
     # read should never exit with a non-zero exit code,
@@ -92,41 +95,49 @@ function send() {
   echo -en "${1}" >guest.in
 }
 
-prepare_boot
-start_qemu
+function main() {
+  init
+  prepare_boot
+  start_qemu
 
-expect "archiso login:"
-send "root\n"
-expect "# "
+  # Login
+  expect "archiso login:"
+  send "root\n"
+  expect "# "
 
-send "bash\n"
-expect "# "
-send "trap \"shutdown now\" ERR\n"
-expect "# "
+  # Switch to bash and shutdown on error
+  send "bash\n"
+  expect "# "
+  send "trap \"shutdown now\" ERR\n"
+  expect "# "
 
-send "mkdir /mnt/arch-boxes && mount -t 9p -o trans=virtio host /mnt/arch-boxes -oversion=9p2000.L\n"
-expect "# "
-send "mkfs.ext4 /dev/vda && mkdir /mnt/scratch-disk/ && mount /dev/vda /mnt/scratch-disk && cd /mnt/scratch-disk\n"
-expect "# "
-send "cp -a /mnt/arch-boxes/{box.ovf,build.sh,http} .\n"
-expect "# "
-send "mkdir pkg && mount --bind pkg /var/cache/pacman/pkg\n"
-expect "# "
+  # Prepare environment
+  send "mkdir /mnt/arch-boxes && mount -t 9p -o trans=virtio host /mnt/arch-boxes -oversion=9p2000.L\n"
+  expect "# "
+  send "mkfs.ext4 /dev/vda && mkdir /mnt/scratch-disk/ && mount /dev/vda /mnt/scratch-disk && cd /mnt/scratch-disk\n"
+  expect "# "
+  send "cp -a /mnt/arch-boxes/{box.ovf,build.sh,http} .\n"
+  expect "# "
+  send "mkdir pkg && mount --bind pkg /var/cache/pacman/pkg\n"
+  expect "# "
 
-# Wait for pacman-init
-send "until systemctl is-active pacman-init; do sleep 1; done\n"
-expect "# "
+  # Wait for pacman-init
+  send "until systemctl is-active pacman-init; do sleep 1; done\n"
+  expect "# "
 
-send "pacman -Sy --noconfirm qemu-headless jq\n"
-expect "# "
+  # Install required packages
+  send "pacman -Sy --noconfirm qemu-headless jq\n"
+  expect "# "
 
-send "bash -x ./build.sh\n"
-expect "# "
-send "cp -r --preserve=mode,timestamps output /mnt/arch-boxes/tmp/$(basename "${TMPDIR}")/\n"
-expect "# "
+  ## Start build and copy output to local disk
+  send "bash -x ./build.sh\n"
+  expect "# "
+  send "cp -r --preserve=mode,timestamps output /mnt/arch-boxes/tmp/$(basename "${TMPDIR}")/\n"
+  expect "# "
+  mv output/* "${OUTPUT}/"
 
-mv output/* "${OUTPUT}/"
-
-send "shutdown now\n"
-
-wait
+  # Shutdown the VM
+  send "shutdown now\n"
+  wait
+}
+main

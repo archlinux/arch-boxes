@@ -74,11 +74,12 @@ function start_qemu() {
 function expect() {
   local length="${#1}"
   local i=0
+  local timeout="${2:-30}"
   # We can't use ex: grep as we could end blocking forever, if the string isn't followed by a newline
   while true; do
     # read should never exit with a non-zero exit code,
     # but it can happen if the fd is EOF or it times out
-    IFS= read -r -u 10 -n 1 -t 240 c
+    IFS= read -r -u 10 -n 1 -t "${timeout}" c
     if [ "${1:${i}:1}" = "${c}" ]; then
       i="$((i + 1))"
       if [ "${length}" -eq "${i}" ]; then
@@ -131,7 +132,7 @@ function main() {
 
   ## Start build and copy output to local disk
   send "bash -x ./build.sh\n"
-  expect "# "
+  expect "# " 240 # qemu-img convert can take a long time
   send "cp -r --preserve=mode,timestamps output /mnt/arch-boxes/tmp/$(basename "${TMPDIR}")/\n"
   expect "# "
   mv output/* "${OUTPUT}/"

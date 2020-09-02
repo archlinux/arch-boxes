@@ -214,6 +214,7 @@ function main() {
     echo "root is required"
     exit 1
   fi
+  init
 
   setup_disk
   bootstrap

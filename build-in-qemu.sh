@@ -134,7 +134,7 @@ function main() {
   send "bash -x ./build.sh\n"
   expect "# " 240 # qemu-img convert can take a long time
   send "cp -r --preserve=mode,timestamps output /mnt/arch-boxes/tmp/$(basename "${TMPDIR}")/\n"
-  expect "# "
+  expect "# " 60
   mv output/* "${OUTPUT}/"
 
   # Shutdown the VM

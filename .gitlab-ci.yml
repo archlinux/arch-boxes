@@ -29,6 +29,13 @@ shfmt:
     - . build.env
     - ./build-in-qemu.sh
     - mv build.env output/
+  after_script:
+    - echo "image_size_megabytes{image=\"qcow2\"} $(du -m output/*cloudimg*qcow2)" > metrics.txt
+    - echo "image_size_megabytes{image=\"libvirt\"} $(du -m output/*libvirt*box)" >> metrics.txt
+    - echo "image_size_megabytes{image=\"virtualbox\"} $(du -m output/*virtualbox*box)" >> metrics.txt
+  artifacts:
+    reports:
+      metrics: metrics.txt
 
 build:
   extends: .build

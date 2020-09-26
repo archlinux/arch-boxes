@@ -71,7 +71,7 @@ EOF
   echo "Server = ${MIRROR}" >mirrorlist
 
   # We use the hosts package cache
-  pacstrap -c -C pacman.conf -M "${MOUNT}" base linux grub openssh sudo polkit haveged netctl python btrfs-progs reflector
+  pacstrap -c -C pacman.conf -M "${MOUNT}" base linux grub openssh sudo polkit haveged netctl btrfs-progs reflector
   cp mirrorlist "${MOUNT}/etc/pacman.d/"
 }
 
@@ -144,7 +144,7 @@ function create_image() {
 
 function cloud_image() {
   arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{cloud,common}.sh)
-  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm linux-headers qemu-guest-agent cloud-init
+  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm qemu-guest-agent cloud-init
   arch-chroot "${MOUNT}" /usr/bin/systemctl enable cloud-init-local.service cloud-init.service cloud-config.service cloud-final.service
 }
 
@@ -155,7 +155,7 @@ function cloud_image_post() {
 
 function vagrant_qemu() {
   arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{chroot,common}.sh)
-  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm linux-headers qemu-guest-agent
+  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm qemu-guest-agent
 }
 
 function vagrant_qemu_post() {

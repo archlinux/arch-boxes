@@ -20,12 +20,8 @@ shfmt:
   script:
     - find . -iname "*.sh" -exec shfmt -i 2 -ci -d {} +
 
-# Note: We explicitly need the `ipv6` tag here because otherwise we'd get random
-# gpg/pacman-key issues.
 build:
   stage: build
-  tags:
-    - ipv6
   before_script:
     - pacman -Syu --needed --noconfirm qemu-headless libisoburn
   script:
@@ -42,7 +38,6 @@ build:
 publish:
   stage: publish
   tags:
-    - ipv6
     - secure
   before_script:
     - pacman -Syu --needed --noconfirm vagrant

@@ -68,11 +68,17 @@ tag_release:
   before_script:
     - pacman -Syu --needed --noconfirm httpie
   script:
+    - >
+        export ASSET_LINKS="[
+          { \"name\": \"Vagrant Cloud Release\", \"url\": \"https://app.vagrantup.com/archlinux/boxes/archlinux/versions/$BUILD_VERSION\" },
+          { \"name\": \"qcow2 Image\", \"url\": \"https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/raw/output/Arch-Linux-x86_64-cloudimg-$BUILD_VERSION.qcow2?job=build:secure\" }
+        ]"
     - http --ignore-stdin "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases"
         "JOB-TOKEN:$CI_JOB_TOKEN"
         "name=v$BUILD_VERSION"
         "tag_name=v$BUILD_VERSION"
         "ref=$CI_COMMIT_SHA"
+        "assets.links=$ASSET_LINKS"
 
 publish:
   stage: publish

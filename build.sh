@@ -71,7 +71,7 @@ EOF
   echo "Server = ${MIRROR}" >mirrorlist
 
   # We use the hosts package cache
-  pacstrap -c -C pacman.conf -M "${MOUNT}" base linux grub openssh sudo polkit haveged netctl btrfs-progs reflector
+  pacstrap -c -C pacman.conf -M "${MOUNT}" base linux grub openssh sudo polkit haveged btrfs-progs reflector
   cp mirrorlist "${MOUNT}/etc/pacman.d/"
 }
 
@@ -155,7 +155,7 @@ function cloud_image_post() {
 
 function vagrant_qemu() {
   arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{chroot,common}.sh)
-  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm qemu-guest-agent
+  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm netctl qemu-guest-agent
 }
 
 function vagrant_qemu_post() {
@@ -179,7 +179,7 @@ EOF
 
 function vagrant_virtualbox() {
   arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{chroot,common}.sh)
-  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm virtualbox-guest-utils-nox
+  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm netctl virtualbox-guest-utils-nox
   arch-chroot "${MOUNT}" /usr/bin/systemctl enable vboxservice
 }
 

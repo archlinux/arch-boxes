@@ -20,7 +20,7 @@ shfmt:
   script:
     - shfmt -i 2 -ci -d **/*.sh
 
-build:
+.build:
   stage: build
   before_script:
     - pacman -Syu --needed --noconfirm qemu-headless libisoburn
@@ -29,6 +29,18 @@ build:
     - . build.env
     - ./build-in-qemu.sh
     - mv build.env output/
+
+build:
+  extends: .build
+  except:
+    - master
+
+build:release:
+  extends: .build
+  tags:
+    - secure
+  only:
+    - master
   artifacts:
     name: "output"
     paths:

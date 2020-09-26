@@ -76,19 +76,14 @@ WantedBy=multi-user.target
 EOF
 
 # enabling important services
-systemctl daemon-reload
 systemctl enable sshd
 systemctl enable haveged
 systemctl enable systemd-networkd
 systemctl enable systemd-resolved
+systemctl enable systemd-timesyncd
 systemctl enable pacman-init.service
 systemctl enable reflector-init.service
 
-if [ -b "/dev/sda" ]; then
-  grub-install /dev/sda
-elif [ -b "/dev/vda" ]; then
-  grub-install /dev/vda
-fi
 sed -i 's/^GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=1/' /etc/default/grub
 # setup unpredictable kernel names
 sed -i 's/^GRUB_CMDLINE_LINUX=.*$/GRUB_CMDLINE_LINUX="net.ifnames=0"/' /etc/default/grub

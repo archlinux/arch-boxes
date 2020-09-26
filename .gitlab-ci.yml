@@ -1,9 +1,6 @@
 default:
   image: "archlinux:latest"
 
-variables:
-  PACKER_LOG: 1
-
 stages:
   - lint
   - build
@@ -23,55 +20,23 @@ shfmt:
   script:
     - find . -iname "*.sh" -exec shfmt -i 2 -ci -d {} +
 
-validate-packer:
-  stage: lint
-  before_script:
-    - pacman -Syu --needed --noconfirm packer
-  script:
-    - packer validate config.json
-
 # Note: We explicitly need the `ipv6` tag here because otherwise we'd get random
 # gpg/pacman-key issues.
-build:cloud-qemu:
+build:
   stage: build
   tags:
     - ipv6
   before_script:
-    - pacman -Syu --needed --noconfirm packer qemu-headless
+    - pacman -Syu --needed --noconfirm qemu-headless libisoburn
   script:
-    - packer build -only=cloud -except=sign config.json
+    - echo "BUILD_DATE=$(date -I)" > build.env
+    - . build.env
+    - ./build-in-qemu.sh
+    - mv build.env output/
   artifacts:
-    name: "archlinux_x86_64_qcow2"
+    name: "output"
     paths:
-      - "Arch-Linux-x86_64-cloudimg-*.*"
-    expire_in: 2d
-
-build:vagrant-virtualbox:
-  stage: build
-  tags:
-    - ipv6
-  before_script:
-    - pacman -Syu --needed --noconfirm packer qemu-headless
-  script:
-    - packer build -only=virtualbox config.json
-  artifacts:
-    name: "archlinux_x86_64_virtualbox"
-    paths:
-      - "*.box"
-    expire_in: 2d
-
-build:vagrant-qemu:
-  stage: build
-  tags:
-    - ipv6
-  before_script:
-    - pacman -Syu --needed --noconfirm packer qemu-headless
-  script:
-    - packer build -only=libvirt config.json
-  artifacts:
-    name: "archlinux_x86_64_libvirt"
-    paths:
-      - "*.box"
+      - "output/*"
     expire_in: 2d
 
 publish:
@@ -82,13 +47,12 @@ publish:
   before_script:
     - pacman -Syu --needed --noconfirm vagrant
   script:
-    - vagrant cloud auth login --token $VAGRANT_API_TOKEN
+    - . output/build.env
+    - vagrant cloud auth login --token "${VAGRANT_API_TOKEN}"
     - vagrant cloud auth login --check
     - vagrant cloud box show archlinux/archlinux
-    - LIBVIRT_RELEASE=`ls Arch-Linux-x86_64-libvirt-*.box | awk -F "." '{print $1}'  | awk -F "-" '{print $5"."$6"."$7}'`
-    - VIRTUALBOX_RELEASE=`ls Arch-Linux-x86_64-virtualbox-*.box | awk -F "." '{print $1}'  | awk -F "-" '{print $5"."$6"."$7}'`
-    - vagrant cloud publish archlinux/archlinux $LIBVIRT_RELEASE libvirt Arch-Linux-x86_64-libvirt-*.box --release -f
-    - vagrant cloud publish archlinux/archlinux $VIRTUALBOX_RELEASE virtualbox Arch-Linux-x86_64-virtualbox-*.box --release -f
+    - vagrant cloud publish archlinux/archlinux "v${BUILD_DATE}" libvirt output/Arch-Linux-x86_64-libvirt-*.box --release -f
+    - vagrant cloud publish archlinux/archlinux "v${BUILD_DATE}" virtualbox output/Arch-Linux-x86_64-virtualbox-*.box --release -f
   only:
     variables:
       - $SCHEDULED_PUBLISH == "TRUE"

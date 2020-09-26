@@ -11,14 +11,14 @@ shellcheck:
   before_script:
     - pacman -Syu --needed --noconfirm shellcheck
   script:
-    - find . -iname "*.sh" -exec shellcheck {} +
+    - shellcheck **/*.sh
 
 shfmt:
   stage: lint
   before_script:
     - pacman -Syu --needed --noconfirm shfmt
   script:
-    - find . -iname "*.sh" -exec shfmt -i 2 -ci -d {} +
+    - shfmt -i 2 -ci -d **/*.sh
 
 build:
   stage: build

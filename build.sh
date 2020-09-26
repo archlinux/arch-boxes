@@ -200,7 +200,7 @@ EOF
   cp "${ORIG_PWD}/box.ovf" .
   sed -e "s/MACHINE_UUID/$(uuidgen)/" \
     -e "s/DISK_UUID/$(uuidgen)/" \
-    -e "s/DISK_CAPACITY/$(qemu-img info --output=json "box/packer-virtualbox.vmdk" | jq '."virtual-size"')/" \
+    -e "s/DISK_CAPACITY/$(qemu-img info --output=json "packer-virtualbox.vmdk" | jq '."virtual-size"')/" \
     -e "s/UNIX/$(date +%s)/" \
     -e "s/MAC_ADDRESS/${mac_address}/" \
     -i box.ovf

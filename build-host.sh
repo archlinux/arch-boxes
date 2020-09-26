@@ -1,5 +1,5 @@
 #!/bin/bash
-# build-in qemu.sh runs build.sh in a qemu VM running the latest Arch installer iso
+# build-host.sh runs build-inside-vm.sh in a qemu VM running the latest Arch installer iso
 #
 # nounset: "Treat unset variables and parameters [...] as an error when performing parameter expansion."
 # errexit: "Exit immediately if [...] command exits with a non-zero status."
@@ -117,7 +117,7 @@ function main() {
   expect "# "
   send "mkfs.ext4 /dev/vda && mkdir /mnt/scratch-disk/ && mount /dev/vda /mnt/scratch-disk && cd /mnt/scratch-disk\n"
   expect "# "
-  send "cp -a /mnt/arch-boxes/{box.ovf,build.sh,http} .\n"
+  send "cp -a /mnt/arch-boxes/{box.ovf,build-inside-vm.sh,http} .\n"
   expect "# "
   send "mkdir pkg && mount --bind pkg /var/cache/pacman/pkg\n"
   expect "# "
@@ -131,7 +131,7 @@ function main() {
   expect "# "
 
   ## Start build and copy output to local disk
-  send "bash -x ./build.sh\n"
+  send "bash -x ./build-inside-vm.sh ${BUILD_VERSION}\n"
   expect "# " 240 # qemu-img convert can take a long time
   send "cp -r --preserve=mode,timestamps output /mnt/arch-boxes/tmp/$(basename "${TMPDIR}")/\n"
   expect "# " 60

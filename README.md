@@ -2,11 +2,11 @@
 [![CI Status](https://gitlab.archlinux.org/archlinux/arch-boxes/badges/master/pipeline.svg)](https://gitlab.archlinux.org/archlinux/arch-boxes/-/pipelines)
 
 - [Vagrant Cloud](https://app.vagrantup.com/archlinux/boxes/archlinux)
-- [Download latest qcow2 image](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/download?job=build:cloud-qemu)
+- [Download latest qcow2 image](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/download?job=build:secure)
 
-Arch-boxes provides automated builds of the Arch Linux releases for
-different providers and post-processors. Check the providers or post-processor sections if you want to know
-which are currently supported.
+Arch-boxes provides automated builds of the Arch Linux releases for different providers and
+post-processors. Check the providers or post-processor sections if you want to know which are
+currently supported.
 
 ## Dependencies
 You'll need the following dependencies:

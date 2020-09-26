@@ -25,10 +25,9 @@ shfmt:
   before_script:
     - pacman -Syu --needed --noconfirm qemu-headless libisoburn
   script:
-    - echo "BUILD_DATE=$(date -I)" > build.env
-    - . build.env
-    - ./build-in-qemu.sh
-    - mv build.env output/
+    - echo "BUILD_VERSION=$(date +%Y.%m.%d)" > build.env
+    - export $(< build.env)
+    - ./build-host.sh
   after_script:
     - echo "image_size_megabytes{image=\"qcow2\"} $(du -m output/*cloudimg*qcow2)" > metrics.txt
     - echo "image_size_megabytes{image=\"libvirt\"} $(du -m output/*libvirt*box)" >> metrics.txt
@@ -36,38 +35,56 @@ shfmt:
   artifacts:
     reports:
       metrics: metrics.txt
+      dotenv: build.env
 
 build:
   extends: .build
   except:
     - master
 
-build:release:
+build:secure:
   extends: .build
   tags:
     - secure
   only:
     - master
+    - schedules
+    - tags
   artifacts:
     name: "output"
     paths:
       - "output/*"
     expire_in: 2d
 
+tag_release:
+  stage: publish
+  tags:
+    - secure
+  only:
+    refs:
+      - schedules
+    variables:
+      - $SCHEDULED_PUBLISH == "TRUE"
+  before_script:
+    - pacman -Syu --needed --noconfirm httpie
+  script:
+    - http --ignore-stdin "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases"
+        "JOB-TOKEN:$CI_JOB_TOKEN"
+        "name=v$BUILD_VERSION"
+        "tag_name=v$BUILD_VERSION"
+        "ref=$CI_COMMIT_SHA"
+
 publish:
   stage: publish
   tags:
     - secure
+  only:
+    - tags
   before_script:
     - pacman -Syu --needed --noconfirm vagrant
   script:
-    - . output/build.env
     - vagrant cloud auth login --token "${VAGRANT_API_TOKEN}"
     - vagrant cloud auth login --check
     - vagrant cloud box show archlinux/archlinux
-    - vagrant cloud publish archlinux/archlinux "v${BUILD_DATE}" libvirt output/Arch-Linux-x86_64-libvirt-*.box --release -f
-    - vagrant cloud publish archlinux/archlinux "v${BUILD_DATE}" virtualbox output/Arch-Linux-x86_64-virtualbox-*.box --release -f
-  only:
-    variables:
-      - $SCHEDULED_PUBLISH == "TRUE"
-  resource_group: vm-build
+    - vagrant cloud publish archlinux/archlinux "v${BUILD_VERSION}" libvirt output/Arch-Linux-x86_64-libvirt-*.box --release -f
+    - vagrant cloud publish archlinux/archlinux "v${BUILD_VERSION}" virtualbox output/Arch-Linux-x86_64-virtualbox-*.box --release -f

@@ -1,5 +1,5 @@
 #!/bin/bash
-# build.sh builds the images (cloud image, vagrant boxes)
+# build-inside-vm.sh builds the images (cloud image, vagrant boxes)
 
 # nounset: "Treat unset variables and parameters [...] as an error when performing parameter expansion."
 # errexit: "Exit immediately if [...] command exits with a non-zero status."
@@ -209,6 +209,7 @@ EOF
   rm Vagrantfile metadata.json packer-virtualbox.vmdk box.ovf
 }
 
+# ${1} - Optional build version. If not set, will generate a default based on date.
 function main() {
   if [ "$(id -u)" -ne 0 ]; then
     echo "root is required"
@@ -223,11 +224,16 @@ function main() {
   arch-chroot "${MOUNT}" grub-install --target=i386-pc "${LOOPDEV}"
   unmount_image
 
-  if [ -z "${BUILD_DATE:-}" ]; then
-    BUILD_DATE="$(date -I)"
+  local build_version
+  if [ -z "${1:-}" ]; then
+    build_version="$(date +%Y.%m.%d)"
+    echo "WARNING: BUILD_VERSION wasn't set!"
+    echo "Falling back to $build_version"
+  else
+    build_version="${1}"
   fi
-  create_image "cloud-img.img" "Arch-Linux-x86_64-cloudimg-${BUILD_DATE}.qcow2" cloud_image cloud_image_post
-  create_image "vagrant-qemu.img" "Arch-Linux-x86_64-libvirt-${BUILD_DATE}.box" vagrant_qemu vagrant_qemu_post
-  create_image "vagrant-virtualbox.img" "Arch-Linux-x86_64-virtualbox-${BUILD_DATE}.box" vagrant_qemu vagrant_virtualbox_post
+  create_image "cloud-img.img" "Arch-Linux-x86_64-cloudimg-${build_version}.qcow2" cloud_image cloud_image_post
+  create_image "vagrant-qemu.img" "Arch-Linux-x86_64-libvirt-${build_version}.box" vagrant_qemu vagrant_qemu_post
+  create_image "vagrant-virtualbox.img" "Arch-Linux-x86_64-virtualbox-${build_version}.box" vagrant_qemu vagrant_virtualbox_post
 }
-main
+main "$@"

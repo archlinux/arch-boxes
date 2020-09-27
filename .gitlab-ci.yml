@@ -41,6 +41,8 @@ build:
   extends: .build
   except:
     - master
+    - schedules
+    - tags
 
 build:secure:
   extends: .build

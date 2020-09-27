@@ -49,6 +49,8 @@ function setup_disk() {
     "${IMAGE}"
 
   LOOPDEV=$(losetup --find --partscan --show "${IMAGE}")
+  # Partscan is racy
+  until test -e "${LOOPDEV}p2"; do true; done
   mkfs.btrfs "${LOOPDEV}p2"
   mount -o compress-force=zstd "${LOOPDEV}p2" "${MOUNT}"
 }
@@ -101,6 +103,8 @@ function image_cleanup() {
 # Mount image helper (loop device + mount)
 function mount_image() {
   LOOPDEV=$(losetup --find --partscan --show "${1:-${IMAGE}}")
+  # Partscan is racy
+  until test -e "${LOOPDEV}p2"; do true; done
   mount -o compress-force=zstd "${LOOPDEV}p2" "${MOUNT}"
   # Setup bind mount to package cache
   mount --bind "/var/cache/pacman/pkg" "${MOUNT}/var/cache/pacman/pkg"

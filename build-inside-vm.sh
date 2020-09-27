@@ -40,6 +40,15 @@ function cleanup() {
 }
 trap cleanup EXIT
 
+# Helper function: wait until a file path exists
+# ${1} - file path
+function wait_until_exists() {
+  until test -e "${1}"; do
+      echo "${1} doesn't exist yet..."
+      sleep 1
+  done
+}
+
 # Create the disk, partitions it, format the partition and mount the filesystem
 function setup_disk() {
   truncate -s "${DISK_SIZE}" "${IMAGE}"
@@ -50,7 +59,7 @@ function setup_disk() {
 
   LOOPDEV=$(losetup --find --partscan --show "${IMAGE}")
   # Partscan is racy
-  until test -e "${LOOPDEV}p2"; do true; done
+  wait_until_exists "${LOOPDEV}p2"
   mkfs.btrfs "${LOOPDEV}p2"
   mount -o compress-force=zstd "${LOOPDEV}p2" "${MOUNT}"
 }
@@ -104,7 +113,7 @@ function image_cleanup() {
 function mount_image() {
   LOOPDEV=$(losetup --find --partscan --show "${1:-${IMAGE}}")
   # Partscan is racy
-  until test -e "${LOOPDEV}p2"; do true; done
+  wait_until_exists "${LOOPDEV}p2"
   mount -o compress-force=zstd "${LOOPDEV}p2" "${MOUNT}"
   # Setup bind mount to package cache
   mount --bind "/var/cache/pacman/pkg" "${MOUNT}/var/cache/pacman/pkg"

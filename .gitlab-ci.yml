@@ -25,7 +25,7 @@ shfmt:
   before_script:
     - pacman -Syu --needed --noconfirm qemu-headless libisoburn
   script:
-    - echo "BUILD_VERSION=$(date +%Y.%m.%d)" > build.env
+    - echo "BUILD_VERSION=$(date +%Y%m%d).$CI_JOB_ID" > build.env
     - export $(< build.env)
     - ./build-host.sh
   after_script:

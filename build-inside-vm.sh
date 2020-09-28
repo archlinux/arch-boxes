@@ -241,7 +241,7 @@ function main() {
 
   local build_version
   if [ -z "${1:-}" ]; then
-    build_version="$(date +%Y.%m.%d)"
+    build_version="$(date +%Y%m%d).0"
     echo "WARNING: BUILD_VERSION wasn't set!"
     echo "Falling back to $build_version"
   else

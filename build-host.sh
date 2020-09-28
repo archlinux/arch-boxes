@@ -53,6 +53,7 @@ function start_qemu() {
 
   { qemu-system-x86_64 \
     -machine accel=kvm:tcg \
+    -smp 4 \
     -m 768 \
     -net nic \
     -net user \

@@ -59,6 +59,7 @@ function setup_disk() {
 
   LOOPDEV=$(losetup --find --partscan --show "${IMAGE}")
   # Partscan is racy
+  blockdev --rereadpt ${LOOPDEV}
   wait_until_exists "${LOOPDEV}p2"
   mkfs.btrfs "${LOOPDEV}p2"
   mount -o compress-force=zstd "${LOOPDEV}p2" "${MOUNT}"
@@ -113,6 +114,7 @@ function image_cleanup() {
 function mount_image() {
   LOOPDEV=$(losetup --find --partscan --show "${1:-${IMAGE}}")
   # Partscan is racy
+  blockdev --rereadpt ${LOOPDEV}
   wait_until_exists "${LOOPDEV}p2"
   mount -o compress-force=zstd "${LOOPDEV}p2" "${MOUNT}"
   # Setup bind mount to package cache

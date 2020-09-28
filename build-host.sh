@@ -127,6 +127,10 @@ function main() {
   send "until systemctl is-active pacman-init; do sleep 1; done\n"
   expect "# "
 
+  # Explicitly lookup mirror address as we'd get random failures otherwise during pacman
+  send "host ${MIRROR}\n"
+  expect "# "
+
   # Install required packages
   send "pacman -Sy --noconfirm qemu-headless jq\n"
   expect "# "

@@ -86,6 +86,9 @@ function postinstall() {
   mkswap "${MOUNT}/swap/swapfile"
   echo -e "/swap/swapfile none swap defaults 0 0" >>"${MOUNT}/etc/fstab"
 
+  echo "COMPRESSION=\"xz\"" >>"${MOUNT}/etc/mkinitcpio.conf"
+  arch-chroot "${MOUNT}" /usr/bin/mkinitcpio -p linux
+
   echo "archlinux" >"${MOUNT}/etc/hostname"
   echo "KEYMAP=us" >"${MOUNT}/etc/vconsole.conf"
   ln -sf /var/run/systemd/resolve/resolv.conf "${MOUNT}/etc/resolv.conf"

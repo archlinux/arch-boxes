@@ -25,7 +25,14 @@ shfmt:
   before_script:
     - pacman -Syu --needed --noconfirm qemu-headless libisoburn
   script:
-    - echo "BUILD_VERSION=$(date +%Y%m%d).$CI_JOB_ID" > build.env
+    - |
+      # If we're building a tagged release, use the tag (without the 'v' prefix) as the
+      # BUILD_VERSION. Otherwise, determine a new BUILD_VERSION.
+      if [[ -n "$CI_COMMIT_TAG" ]]; then
+        echo "BUILD_VERSION=${CI_COMMIT_TAG/v/}" > build.env
+      else
+        echo "BUILD_VERSION=$(date +%Y%m%d).$CI_JOB_ID" > build.env
+      fi
     - export $(< build.env)
     - ./build-host.sh
   after_script:

@@ -80,7 +80,7 @@ tag_release:
     - >
         export ASSET_LINKS="{ \"links\": [ \
           { \"name\": \"Vagrant Cloud Release\", \"url\": \"https://app.vagrantup.com/archlinux/boxes/archlinux/versions/$BUILD_VERSION\" }, \
-          { \"name\": \"qcow2 Image\", \"url\": \"https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/raw/output/Arch-Linux-x86_64-cloudimg-$BUILD_VERSION.qcow2?job=build:secure\" } \
+          { \"name\": \"Browse artifacts\", \"url\": \"https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/v$BUILD_VERSION/browse/output?job=build:secure\" } \
         ]}"
     - http --ignore-stdin "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases"
         "JOB-TOKEN:$CI_JOB_TOKEN"

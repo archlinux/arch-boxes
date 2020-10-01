@@ -58,7 +58,7 @@ function start_qemu() {
     -net nic \
     -net user \
     -kernel vmlinuz-linux \
-    -initrd archiso.img \
+    -initrd initramfs-linux.img \
     -append "archisobasedir=arch archisolabel=${ISO_VOLUME_ID} ip=dhcp net.ifnames=0 console=ttyS0 mirror=${MIRROR}" \
     -drive file=scratch-disk.img,format=raw,if=virtio \
     -drive file="${ISO}",format=raw,if=virtio,media=cdrom,read-only \

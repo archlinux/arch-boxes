@@ -89,8 +89,9 @@ function postinstall() {
   echo "COMPRESSION=\"xz\"" >>"${MOUNT}/etc/mkinitcpio.conf"
   arch-chroot "${MOUNT}" /usr/bin/mkinitcpio -p linux
 
-  echo "archlinux" >"${MOUNT}/etc/hostname"
-  echo "KEYMAP=us" >"${MOUNT}/etc/vconsole.conf"
+  sed -i -e 's/^#\(en_US.UTF-8\)/\1/' "${MOUNT}/etc/locale.gen"
+  arch-chroot "${MOUNT}" /usr/bin/locale-gen
+  arch-chroot "${MOUNT}" /usr/bin/systemd-firstboot --locale=en_US.UTF-8 --timezone=UTC --hostname=archlinux --keymap=us
   ln -sf /var/run/systemd/resolve/resolv.conf "${MOUNT}/etc/resolv.conf"
 }
 

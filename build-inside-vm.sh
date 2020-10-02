@@ -253,6 +253,6 @@ function main() {
   fi
   create_image "Arch-Linux-x86_64-cloudimg-${build_version}.qcow2" cloud_image cloud_image_post
   create_image "Arch-Linux-x86_64-libvirt-${build_version}.box" vagrant_qemu vagrant_qemu_post
-  create_image "Arch-Linux-x86_64-virtualbox-${build_version}.box" vagrant_qemu vagrant_virtualbox_post
+  create_image "Arch-Linux-x86_64-virtualbox-${build_version}.box" vagrant_virtualbox vagrant_virtualbox_post
 }
 main "$@"

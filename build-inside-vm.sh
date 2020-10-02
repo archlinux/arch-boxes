@@ -148,17 +148,17 @@ function mv_to_output() {
 }
 
 # Helper function: create a new image from the "base" image
-# ${1} - new image file
-# ${2} - final file
-# ${3} - pre
-# ${4} - post
+# ${1} - final file
+# ${2} - pre
+# ${3} - post
 function create_image() {
-  copy_and_mount_image "${1}"
-  "${3}"
+  local tmp_image="$(basename "$(mktemp -u)")"
+  copy_and_mount_image "${tmp_image}"
+  "${2}"
   image_cleanup
   unmount_image
-  "${4}" "${1}" "${2}"
-  mv_to_output "${2}"
+  "${3}" "${tmp_image}" "${1}"
+  mv_to_output "${1}"
 }
 
 function cloud_image() {
@@ -251,8 +251,8 @@ function main() {
   else
     build_version="${1}"
   fi
-  create_image "cloud-img.img" "Arch-Linux-x86_64-cloudimg-${build_version}.qcow2" cloud_image cloud_image_post
-  create_image "vagrant-qemu.img" "Arch-Linux-x86_64-libvirt-${build_version}.box" vagrant_qemu vagrant_qemu_post
-  create_image "vagrant-virtualbox.img" "Arch-Linux-x86_64-virtualbox-${build_version}.box" vagrant_qemu vagrant_virtualbox_post
+  create_image "Arch-Linux-x86_64-cloudimg-${build_version}.qcow2" cloud_image cloud_image_post
+  create_image "Arch-Linux-x86_64-libvirt-${build_version}.box" vagrant_qemu vagrant_qemu_post
+  create_image "Arch-Linux-x86_64-virtualbox-${build_version}.box" vagrant_qemu vagrant_virtualbox_post
 }
 main "$@"

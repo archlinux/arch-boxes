@@ -6,13 +6,30 @@
 
 Arch-boxes provides automated builds of the Arch Linux releases for different providers and formats.
 
-## Dependencies
+## Usage
+
+### Vagrant
+If you're a vagrant user, you can just go to [our Vagrant Cloud page](https://app.vagrantup.com/archlinux/boxes/archlinux) and follow the instructions there.
+
+### Plain qcow2 image
+If you want to use the plain qcow2 image with `qemu` or other hypervisors, you can use the nightly qcow2 images we provide.
+Be advised, however, that our automatic builds are cleaned up after a few days so you can't hard-code a specific image version anywhere.
+
+You can use this snippet to always get the most recent image and check its integrity (you need to install `hq` for this):
+
+    most_recent=$(curl -Ls 'https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/browse/output?job=build:secure' | grep cloudimg | grep -vi sha256 | hq a attr href | sed "s|artifacts/file|artifacts/raw|")
+    curl -LO  "https://gitlab.archlinux.org$most_recent"{,.SHA256}
+    sha256sum -c $(basename $most_recent).SHA256
+
+## Development
+
+### Dependencies
 You'll need the following dependencies:
 
 * vagrant (for vagrant images)
 * qemu
 
-## How to build this
+### How to build this
 The official builds are done in our Arch Linux GitLab CI.
 
     ./build-host.sh

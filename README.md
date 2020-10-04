@@ -1,18 +1,18 @@
 # arch-boxes
 [![CI Status](https://gitlab.archlinux.org/archlinux/arch-boxes/badges/master/pipeline.svg)](https://gitlab.archlinux.org/archlinux/arch-boxes/-/pipelines)
 
-- [Vagrant Cloud](https://app.vagrantup.com/archlinux/boxes/archlinux)
-- [Download latest artifacts](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/browse/output?job=build:secure)
+- [**Vagrant Cloud**](https://app.vagrantup.com/archlinux/boxes/archlinux)
+- [**Download latest artifacts**](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/browse/output?job=build:secure)
 
 Arch-boxes provides automated builds of the Arch Linux releases for different providers and formats.
 
 ## Usage
 
 ### Vagrant
-If you're a vagrant user, you can just go to [our Vagrant Cloud page](https://app.vagrantup.com/archlinux/boxes/archlinux) and follow the instructions there.
+If you're a vagrant user, you can just go to [**our Vagrant Cloud page**](https://app.vagrantup.com/archlinux/boxes/archlinux) and follow the instructions there.
 
 ### Plain qcow2 image
-If you want to use the plain qcow2 image with `qemu` or other hypervisors, you can use the nightly qcow2 images we provide.
+If you want to use the plain qcow2 image with `qemu` or other hypervisors, you can use the [**nightly qcow2 images**](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/browse/output?job=build:secure) we provide.
 Be advised, however, that our automatic builds are cleaned up after a few days so you can't hard-code a specific image version anywhere.
 
 You can use this snippet to always get the most recent image and check its integrity (you need to install `hq` for this):

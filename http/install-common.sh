@@ -3,13 +3,7 @@
 set -e
 set -x
 
-ln -sf /usr/share/zoneinfo/UTC /etc/localtime
-sed -i -e 's/^#\(en_US.UTF-8\)/\1/' /etc/locale.gen
-locale-gen
-echo 'LANG=en_US.UTF-8' >/etc/locale.conf
-
 # setting the user credentials
-echo -e "${NEWUSER}\n${NEWUSER}" | passwd
 useradd -m -U "${NEWUSER}"
 echo -e "${NEWUSER}\n${NEWUSER}" | passwd "${NEWUSER}"
 
@@ -89,9 +83,6 @@ sed -i 's/^GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=1/' /etc/default/grub
 sed -i 's/^GRUB_CMDLINE_LINUX=.*$/GRUB_CMDLINE_LINUX="net.ifnames=0"/' /etc/default/grub
 sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT=\"rootflags=compress-force=zstd\"/' /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
-
-# lock root account
-usermod -p "*" root
 
 if declare -f post >/dev/null; then
   post

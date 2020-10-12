@@ -40,6 +40,10 @@ shfmt:
     - echo "image_size_megabytes{image=\"libvirt\"} $(du -m output/*libvirt*box)" >> metrics.txt
     - echo "image_size_megabytes{image=\"virtualbox\"} $(du -m output/*virtualbox*box)" >> metrics.txt
   artifacts:
+    name: "output"
+    paths:
+      - "output/*"
+    expire_in: 2d
     reports:
       metrics: metrics.txt
       dotenv: build.env
@@ -59,11 +63,6 @@ build:secure:
     - master
     - schedules
     - tags
-  artifacts:
-    name: "output"
-    paths:
-      - "output/*"
-    expire_in: 2d
 
 tag_release:
   stage: publish

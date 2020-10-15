@@ -79,6 +79,11 @@ EOF
 
 # Misc "tweaks" done after bootstrapping
 function postinstall() {
+  # Remove machine-id see:
+  # https://gitlab.archlinux.org/archlinux/arch-boxes/-/issues/25
+  # https://gitlab.archlinux.org/archlinux/arch-boxes/-/issues/117
+  rm "${MOUNT}/etc/machine-id"
+
   arch-chroot "${MOUNT}" /usr/bin/btrfs subvolume create /swap
   chattr +C "${MOUNT}/swap"
   chmod 0700 "${MOUNT}/swap"

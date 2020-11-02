@@ -36,7 +36,7 @@ shfmt:
     - export $(< build.env)
     - ./build-host.sh
   after_script:
-    - echo "image_size_megabytes{image=\"qcow2\"} $(du -m output/*cloudimg*qcow2)" > metrics.txt
+    - echo "image_size_megabytes{image=\"cloudimg\"} $(du -m output/*cloudimg*qcow2)" > metrics.txt
     - echo "image_size_megabytes{image=\"libvirt\"} $(du -m output/*libvirt*box)" >> metrics.txt
     - echo "image_size_megabytes{image=\"virtualbox\"} $(du -m output/*virtualbox*box)" >> metrics.txt
   artifacts:

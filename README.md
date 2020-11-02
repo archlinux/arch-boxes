@@ -11,8 +11,11 @@ Arch-boxes provides automated builds of the Arch Linux releases for different pr
 ### Vagrant
 If you're a vagrant user, you can just go to [**our Vagrant Cloud page**](https://app.vagrantup.com/archlinux/boxes/archlinux) and follow the instructions there.
 
-### Plain qcow2 image
-If you want to use the plain qcow2 image with `qemu` or other hypervisors, you can use the [**nightly qcow2 images**](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/browse/output?job=build:secure) we provide.
+### Cloud image
+If you want to run Arch Linux in the cloud, you can use our cloud-image, which is preconfigured to work in most cloud environments. It is built daily and can be downloaded [here](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/browse/output?job=build:secure) (`Arch-Linux-x86_64-cloudimg-xxxxxxxx.xxxx.qcow2`).
+
+The default user is `arch`.
+
 Be advised, however, that our automatic builds are cleaned up after a few days so you can't hard-code a specific image version anywhere.
 
 You can use this snippet to always get the most recent image and check its integrity (you need to install `hq` for this):
@@ -43,7 +46,7 @@ We have CI in place to build all images even for merge requests.
 Releases are done automatically via [GitLab CI schedule](https://gitlab.archlinux.org/archlinux/arch-boxes/-/pipeline_schedules).
 No manual intervention is required or desired.
 
-## Checking cloud-init support in our qcow2 images:
+## Checking cloud-init support in our cloud image:
 ```bash
 $ packer build -only=cloud -except=sign config.json
 $ cp Arch-Linux-cloudimg-2020-02-24.qcow2 disk.qcow2

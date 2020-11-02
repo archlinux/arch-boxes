@@ -171,7 +171,7 @@ function cloud_image() {
   # The growpart module[1] requires the growpart program, provided by the
   # cloud-guest-utils package
   # [1] https://cloudinit.readthedocs.io/en/latest/topics/modules.html#growpart
-  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm qemu-guest-agent cloud-init cloud-guest-utils
+  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm cloud-init cloud-guest-utils
   arch-chroot "${MOUNT}" /usr/bin/systemctl enable cloud-init-local.service cloud-init.service cloud-config.service cloud-final.service
 }
 
@@ -182,7 +182,7 @@ function cloud_image_post() {
 
 function vagrant_qemu() {
   arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{chroot,common}.sh)
-  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm netctl qemu-guest-agent
+  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm netctl
 }
 
 function vagrant_qemu_post() {

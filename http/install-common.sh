@@ -7,15 +7,6 @@ set -x
 useradd -m -U "${NEWUSER}"
 echo -e "${NEWUSER}\n${NEWUSER}" | passwd "${NEWUSER}"
 
-# setting automatic authentication for any action requiring admin rights via Polkit
-cat <<EOF >/etc/polkit-1/rules.d/49-nopasswd_global.rules
-polkit.addRule(function(action, subject) {
-    if (subject.isInGroup("${NEWUSER}")) {
-        return polkit.Result.YES;
-    }
-});
-EOF
-
 # setting sudo for the user
 cat <<EOF >"/etc/sudoers.d/${NEWUSER}"
 Defaults:${NEWUSER} !requiretty

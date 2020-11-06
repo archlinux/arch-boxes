@@ -14,15 +14,6 @@ ${NEWUSER} ALL=(ALL) NOPASSWD: ALL
 EOF
 chmod 440 "/etc/sudoers.d/${NEWUSER}"
 
-# setup network
-cat <<EOF >/etc/systemd/network/eth0.network
-[Match]
-Name=eth0
-
-[Network]
-DHCP=ipv4
-EOF
-
 # Setup pacman-init.service for clean pacman keyring initialization
 cat <<EOF >/etc/systemd/system/pacman-init.service
 [Unit]

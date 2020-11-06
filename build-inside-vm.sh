@@ -181,7 +181,7 @@ function cloud_image_post() {
 }
 
 function vagrant_qemu() {
-  arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{chroot,common}.sh)
+  arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{vagrant,common}.sh)
   arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm netctl
 }
 
@@ -205,7 +205,7 @@ EOF
 }
 
 function vagrant_virtualbox() {
-  arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{chroot,common}.sh)
+  arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{vagrant,common}.sh)
   arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm netctl virtualbox-guest-utils-nox
   arch-chroot "${MOUNT}" /usr/bin/systemctl enable vboxservice
 }

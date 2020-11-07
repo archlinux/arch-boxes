@@ -3,6 +3,17 @@
 NEWUSER="vagrant"
 
 post() {
+  # setting the user credentials
+  useradd -m -U "${NEWUSER}"
+  echo -e "${NEWUSER}\n${NEWUSER}" | passwd "${NEWUSER}"
+
+  # setting sudo for the user
+  cat <<EOF >"/etc/sudoers.d/${NEWUSER}"
+Defaults:${NEWUSER} !requiretty
+${NEWUSER} ALL=(ALL) NOPASSWD: ALL
+EOF
+  chmod 440 "/etc/sudoers.d/${NEWUSER}"
+
   # setup network
   cat <<EOF >/etc/systemd/network/eth0.network
 [Match]

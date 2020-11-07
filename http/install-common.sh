@@ -3,17 +3,6 @@
 set -e
 set -x
 
-# setting the user credentials
-useradd -m -U "${NEWUSER}"
-echo -e "${NEWUSER}\n${NEWUSER}" | passwd "${NEWUSER}"
-
-# setting sudo for the user
-cat <<EOF >"/etc/sudoers.d/${NEWUSER}"
-Defaults:${NEWUSER} !requiretty
-${NEWUSER} ALL=(ALL) NOPASSWD: ALL
-EOF
-chmod 440 "/etc/sudoers.d/${NEWUSER}"
-
 # Setup pacman-init.service for clean pacman keyring initialization
 cat <<EOF >/etc/systemd/system/pacman-init.service
 [Unit]

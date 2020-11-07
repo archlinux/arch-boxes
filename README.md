@@ -16,6 +16,18 @@ If you want to run Arch Linux in the cloud, you can use our cloud-image, which i
 
 The default user is `arch`.
 
+If you are running the cloud-image with QEMU, it can in some cases\* be beneficial to run the [QEMU guest-agent](https://wiki.qemu.org/Features/GuestAgent). This can be done with the following user-data:
+```yaml
+#cloud-config
+packages:
+  - qemu-guest-agent
+runcmd:
+  - [ systemctl, daemon-reload ]
+  - [ systemctl, enable, qemu-ga ]
+  - [ systemctl, start, qemu-ga ]
+```
+*\*ex: when using [Proxmox](https://pve.proxmox.com/wiki/Qemu-guest-agent) or [oVirt](https://www.ovirt.org/develop/internal/guest-agent/understanding-guest-agents-and-other-tools.html). Please be aware, that the agent basically gives the host root access to the guest.*
+
 Be advised, however, that our automatic builds are cleaned up after a few days so you can't hard-code a specific image version anywhere.
 
 You can use this snippet to always get the most recent image and check its integrity (you need to install `hq` for this):

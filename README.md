@@ -43,6 +43,7 @@ You'll need the following dependencies:
 
 * vagrant (for vagrant images)
 * qemu
+* libisoburn
 
 ### How to build this
 The official builds are done in our Arch Linux GitLab CI.

@@ -73,7 +73,7 @@ EOF
   echo "Server = ${MIRROR}" >mirrorlist
 
   # We use the hosts package cache
-  pacstrap -c -C pacman.conf -M "${MOUNT}" base linux grub openssh sudo polkit haveged btrfs-progs reflector
+  pacstrap -c -C pacman.conf -M "${MOUNT}" base linux grub openssh sudo haveged btrfs-progs reflector
   cp mirrorlist "${MOUNT}/etc/pacman.d/"
 }
 
@@ -171,7 +171,7 @@ function cloud_image() {
   # The growpart module[1] requires the growpart program, provided by the
   # cloud-guest-utils package
   # [1] https://cloudinit.readthedocs.io/en/latest/topics/modules.html#growpart
-  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm qemu-guest-agent cloud-init cloud-guest-utils
+  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm cloud-init cloud-guest-utils
   arch-chroot "${MOUNT}" /usr/bin/systemctl enable cloud-init-local.service cloud-init.service cloud-config.service cloud-final.service
 }
 
@@ -180,9 +180,17 @@ function cloud_image_post() {
   rm "${1}"
 }
 
-function vagrant_qemu() {
-  arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{chroot,common}.sh)
-  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm netctl qemu-guest-agent
+function vagrant_common() {
+  arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{vagrant,common}.sh)
+  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm netctl polkit
+  # setting automatic authentication for any action requiring admin rights via Polkit
+  cat <<EOF >"${MOUNT}/etc/polkit-1/rules.d/49-nopasswd_global.rules"
+polkit.addRule(function(action, subject) {
+    if (subject.isInGroup("vagrant")) {
+        return polkit.Result.YES;
+    }
+});
+EOF
 }
 
 function vagrant_qemu_post() {
@@ -205,8 +213,8 @@ EOF
 }
 
 function vagrant_virtualbox() {
-  arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{chroot,common}.sh)
-  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm netctl virtualbox-guest-utils-nox
+  vagrant_common
+  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm virtualbox-guest-utils-nox
   arch-chroot "${MOUNT}" /usr/bin/systemctl enable vboxservice
 }
 
@@ -260,7 +268,7 @@ function main() {
     build_version="${1}"
   fi
   create_image "Arch-Linux-x86_64-cloudimg-${build_version}.qcow2" cloud_image cloud_image_post
-  create_image "Arch-Linux-x86_64-libvirt-${build_version}.box" vagrant_qemu vagrant_qemu_post
+  create_image "Arch-Linux-x86_64-libvirt-${build_version}.box" vagrant_common vagrant_qemu_post
   create_image "Arch-Linux-x86_64-virtualbox-${build_version}.box" vagrant_virtualbox vagrant_virtualbox_post
 }
 main "$@"

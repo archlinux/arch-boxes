@@ -3,35 +3,6 @@
 set -e
 set -x
 
-# setting the user credentials
-useradd -m -U "${NEWUSER}"
-echo -e "${NEWUSER}\n${NEWUSER}" | passwd "${NEWUSER}"
-
-# setting automatic authentication for any action requiring admin rights via Polkit
-cat <<EOF >/etc/polkit-1/rules.d/49-nopasswd_global.rules
-polkit.addRule(function(action, subject) {
-    if (subject.isInGroup("${NEWUSER}")) {
-        return polkit.Result.YES;
-    }
-});
-EOF
-
-# setting sudo for the user
-cat <<EOF >"/etc/sudoers.d/${NEWUSER}"
-Defaults:${NEWUSER} !requiretty
-${NEWUSER} ALL=(ALL) NOPASSWD: ALL
-EOF
-chmod 440 "/etc/sudoers.d/${NEWUSER}"
-
-# setup network
-cat <<EOF >/etc/systemd/network/eth0.network
-[Match]
-Name=eth0
-
-[Network]
-DHCP=ipv4
-EOF
-
 # Setup pacman-init.service for clean pacman keyring initialization
 cat <<EOF >/etc/systemd/system/pacman-init.service
 [Unit]

@@ -168,7 +168,10 @@ function create_image() {
 
 function cloud_image() {
   arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{cloud,common}.sh)
-  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm qemu-guest-agent cloud-init
+  # The growpart module[1] requires the growpart program, provided by the
+  # cloud-guest-utils package
+  # [1] https://cloudinit.readthedocs.io/en/latest/topics/modules.html#growpart
+  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm qemu-guest-agent cloud-init cloud-guest-utils
   arch-chroot "${MOUNT}" /usr/bin/systemctl enable cloud-init-local.service cloud-init.service cloud-config.service cloud-final.service
 }
 

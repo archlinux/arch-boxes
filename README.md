@@ -23,8 +23,8 @@ packages:
   - qemu-guest-agent
 runcmd:
   - [ systemctl, daemon-reload ]
-  - [ systemctl, enable, qemu-ga ]
-  - [ systemctl, start, qemu-ga ]
+  - [ systemctl, enable, qemu-guest-agent ]
+  - [ systemctl, start, qemu-guest-agent ]
 ```
 *\*ex: when using [Proxmox](https://pve.proxmox.com/wiki/Qemu-guest-agent) or [oVirt](https://www.ovirt.org/develop/internal/guest-agent/understanding-guest-agents-and-other-tools.html). Please be aware, that the agent basically gives the host root access to the guest.*
 

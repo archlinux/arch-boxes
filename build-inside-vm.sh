@@ -167,7 +167,7 @@ function create_image() {
 }
 
 function cloud_image() {
-  arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{cloud,common}.sh)
+  arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-common.sh)
   # The growpart module[1] requires the growpart program, provided by the
   # cloud-guest-utils package
   # [1] https://cloudinit.readthedocs.io/en/latest/topics/modules.html#growpart

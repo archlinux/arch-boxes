@@ -12,14 +12,16 @@ shellcheck:
   before_script:
     - pacman -Syu --needed --noconfirm shellcheck
   script:
-    - shellcheck *.sh
+    - shopt -s globstar
+    - shellcheck **/*.sh
 
 shfmt:
   stage: lint
   before_script:
     - pacman -Syu --needed --noconfirm shfmt
   script:
-    - shfmt -i 2 -ci -d *.sh
+    - shopt -s globstar
+    - shfmt -i 2 -ci -d **/*.sh
 
 .build:
   stage: build

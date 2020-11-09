@@ -170,10 +170,10 @@ function image_cleanup() {
 # ${1} - loop device
 function wait_until_settled() {
   udevadm settle
-  blockdev --flushbufs --rereadpt ${1}
+  blockdev --flushbufs --rereadpt "${1}"
   until test -e "${1}p2"; do
-      echo "${1}p2 doesn't exist yet..."
-      sleep 1
+    echo "${1}p2 doesn't exist yet..."
+    sleep 1
   done
 }
 
@@ -181,7 +181,7 @@ function wait_until_settled() {
 function mount_image() {
   LOOPDEV=$(losetup --find --partscan --show "${1:-${IMAGE}}")
   # Partscan is racy
-  wait_until_settled ${LOOPDEV}
+  wait_until_settled "${LOOPDEV}"
   mount -o compress-force=zstd "${LOOPDEV}p2" "${MOUNT}"
   # Setup bind mount to package cache
   mount --bind "/var/cache/pacman/pkg" "${MOUNT}/var/cache/pacman/pkg"
@@ -214,7 +214,8 @@ function mv_to_output() {
 # ${2} - pre
 # ${3} - post
 function create_image() {
-  local tmp_image="$(basename "$(mktemp -u)")"
+  local tmp_image
+  tmp_image="$(basename "$(mktemp -u)")"
   copy_and_mount_image "${tmp_image}"
   "${2}"
   image_cleanup

@@ -118,7 +118,7 @@ function main() {
   expect "# "
   send "mkfs.ext4 /dev/vda && mkdir /mnt/scratch-disk/ && mount /dev/vda /mnt/scratch-disk && cd /mnt/scratch-disk\n"
   expect "# "
-  send "cp -a /mnt/arch-boxes/{box.ovf,build-inside-vm.sh,http} .\n"
+  send "cp -a /mnt/arch-boxes/{box.ovf,build-inside-vm.sh} .\n"
   expect "# "
   send "mkdir pkg && mount --bind pkg /var/cache/pacman/pkg\n"
   expect "# "

@@ -98,6 +98,63 @@ function postinstall() {
   arch-chroot "${MOUNT}" /usr/bin/locale-gen
   arch-chroot "${MOUNT}" /usr/bin/systemd-firstboot --locale=en_US.UTF-8 --timezone=UTC --hostname=archlinux --keymap=us
   ln -sf /run/systemd/resolve/stub-resolv.conf "${MOUNT}/etc/resolv.conf"
+
+  # Setup pacman-init.service for clean pacman keyring initialization
+  cat <<EOF >"${MOUNT}/etc/systemd/system/pacman-init.service"
+[Unit]
+Description=Initializes Pacman keyring
+Wants=haveged.service
+After=haveged.service
+Before=sshd.service cloud-final.service
+ConditionFirstBoot=yes
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/pacman-key --init
+ExecStart=/usr/bin/pacman-key --populate archlinux
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+  # Add service for running reflector on first boot
+  cat <<EOF >"${MOUNT}/etc/systemd/system/reflector-init.service"
+[Unit]
+Description=Initializes mirrors for the VM
+After=network-online.target
+Wants=network-online.target
+Before=sshd.service cloud-final.service
+ConditionFirstBoot=yes
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+  # enabling important services
+  arch-chroot "${MOUNT}" /bin/bash -e <<EOF
+. /etc/profile
+systemctl enable sshd
+systemctl enable haveged
+systemctl enable systemd-networkd
+systemctl enable systemd-resolved
+systemctl enable systemd-timesyncd
+systemctl enable pacman-init.service
+systemctl enable reflector-init.service
+EOF
+
+  # GRUB
+  arch-chroot "${MOUNT}" /usr/bin/grub-install --target=i386-pc "${LOOPDEV}"
+  sed -i 's/^GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=1/' "${MOUNT}/etc/default/grub"
+  # setup unpredictable kernel names
+  sed -i 's/^GRUB_CMDLINE_LINUX=.*$/GRUB_CMDLINE_LINUX="net.ifnames=0"/' "${MOUNT}/etc/default/grub"
+  sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT=\"rootflags=compress-force=zstd\"/' "${MOUNT}/etc/default/grub"
+  arch-chroot "${MOUNT}" /usr/bin/grub-mkconfig -o /boot/grub/grub.cfg
 }
 
 # Cleanup the image and trim it
@@ -167,7 +224,6 @@ function create_image() {
 }
 
 function cloud_image() {
-  arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-common.sh)
   # The growpart module[1] requires the growpart program, provided by the
   # cloud-guest-utils package
   # [1] https://cloudinit.readthedocs.io/en/latest/topics/modules.html#growpart
@@ -181,8 +237,37 @@ function cloud_image_post() {
 }
 
 function vagrant_common() {
-  arch-chroot "${MOUNT}" /bin/bash < <(cat "${ORIG_PWD}"/http/install-{vagrant,common}.sh)
   arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm netctl polkit
+
+  NEWUSER="vagrant"
+  # setting the user credentials
+  arch-chroot "${MOUNT}" /usr/bin/useradd -m -U "${NEWUSER}"
+  echo -e "${NEWUSER}\n${NEWUSER}" | arch-chroot "${MOUNT}" /usr/bin/passwd "${NEWUSER}"
+
+  # setting sudo for the user
+  cat <<EOF >"${MOUNT}/etc/sudoers.d/${NEWUSER}"
+Defaults:${NEWUSER} !requiretty
+${NEWUSER} ALL=(ALL) NOPASSWD: ALL
+EOF
+  chmod 440 "${MOUNT}/etc/sudoers.d/${NEWUSER}"
+
+  # setup network
+  cat <<EOF >"${MOUNT}/etc/systemd/network/eth0.network"
+[Match]
+Name=eth0
+
+[Network]
+DHCP=ipv4
+EOF
+
+  # install vagrant ssh key
+  arch-chroot "${MOUNT}" /bin/bash -e <<EOF
+install --directory --owner=vagrant --group=vagrant --mode=0700 /home/vagrant/.ssh
+curl --output /home/vagrant/.ssh/authorized_keys --location https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub
+chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys
+chmod 0600 /home/vagrant/.ssh/authorized_keys
+EOF
+
   # setting automatic authentication for any action requiring admin rights via Polkit
   cat <<EOF >"${MOUNT}/etc/polkit-1/rules.d/49-nopasswd_global.rules"
 polkit.addRule(function(action, subject) {
@@ -255,8 +340,6 @@ function main() {
   setup_disk
   bootstrap
   postinstall
-  # We run it here as it is the easiest solution and we do not want anything to go wrong!
-  arch-chroot "${MOUNT}" grub-install --target=i386-pc "${LOOPDEV}"
   unmount_image
 
   local build_version

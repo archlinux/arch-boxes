@@ -4,6 +4,7 @@ default:
 stages:
   - lint
   - build
+  - test
   - publish
 
 shellcheck:
@@ -63,6 +64,38 @@ build:secure:
     - master
     - schedules
     - tags
+
+test-vagrant-boxes-format:
+  stage: test
+  before_script:
+    - pacman -Syu --needed --noconfirm vagrant
+  script:
+    - vagrant box add output/Arch-Linux-x86_64-virtualbox-*.box --name archlinux-vbox
+    - vagrant box add output/Arch-Linux-x86_64-libvirt-*.box --name archlinux-libvirt
+
+test-cloudimg-qemu:
+  stage: test
+  variables:
+    SSHPASS: passw0rd
+  before_script:
+    - pacman -Syu --needed --noconfirm qemu-headless cdrtools sshpass
+  script:
+    - |
+      cat > user-data <<EOF
+      #cloud-config
+      password: '${SSHPASS}'
+      chpasswd: { expire: False }
+      ssh_pwauth: True
+      EOF
+    - |
+      cat > meta-data <<EOF
+      instance-id: iid-local01
+      local-hostname: cloudimg
+      EOF
+    - cat user-data meta-data
+    - genisoimage -output seed.iso -volid cidata -joliet -rock user-data meta-data
+    - qemu-system-x86_64 -m 512 -net nic -net user,hostfwd=tcp::2222-:22 -drive file=$(ls output/Arch-Linux-x86_64-cloudimg-*.qcow2),if=virtio -drive file=seed.iso,if=virtio -nographic &    
+    - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 true; do sleep 1; done"
 
 tag_release:
   stage: publish

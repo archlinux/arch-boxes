@@ -9,7 +9,7 @@ cat <<EOF >/etc/systemd/system/pacman-init.service
 Description=Initializes Pacman keyring
 Wants=haveged.service
 After=haveged.service
-Before=sshd.service
+Before=sshd.service cloud-final.service
 ConditionFirstBoot=yes
 
 [Service]
@@ -28,7 +28,7 @@ cat <<EOF >/etc/systemd/system/reflector-init.service
 Description=Initializes mirrors for the VM
 After=network-online.target
 Wants=network-online.target
-Before=sshd.service
+Before=sshd.service cloud-final.service
 ConditionFirstBoot=yes
 
 [Service]

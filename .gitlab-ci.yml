@@ -86,6 +86,13 @@ test-cloudimg-qemu:
       password: '${SSHPASS}'
       chpasswd: { expire: False }
       ssh_pwauth: True
+      packages:
+        - tmux
+        - tree
+      runcmd:
+        - [ echo, 'Install more packages using runcmd.' ]
+        - [ pacman, --noconfirm, -Syu, bat ]
+        - [ touch, /runcmd_successful ]
       EOF
     - |
       cat > meta-data <<EOF
@@ -96,6 +103,8 @@ test-cloudimg-qemu:
     - genisoimage -output seed.iso -volid cidata -joliet -rock user-data meta-data
     - qemu-system-x86_64 -m 512 -net nic -net user,hostfwd=tcp::2222-:22 -drive file=$(ls output/Arch-Linux-x86_64-cloudimg-*.qcow2),if=virtio -drive file=seed.iso,if=virtio -nographic &    
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 true; do sleep 1; done"
+    - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 pacman -Q bat tmux tree; do sleep 1; done"
+    - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 test -f /runcmd_successful ; do sleep 1; done"
 
 tag_release:
   stage: publish

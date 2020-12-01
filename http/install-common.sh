@@ -34,7 +34,7 @@ ConditionFirstBoot=yes
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=reflector --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+ExecStart=reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
 
 [Install]
 WantedBy=multi-user.target

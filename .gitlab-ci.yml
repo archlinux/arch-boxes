@@ -51,6 +51,8 @@ shfmt:
 
 build:
   extends: .build
+  tags:
+    - fast-single-thread
   except:
     - master
     - schedules

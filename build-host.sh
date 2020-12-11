@@ -103,7 +103,7 @@ function main() {
   start_qemu
 
   # Login
-  expect "archiso login:" 60
+  expect "archiso login:"
   send "root\n"
   expect "# "
 

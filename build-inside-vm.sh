@@ -91,7 +91,7 @@ function postinstall() {
   mkswap "${MOUNT}/swap/swapfile"
   echo -e "/swap/swapfile none swap defaults 0 0" >>"${MOUNT}/etc/fstab"
 
-  echo "COMPRESSION=\"xz\"" >>"${MOUNT}/etc/mkinitcpio.conf"
+  echo "COMPRESSION=\"zstd\"" >>"${MOUNT}/etc/mkinitcpio.conf"
   arch-chroot "${MOUNT}" /usr/bin/mkinitcpio -p linux
 
   sed -i -e 's/^#\(en_US.UTF-8\)/\1/' "${MOUNT}/etc/locale.gen"

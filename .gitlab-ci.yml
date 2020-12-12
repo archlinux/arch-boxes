@@ -12,6 +12,7 @@ shellcheck:
   before_script:
     - pacman -Syu --needed --noconfirm shellcheck
   script:
+    - shopt -s globstar
     - shellcheck **/*.sh
 
 shfmt:
@@ -19,6 +20,7 @@ shfmt:
   before_script:
     - pacman -Syu --needed --noconfirm shfmt
   script:
+    - shopt -s globstar
     - shfmt -i 2 -ci -d **/*.sh
 
 .build:

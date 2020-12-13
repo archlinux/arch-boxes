@@ -162,7 +162,7 @@ function main() {
   setup_disk
   bootstrap
   # shellcheck source=images/base.sh
-  . "${ORIG_PWD}/images/base.sh"
+  source "${ORIG_PWD}/images/base.sh"
   pre
   unmount_image
 
@@ -176,10 +176,10 @@ function main() {
   fi
 
   # shellcheck source=images/common.sh
-  . "${ORIG_PWD}/images/common.sh"
+  source "${ORIG_PWD}/images/common.sh"
   for image in "${ORIG_PWD}/images/"!(base|common).sh; do
     # shellcheck source=/dev/null
-    . "${image}"
+    source "${image}"
     create_image "${IMAGE_NAME}" pre post
   done
 }

@@ -61,7 +61,7 @@ EOF
 
   # enabling important services
   arch-chroot "${MOUNT}" /bin/bash -e <<EOF
-. /etc/profile
+source /etc/profile
 systemctl enable sshd
 systemctl enable haveged
 systemctl enable systemd-networkd

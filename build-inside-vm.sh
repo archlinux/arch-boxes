@@ -83,6 +83,17 @@ function image_cleanup() {
   # Remove pacman key ring for re-initialization
   rm -rf "${MOUNT}/etc/pacman.d/gnupg/"
 
+  # The mkinitcpio autodetect hook removes modules not needed by the
+  # running system from the initramfs. This make the image non-bootable
+  # on some systems as initramfs lacks the relevant kernel modules.
+  # Ex: Some systems need the virtio-scsi kernel module and not the
+  # "autodetected" virtio-blk kernel module for disk access.
+  #
+  # So for the initial install we use the fallback initramfs, and
+  # "autodetect" should add the relevant modules to the initramfs when
+  # the user updates the kernel.
+  cp -a "${MOUNT}/boot/"{initramfs-linux-fallback.img,initramfs-linux.img}
+
   sync -f "${MOUNT}/etc/os-release"
   fstrim --verbose "${MOUNT}"
 }

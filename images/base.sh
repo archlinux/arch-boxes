@@ -11,6 +11,7 @@ function pre() {
   chattr +C "${MOUNT}/swap"
   chmod 0700 "${MOUNT}/swap"
   fallocate -l 512M "${MOUNT}/swap/swapfile"
+  chmod 0600 "${MOUNT}/swap/swapfile"
   mkswap "${MOUNT}/swap/swapfile"
   echo -e "/swap/swapfile none swap defaults 0 0" >>"${MOUNT}/etc/fstab"
 

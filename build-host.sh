@@ -138,7 +138,7 @@ function main() {
   ## Start build and copy output to local disk
   send "bash -x ./build-inside-vm.sh ${BUILD_VERSION:-}\n"
   expect "# " 240 # qemu-img convert can take a long time
-  send "cp -r --preserve=mode,timestamps output /mnt/arch-boxes/tmp/$(basename "${TMPDIR}")/\n"
+  send "cp -vr --preserve=mode,timestamps output /mnt/arch-boxes/tmp/$(basename "${TMPDIR}")/\n"
   expect "# " 60
   mv output/* "${OUTPUT}/"
 

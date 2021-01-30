@@ -11,6 +11,9 @@ Arch-boxes provides automated builds of the Arch Linux releases for different pr
 ### Vagrant
 If you're a vagrant user, you can just go to [**our Vagrant Cloud page**](https://app.vagrantup.com/archlinux/boxes/archlinux) and follow the instructions there.
 
+### Basic image
+If you want to run Arch Linux locally in a VM (ex: for quick ad hoc testing), you can use our basic image, which comes preconfigured with a `arch` user (password: `arch`). It is built daily and can be downloaded [here](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/browse/output?job=build:secure) (`Arch-Linux-x86_64-basic-xxxxxxxx.xxxx.qcow2`).
+
 ### Cloud image
 If you want to run Arch Linux in the cloud, you can use our cloud-image, which is preconfigured to work in most cloud environments. It is built daily and can be downloaded [here](https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/master/browse/output?job=build:secure) (`Arch-Linux-x86_64-cloudimg-xxxxxxxx.xxxx.qcow2`).
 

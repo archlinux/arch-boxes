@@ -1,7 +1,8 @@
 #!/bin/bash
 # shellcheck disable=SC2034,SC2154
 IMAGE_NAME="Arch-Linux-x86_64-virtualbox-${build_version}.box"
-DISK_SIZE=""
+# https://gitlab.archlinux.org/archlinux/arch-boxes/-/issues/116
+DISK_SIZE="20G"
 PACKAGES=(virtualbox-guest-utils-nox)
 SERVICES=(vboxservice)
 

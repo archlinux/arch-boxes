@@ -80,6 +80,8 @@ test-vagrant-boxes-format:
 
 test-basic-qemu:
   stage: test
+  tags:
+    - fast-single-thread
   variables:
     SSHPASS: arch
   before_script:
@@ -90,6 +92,8 @@ test-basic-qemu:
 
 test-cloudimg-qemu:
   stage: test
+  tags:
+    - fast-single-thread
   variables:
     SSHPASS: passw0rd
   before_script:

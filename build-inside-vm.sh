@@ -5,7 +5,7 @@
 # errexit: "Exit immediately if [...] command exits with a non-zero status."
 set -o nounset -o errexit
 shopt -s extglob
-readonly DISK_SIZE="20G"
+readonly DEFAULT_DISK_SIZE="20G"
 readonly IMAGE="image.img"
 # shellcheck disable=SC2016
 readonly MIRROR='https://mirror.pkgbuild.com/$repo/os/$arch'
@@ -43,7 +43,7 @@ trap cleanup EXIT
 
 # Create the disk, partitions it, format the partition and mount the filesystem
 function setup_disk() {
-  truncate -s "${DISK_SIZE}" "${IMAGE}"
+  truncate -s "${DEFAULT_DISK_SIZE}" "${IMAGE}"
   sgdisk --clear \
     --new 1::+1M --typecode=1:ef02 \
     --new 2::-0 --typecode=2:8300 \
@@ -126,12 +126,6 @@ function unmount_image() {
   LOOPDEV=""
 }
 
-# Copy image and mount the copied image
-function copy_and_mount_image() {
-  cp -a "${IMAGE}" "${1}"
-  mount_image "${1}"
-}
-
 # Compute SHA256, adjust owner to $SUDO_UID:$SUDO_UID and move to output/
 function mv_to_output() {
   sha256sum "${1}" >"${1}.SHA256"
@@ -148,7 +142,19 @@ function mv_to_output() {
 function create_image() {
   local tmp_image
   tmp_image="$(basename "$(mktemp -u)")"
-  copy_and_mount_image "${tmp_image}"
+  cp -a "${IMAGE}" "${tmp_image}"
+  if [ -n "${DISK_SIZE}" ]; then
+    truncate -s "${DISK_SIZE}" "${tmp_image}"
+    sgdisk --delete 2 "${tmp_image}"
+    sgdisk --move-second-header \
+      --new 2::-0 --typecode=2:8300 \
+      "${tmp_image}"
+  fi
+  mount_image "${tmp_image}"
+  if [ -n "${DISK_SIZE}" ]; then
+    btrfs filesystem resize max "${MOUNT}"
+  fi
+
   if [ 0 -lt "${#PACKAGES[@]}" ]; then
     arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm "${PACKAGES[@]}"
   fi

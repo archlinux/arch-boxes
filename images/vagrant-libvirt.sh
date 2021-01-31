@@ -1,6 +1,8 @@
 #!/bin/bash
 # shellcheck disable=SC2034,SC2154
 IMAGE_NAME="Arch-Linux-x86_64-libvirt-${build_version}.box"
+# https://gitlab.archlinux.org/archlinux/arch-boxes/-/issues/116
+DISK_SIZE="20G"
 PACKAGES=()
 SERVICES=()
 

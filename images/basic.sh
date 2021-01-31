@@ -1,6 +1,8 @@
 #!/bin/bash
 # shellcheck disable=SC2034,SC2154
 IMAGE_NAME="Arch-Linux-x86_64-basic-${build_version}.qcow2"
+# It is meant for local usage so the disk should be "big enough".
+DISK_SIZE="40G"
 PACKAGES=()
 SERVICES=()
 

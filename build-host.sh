@@ -67,8 +67,8 @@ function start_qemu() {
     -serial pipe:guest \
     -nographic || kill "${$}"; } &
 
-  # We want to send the output to both stdout (fd1) and fd10 (used by the expect function)
-  exec 3>&1 10< <(tee /dev/fd/3 <guest.out)
+  # We want to send the output to both stdout (fd1) and a new file descriptor (used by the expect function)
+  exec 3>&1 {fd}< <(tee /dev/fd/3 <guest.out)
 }
 
 # Wait for a specific string from qemu
@@ -80,7 +80,7 @@ function expect() {
   while true; do
     # read should never exit with a non-zero exit code,
     # but it can happen if the fd is EOF or it times out
-    IFS= read -r -u 10 -n 1 -t "${timeout}" c
+    IFS= read -r -u ${fd} -n 1 -t "${timeout}" c
     if [ "${1:${i}:1}" = "${c}" ]; then
       i="$((i + 1))"
       if [ "${length}" -eq "${i}" ]; then

@@ -15,9 +15,6 @@ function pre() {
   mkswap "${MOUNT}/swap/swapfile"
   echo -e "/swap/swapfile none swap defaults 0 0" >>"${MOUNT}/etc/fstab"
 
-  echo "COMPRESSION=\"zstd\"" >>"${MOUNT}/etc/mkinitcpio.conf"
-  arch-chroot "${MOUNT}" /usr/bin/mkinitcpio -p linux
-
   sed -i -e 's/^#\(en_US.UTF-8\)/\1/' "${MOUNT}/etc/locale.gen"
   arch-chroot "${MOUNT}" /usr/bin/locale-gen
   arch-chroot "${MOUNT}" /usr/bin/systemd-firstboot --locale=en_US.UTF-8 --timezone=UTC --hostname=archlinux --keymap=us

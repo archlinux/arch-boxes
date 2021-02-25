@@ -54,12 +54,12 @@ function start_qemu() {
   { qemu-system-x86_64 \
     -machine accel=kvm:tcg \
     -smp 4 \
-    -m 1024 \
+    -m 2048 \
     -net nic \
     -net user \
     -kernel vmlinuz-linux \
     -initrd initramfs-linux.img \
-    -append "archisobasedir=arch archisolabel=${ISO_VOLUME_ID} ip=dhcp net.ifnames=0 console=ttyS0 mirror=${MIRROR}" \
+    -append "archisobasedir=arch archisolabel=${ISO_VOLUME_ID} cow_spacesize=2G ip=dhcp net.ifnames=0 console=ttyS0 mirror=${MIRROR}" \
     -drive file=scratch-disk.img,format=raw,if=virtio \
     -drive file="${ISO}",format=raw,if=virtio,media=cdrom,read-only \
     -virtfs "local,path=${ORIG_PWD},mount_tag=host,security_model=none" \
@@ -132,8 +132,8 @@ function main() {
   expect "# "
 
   # Install required packages
-  send "pacman -Sy --noconfirm qemu-headless jq\n"
-  expect "# "
+  send "pacman -Syu --ignore linux --noconfirm qemu-headless jq\n"
+  expect "# " 120 # (10/14) Updating module dependencies...
 
   ## Start build and copy output to local disk
   send "bash -x ./build-inside-vm.sh ${BUILD_VERSION:-}\n"

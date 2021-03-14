@@ -57,18 +57,18 @@ build:
   tags:
     - fast-single-thread
   except:
-    - master
-    - schedules
-    - tags
+    - master@archlinux/arch-boxes
+    - schedules@archlinux/arch-boxes
+    - tags@archlinux/arch-boxes
 
 build:secure:
   extends: .build
   tags:
     - secure
   only:
-    - master
-    - schedules
-    - tags
+    - master@archlinux/arch-boxes
+    - schedules@archlinux/arch-boxes
+    - tags@archlinux/arch-boxes
 
 test-vagrant-boxes-format:
   stage: test
@@ -131,7 +131,7 @@ tag_release:
     - secure
   only:
     refs:
-      - schedules
+      - schedules@archlinux/arch-boxes
     variables:
       - $SCHEDULED_PUBLISH == "TRUE"
   before_script:
@@ -154,7 +154,7 @@ publish:
   tags:
     - secure
   only:
-    - tags
+    - tags@archlinux/arch-boxes
   before_script:
     - pacman -Syu --needed --noconfirm vagrant
   script:

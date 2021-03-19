@@ -24,8 +24,6 @@ function pre() {
   cat <<EOF >"${MOUNT}/etc/systemd/system/pacman-init.service"
 [Unit]
 Description=Initializes Pacman keyring
-Wants=haveged.service
-After=haveged.service
 Before=sshd.service cloud-final.service
 ConditionFirstBoot=yes
 
@@ -61,7 +59,6 @@ EOF
   arch-chroot "${MOUNT}" /bin/bash -e <<EOF
 source /etc/profile
 systemctl enable sshd
-systemctl enable haveged
 systemctl enable systemd-networkd
 systemctl enable systemd-resolved
 systemctl enable systemd-timesyncd

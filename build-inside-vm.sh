@@ -13,9 +13,11 @@ readonly MIRROR='https://mirror.pkgbuild.com/$repo/os/$arch'
 function init() {
   readonly ORIG_PWD="${PWD}"
   readonly OUTPUT="${PWD}/output"
-  readonly TMPDIR="$(mktemp --dry-run --directory --tmpdir="${PWD}/tmp")"
+  local tmpdir
+  tmpdir="$(mktemp --dry-run --directory --tmpdir="${PWD}/tmp")"
+  readonly TMPDIR="${tmpdir}"
   mkdir -p "${OUTPUT}" "${TMPDIR}"
-  if [ -n "${SUDO_UID:-}" ]; then
+  if [ -n "${SUDO_UID:-}" ] && [[ -n "${SUDO_GID:-}" ]]; then
     chown "${SUDO_UID}:${SUDO_GID}" "${OUTPUT}" "${TMPDIR}"
   fi
   cd "${TMPDIR}"

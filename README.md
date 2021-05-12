@@ -17,7 +17,7 @@ At the time of writing we offer two different QCOW2 images. The images are synce
 The basic image is meant for local usage and comes preconfigured with the user `arch` (pw: `arch`) and sshd running.
 
 #### Cloud image
-The cloud image is meant to be used in "the cloud" and comes with [`cloud-init`](https://cloud-init.io/) preinstalled. For tested cloud providers and instructions please see the [ArchWiki's Arch Linux on a VPS page](https://wiki.archlinux.org/index.php/Arch_Linux_on_a_VPS#Official_Arch_Linux_cloud_image).
+The cloud image is meant to be used in "the cloud" and comes with [`cloud-init`](https://cloud-init.io/) preinstalled. For tested cloud providers and instructions please see the [ArchWiki's Arch Linux on a VPS page](https://wiki.archlinux.org/title/Arch_Linux_on_a_VPS#Official_Arch_Linux_cloud_image).
 
 ## Development
 

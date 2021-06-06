@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function vagrant_common() {
-  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm netctl polkit
+  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm polkit
 
   local NEWUSER="vagrant"
   # setting the user credentials

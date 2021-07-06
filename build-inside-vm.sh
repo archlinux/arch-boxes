@@ -48,14 +48,18 @@ function setup_disk() {
   truncate -s "${DEFAULT_DISK_SIZE}" "${IMAGE}"
   sgdisk --clear \
     --new 1::+1M --typecode=1:ef02 \
-    --new 2::-0 --typecode=2:8300 \
+    --new 2::+128M --typecode=2:ef00 \
+    --new 3::-0 --typecode=3:8300 \
     "${IMAGE}"
 
   LOOPDEV=$(losetup --find --partscan --show "${IMAGE}")
   # Partscan is racy
   wait_until_settled "${LOOPDEV}"
-  mkfs.btrfs "${LOOPDEV}p2"
-  mount -o compress-force=zstd "${LOOPDEV}p2" "${MOUNT}"
+  mkfs.btrfs "${LOOPDEV}p3"
+  mount -o compress-force=zstd "${LOOPDEV}p3" "${MOUNT}"
+  mkdir -p "${MOUNT}/boot"
+  mkfs.fat -F32 "${LOOPDEV}p2"
+  mount "${LOOPDEV}p2" "${MOUNT}/boot"
 }
 
 # Install Arch Linux to the filesystem (bootstrap)
@@ -94,7 +98,7 @@ function image_cleanup() {
   # So for the initial install we use the fallback initramfs, and
   # "autodetect" should add the relevant modules to the initramfs when
   # the user updates the kernel.
-  cp --reflink=always -a "${MOUNT}/boot/"{initramfs-linux-fallback.img,initramfs-linux.img}
+  cp -a "${MOUNT}/boot/"{initramfs-linux-fallback.img,initramfs-linux.img}
 
   sync -f "${MOUNT}/etc/os-release"
   fstrim --verbose "${MOUNT}"
@@ -116,7 +120,8 @@ function mount_image() {
   LOOPDEV=$(losetup --find --partscan --show "${1:-${IMAGE}}")
   # Partscan is racy
   wait_until_settled "${LOOPDEV}"
-  mount -o compress-force=zstd "${LOOPDEV}p2" "${MOUNT}"
+  mount -o compress-force=zstd "${LOOPDEV}p3" "${MOUNT}"
+  mount "${LOOPDEV}p2" "${MOUNT}/boot"
   # Setup bind mount to package cache
   mount --bind "/var/cache/pacman/pkg" "${MOUNT}/var/cache/pacman/pkg"
 }
@@ -147,9 +152,9 @@ function create_image() {
   cp -a "${IMAGE}" "${tmp_image}"
   if [ -n "${DISK_SIZE}" ]; then
     truncate -s "${DISK_SIZE}" "${tmp_image}"
-    sgdisk --delete 2 "${tmp_image}"
+    sgdisk --delete 3 "${tmp_image}"
     sgdisk --move-second-header \
-      --new 2::-0 --typecode=2:8300 \
+      --new 3::-0 --typecode=3:8300 \
       "${tmp_image}"
   fi
   mount_image "${tmp_image}"

@@ -59,13 +59,14 @@ function start_qemu() {
     -machine accel=kvm:tcg \
     -smp 4 \
     -m 2048 \
+    -bios /usr/share/edk2-ovmf/x64/OVMF.fd \
     -net nic \
     -net user \
     -kernel vmlinuz-linux \
     -initrd initramfs-linux.img \
     -append "archisobasedir=arch archisolabel=${ISO_VOLUME_ID} cow_spacesize=2G ip=dhcp net.ifnames=0 console=ttyS0 mirror=${MIRROR}" \
     -drive file=scratch-disk.img,format=raw,if=virtio \
-    -drive file="${ISO}",format=raw,if=virtio,media=cdrom,read-only \
+    -drive file="${ISO}",format=raw,if=virtio,media=cdrom,read-only=on \
     -virtfs "local,path=${ORIG_PWD},mount_tag=host,security_model=none" \
     -monitor none \
     -serial pipe:guest \
@@ -136,7 +137,7 @@ function main() {
   expect "# "
 
   # Install required packages
-  send "pacman -Syu --ignore linux --noconfirm qemu-headless jq\n"
+  send "pacman -Syu --ignore linux --noconfirm qemu-headless jq dosfstools\n"
   expect "# " 120 # (10/14) Updating module dependencies...
 
   # Downgrade util-linux to v2.36 as losetup (>=2.37)[1] uses

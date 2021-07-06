@@ -14,7 +14,7 @@ function pre() {
   chmod 0600 "${MOUNT}/swap/swapfile"
   mkswap "${MOUNT}/swap/swapfile"
   echo -e "/swap/swapfile none swap defaults 0 0" >>"${MOUNT}/etc/fstab"
-
+  echo -e "/dev/sda2 /boot vfat rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro 0 2" >>"${MOUNT}/etc/fstab"
   sed -i -e 's/^#\(en_US.UTF-8\)/\1/' "${MOUNT}/etc/locale.gen"
   arch-chroot "${MOUNT}" /usr/bin/locale-gen
   arch-chroot "${MOUNT}" /usr/bin/systemd-firstboot --locale=en_US.UTF-8 --timezone=UTC --hostname=archlinux --keymap=us
@@ -67,6 +67,8 @@ systemctl enable reflector-init.service
 EOF
 
   # GRUB
+  mkdir "${MOUNT}"/boot/EFI
+  arch-chroot "${MOUNT}" /usr/bin/grub-install --efi-directory=/boot --removable
   arch-chroot "${MOUNT}" /usr/bin/grub-install --target=i386-pc "${LOOPDEV}"
   sed -i 's/^GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=1/' "${MOUNT}/etc/default/grub"
   # setup unpredictable kernel names

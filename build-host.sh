@@ -15,6 +15,8 @@ function init() {
   mkdir -p "${OUTPUT}" "${TMPDIR}"
 
   cd "${TMPDIR}"
+
+  sudo pacman -Sy --noconfirm qemu-headless edk2-ovmf xorriso
 }
 
 # Do some cleanup when the script exits

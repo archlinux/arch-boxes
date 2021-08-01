@@ -137,13 +137,6 @@ function main() {
   send "pacman -Syu --ignore linux --noconfirm qemu-headless jq\n"
   expect "# " 120 # (10/14) Updating module dependencies...
 
-  # Downgrade util-linux to v2.36 as losetup (>=2.37)[1] uses
-  # the LOOP_CONFIGURE ioctl which discard support is broken[2].
-  # [1] https://github.com/karelzak/util-linux/pull/1152
-  # [2] https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-5.14/drivers&id=2b9ac22b12a266eb4fec246a07b504dd4983b16b
-  send "pacman -U --noconfirm https://archive.archlinux.org/packages/u/util-linux/util-linux{,-libs}-2.36.2-1-x86_64.pkg.tar.zst\n"
-  expect "# "
-
   ## Start build and copy output to local disk
   send "bash -x ./build-inside-vm.sh ${BUILD_VERSION:-}\n"
   expect "# " 240 # qemu-img convert can take a long time

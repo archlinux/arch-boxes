@@ -26,7 +26,7 @@ shfmt:
 .build:
   stage: build
   before_script:
-    - pacman -Syu --needed --noconfirm qemu-headless libisoburn
+    - pacman -Syu --needed --noconfirm gptfdisk arch-install-scripts qemu-headless jq
   script:
     - |
       # If we're building a tagged release, use the tag (without the 'v' prefix) as the
@@ -37,7 +37,7 @@ shfmt:
         echo "BUILD_VERSION=$(date +%Y%m%d).$CI_JOB_ID" > build.env
       fi
     - export $(< build.env)
-    - ./build-host.sh
+    - ./build-inside-vm.sh
   after_script:
     - echo "image_size_megabytes{image=\"basic\"} $(du -m output/*basic*qcow2)" > metrics.txt
     - echo "image_size_megabytes{image=\"cloudimg\"} $(du -m output/*cloudimg*qcow2)" > metrics.txt
@@ -55,7 +55,7 @@ shfmt:
 build:
   extends: .build
   tags:
-    - fast-single-thread
+    - vm
   except:
     - master@archlinux/arch-boxes
     - schedules@archlinux/arch-boxes
@@ -65,6 +65,7 @@ build:secure:
   extends: .build
   tags:
     - secure
+    - vm
   only:
     - master@archlinux/arch-boxes
     - schedules@archlinux/arch-boxes

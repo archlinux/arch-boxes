@@ -1,8 +1,6 @@
 #!/bin/bash
 
 function vagrant_common() {
-  arch-chroot "${MOUNT}" /usr/bin/pacman -S --noconfirm polkit
-
   local NEWUSER="vagrant"
   # setting the user credentials
   arch-chroot "${MOUNT}" /usr/bin/useradd -m -U "${NEWUSER}"
@@ -32,14 +30,5 @@ curl --output /home/vagrant/.ssh/authorized_keys --location https://github.com/h
 sha256sum -c <<< "9aa9292172c915821e29bcbf5ff42d4940f59d6a148153c76ad638f5f4c6cd8b /home/vagrant/.ssh/authorized_keys"
 chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys
 chmod 0600 /home/vagrant/.ssh/authorized_keys
-EOF
-
-  # setting automatic authentication for any action requiring admin rights via Polkit
-  cat <<EOF >"${MOUNT}/etc/polkit-1/rules.d/49-nopasswd_global.rules"
-polkit.addRule(function(action, subject) {
-    if (subject.isInGroup("vagrant")) {
-        return polkit.Result.YES;
-    }
-});
 EOF
 }

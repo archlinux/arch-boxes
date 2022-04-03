@@ -40,7 +40,7 @@ shfmt:
     - ./build-inside-vm.sh "${BUILD_VERSION}"
   after_script:
     - echo "image_size_megabytes{image=\"basic\"} $(du -m output/*basic*qcow2)" > metrics.txt
-    - echo "image_size_megabytes{image=\"cloudimg\"} $(du -m output/*cloudimg*qcow2)" > metrics.txt
+    - echo "image_size_megabytes{image=\"cloudimg\"} $(du -m output/*cloudimg*qcow2)" >> metrics.txt
     - echo "image_size_megabytes{image=\"libvirt\"} $(du -m output/*libvirt*box)" >> metrics.txt
     - echo "image_size_megabytes{image=\"virtualbox\"} $(du -m output/*virtualbox*box)" >> metrics.txt
   artifacts:

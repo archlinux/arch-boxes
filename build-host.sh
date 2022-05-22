@@ -4,7 +4,7 @@
 # nounset: "Treat unset variables and parameters [...] as an error when performing parameter expansion."
 # errexit: "Exit immediately if [...] command exits with a non-zero status."
 set -o nounset -o errexit
-readonly MIRROR="https://mirror.pkgbuild.com"
+readonly MIRROR="https://geo.mirror.pkgbuild.com"
 
 function init() {
   readonly ORIG_PWD="${PWD}"

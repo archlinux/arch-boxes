@@ -11,7 +11,7 @@ The images is built daily and released biweekly (via [GitLab CI schedule](https:
 Vagrant images for the VirtualBox and Libvirt provider are released to [Vagrant Cloud](https://app.vagrantup.com/archlinux/boxes/archlinux).
 
 ### QCOW2 images
-At the time of writing we offer two different QCOW2 images. The images are synced to the mirrors under the `images` directory, ex: https://mirror.pkgbuild.com/images/.
+At the time of writing we offer two different QCOW2 images. The images are synced to the mirrors under the `images` directory, ex: https://geo.mirror.pkgbuild.com/images/.
 
 #### Basic image
 The basic image is meant for local usage and comes preconfigured with the user `arch` (pw: `arch`) and sshd running.

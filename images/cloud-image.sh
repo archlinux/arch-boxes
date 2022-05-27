@@ -9,7 +9,10 @@ PACKAGES=(cloud-init cloud-guest-utils)
 SERVICES=(cloud-init-local.service cloud-init.service cloud-config.service cloud-final.service)
 
 function pre() {
-  true
+  sed -Ei 's/^(GRUB_CMDLINE_LINUX_DEFAULT=.*)"$/\1 console=tty0 console=ttyS0,115200"/' "${MOUNT}/etc/default/grub"
+  echo 'GRUB_TERMINAL="serial console"' >>"${MOUNT}/etc/default/grub"
+  echo 'GRUB_SERIAL_COMMAND="serial --speed=115200"' >>"${MOUNT}/etc/default/grub"
+  arch-chroot "${MOUNT}" /usr/bin/grub-mkconfig -o /boot/grub/grub.cfg
 }
 
 function post() {

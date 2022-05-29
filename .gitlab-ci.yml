@@ -41,7 +41,7 @@ shfmt:
     - |
       for f in output/*; do
           base="$(basename "${f}")"
-          curl -sSf --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${f}" ""${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/images/v${BUILD_VERSION}/${base}"
+          curl -sSf --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${f}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/images/v${BUILD_VERSION}/${base}"
       done
   after_script:
     - echo "image_size_megabytes{image=\"basic\"} $(du -m output/*basic*qcow2)" > metrics.txt

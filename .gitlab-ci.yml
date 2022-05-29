@@ -62,6 +62,13 @@ build:secure:
   only:
     - master@archlinux/arch-boxes
     - schedules@archlinux/arch-boxes
+  script:
+    - !reference [.build, script]
+    - gpg --import < <(echo "${GPG_PRIVATE_KEY}")
+    - |
+      for file in output/*; do
+        gpg --detach-sign "${file}"
+      done
 
 test-vagrant-boxes-format:
   stage: test

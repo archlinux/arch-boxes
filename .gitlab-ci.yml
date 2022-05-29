@@ -6,6 +6,7 @@ stages:
   - build
   - test
   - publish
+  - cleanup
 
 shellcheck:
   stage: lint
@@ -28,21 +29,9 @@ shfmt:
   before_script:
     - pacman -Syu --needed --noconfirm gptfdisk arch-install-scripts qemu-headless jq
   script:
-    - |
-      # If we're building a tagged release, use the tag (without the 'v' prefix) as the
-      # BUILD_VERSION. Otherwise, determine a new BUILD_VERSION.
-      if [[ -n "$CI_COMMIT_TAG" ]]; then
-        echo "BUILD_VERSION=${CI_COMMIT_TAG/v/}" > build.env
-      else
-        echo "BUILD_VERSION=$(date +%Y%m%d).$CI_JOB_ID" > build.env
-      fi
+    - echo "BUILD_VERSION=$(date +%Y%m%d).$CI_JOB_ID" > build.env
     - export $(< build.env)
     - ./build-inside-vm.sh "${BUILD_VERSION}"
-    - |
-      for f in output/*; do
-          base="$(basename "${f}")"
-          curl -sSf --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${f}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/images/v${BUILD_VERSION}/${base}"
-      done
   after_script:
     - echo "image_size_megabytes{image=\"basic\"} $(du -m output/*basic*qcow2)" > metrics.txt
     - echo "image_size_megabytes{image=\"cloudimg\"} $(du -m output/*cloudimg*qcow2)" >> metrics.txt
@@ -64,7 +53,6 @@ build:
   except:
     - master@archlinux/arch-boxes
     - schedules@archlinux/arch-boxes
-    - tags@archlinux/arch-boxes
 
 build:secure:
   extends: .build
@@ -74,7 +62,6 @@ build:secure:
   only:
     - master@archlinux/arch-boxes
     - schedules@archlinux/arch-boxes
-    - tags@archlinux/arch-boxes
 
 test-vagrant-boxes-format:
   stage: test
@@ -131,41 +118,37 @@ test-cloudimg-qemu:
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 pacman -Q bat tmux tree; do sleep 1; done"
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 test -f /runcmd_successful ; do sleep 1; done"
 
-tag_release:
-  stage: publish
-  tags:
-    - secure
-  only:
-    refs:
-      - schedules@archlinux/arch-boxes
-    variables:
-      - $SCHEDULED_PUBLISH == "TRUE"
-  before_script:
-    - pacman -Syu --needed --noconfirm httpie
-  script:
-    - >
-        export ASSET_LINKS="{ \"links\": [ \
-          { \"name\": \"Vagrant Cloud Release\", \"url\": \"https://app.vagrantup.com/archlinux/boxes/archlinux/versions/$BUILD_VERSION\" }, \
-          { \"name\": \"Browse artifacts\", \"url\": \"https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/artifacts/v$BUILD_VERSION/browse/output?job=build:secure\" } \
-        ]}"
-    - http --ignore-stdin "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases"
-        "JOB-TOKEN:$CI_JOB_TOKEN"
-        "name=v$BUILD_VERSION"
-        "tag_name=v$BUILD_VERSION"
-        "ref=$CI_COMMIT_SHA"
-        "assets:=$ASSET_LINKS"
-
 publish:
   stage: publish
   tags:
     - secure
-  only:
-    - tags@archlinux/arch-boxes
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $SCHEDULED_PUBLISH == "TRUE"
   before_script:
     - pacman -Syu --needed --noconfirm vagrant
   script:
+    - |
+      for file in output/*; do
+          base="$(basename "${file}")"
+          curl -sSf --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${file}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/images/v${BUILD_VERSION}/${base}"
+      done
     - vagrant cloud auth login --token "${VAGRANT_API_TOKEN}"
     - vagrant cloud auth login --check
     - vagrant cloud box show archlinux/archlinux
     - vagrant cloud publish archlinux/archlinux "${BUILD_VERSION}" libvirt output/Arch-Linux-x86_64-libvirt-*.box --release -f
     - vagrant cloud publish archlinux/archlinux "${BUILD_VERSION}" virtualbox output/Arch-Linux-x86_64-virtualbox-*.box --release -f
+
+cleanup:
+  stage: cleanup
+  needs: []
+  tags:
+    - secure
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $CLEANUP_PACKAGE_REGISTRY == "TRUE"
+  before_script:
+    - pacman -Syu --noconfirm jq
+  script:
+    - |
+      for id in $(curl --silent --fail --show-error "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages?per_page=100&order_by=created_at&sort=asc" | jq '.[] | select(.created_at | split("T")[0] | . < (now-60*60*24*60|strflocaltime("%Y-%m-%d"))) | .id'); do
+        curl --silent --fail --show-error --request DELETE --header "PRIVATE-TOKEN: ${GITLAB_PROJECT_TOKEN}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/${id}"
+      done

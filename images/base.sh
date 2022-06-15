@@ -15,9 +15,7 @@ function pre() {
   mkswap "${MOUNT}/swap/swapfile"
   echo -e "/swap/swapfile none swap defaults 0 0" >>"${MOUNT}/etc/fstab"
 
-  sed -i -e 's/^#\(en_US.UTF-8\)/\1/' "${MOUNT}/etc/locale.gen"
-  arch-chroot "${MOUNT}" /usr/bin/locale-gen
-  arch-chroot "${MOUNT}" /usr/bin/systemd-firstboot --locale=en_US.UTF-8 --timezone=UTC --hostname=archlinux --keymap=us
+  arch-chroot "${MOUNT}" /usr/bin/systemd-firstboot --locale=C.UTF-8 --timezone=UTC --hostname=archlinux --keymap=us
   ln -sf /run/systemd/resolve/stub-resolv.conf "${MOUNT}/etc/resolv.conf"
 
   # Setup pacman-init.service for clean pacman keyring initialization

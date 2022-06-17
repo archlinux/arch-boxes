@@ -46,9 +46,10 @@ trap cleanup EXIT
 # Create the disk, partitions it, format the partition and mount the filesystem
 function setup_disk() {
   truncate -s "${DEFAULT_DISK_SIZE}" "${IMAGE}"
-  sgdisk --clear \
-    --new 1::+1M --typecode=1:ef02 \
-    --new 2::-0 --typecode=2:8300 \
+  sgdisk --align-end \
+    --clear \
+    --new 0:0:+1M --typecode=0:ef02 --change-name=0:'BIOS boot partition' \
+    --new 0:0:0 --typecode=0:8304 --change-name=0:'Arch Linux root' \
     "${IMAGE}"
 
   LOOPDEV=$(losetup --find --partscan --show "${IMAGE}")
@@ -147,9 +148,9 @@ function create_image() {
   cp -a "${IMAGE}" "${tmp_image}"
   if [ -n "${DISK_SIZE}" ]; then
     truncate -s "${DISK_SIZE}" "${tmp_image}"
-    sgdisk --delete 2 "${tmp_image}"
-    sgdisk --move-second-header \
-      --new 2::-0 --typecode=2:8300 \
+    sgdisk --align-end --delete 2 "${tmp_image}"
+    sgdisk --align-end --move-second-header \
+      --new 0:0:0 --typecode=0:8304 --change-name=0:'Arch Linux root' \
       "${tmp_image}"
   fi
   mount_image "${tmp_image}"

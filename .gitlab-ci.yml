@@ -49,7 +49,7 @@ shfmt:
 build:
   extends: .build
   tags:
-    - vm
+    - secure-vm
   except:
     - master@archlinux/arch-boxes
     - schedules@archlinux/arch-boxes

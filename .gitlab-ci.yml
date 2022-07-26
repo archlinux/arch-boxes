@@ -8,27 +8,13 @@ stages:
   - publish
   - cleanup
 
-shellcheck:
-  stage: lint
-  before_script:
-    - pacman -Syu --needed --noconfirm shellcheck
-  script:
-    - shopt -s globstar
-    - shellcheck **/*.sh
-
-shfmt:
-  stage: lint
-  before_script:
-    - pacman -Syu --needed --noconfirm shfmt
-  script:
-    - shopt -s globstar
-    - shfmt -i 2 -ci -d **/*.sh
-
 .build:
   stage: build
-  before_script:
-    - pacman -Syu --needed --noconfirm gptfdisk arch-install-scripts qemu-headless jq
   script:
+    - systemd-analyze blame
+    - systemctl status pacman-init
+    - systemd-analyze
+    - exit
     - echo "BUILD_VERSION=$(date +%Y%m%d).$CI_JOB_ID" > build.env
     - export $(< build.env)
     - ./build-inside-vm.sh "${BUILD_VERSION}"

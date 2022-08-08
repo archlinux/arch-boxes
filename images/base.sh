@@ -22,7 +22,7 @@ function pre() {
   cat <<EOF >"${MOUNT}/etc/systemd/system/pacman-init.service"
 [Unit]
 Description=Initializes Pacman keyring
-Before=sshd.service cloud-final.service
+Before=sshd.service cloud-final.service archlinux-keyring-wkd-sync.service
 ConditionFirstBoot=yes
 
 [Service]

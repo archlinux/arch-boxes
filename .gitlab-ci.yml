@@ -27,7 +27,7 @@ shfmt:
 .build:
   stage: build
   before_script:
-    - pacman -Syu --needed --noconfirm gptfdisk btrfs-progs arch-install-scripts qemu-headless jq
+    - pacman -Syu --needed --noconfirm gptfdisk btrfs-progs dosfstools arch-install-scripts qemu-headless jq
   script:
     - echo "BUILD_VERSION=$(date +%Y%m%d).$CI_JOB_ID" > build.env
     - export $(< build.env)

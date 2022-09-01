@@ -23,6 +23,7 @@ function pre() {
 [Unit]
 Description=Initializes Pacman keyring
 Before=sshd.service cloud-final.service archlinux-keyring-wkd-sync.service
+After=time-sync.target
 ConditionFirstBoot=yes
 
 [Service]
@@ -60,6 +61,7 @@ systemctl enable sshd
 systemctl enable systemd-networkd
 systemctl enable systemd-resolved
 systemctl enable systemd-timesyncd
+systemctl enable systemd-time-wait-sync
 systemctl enable pacman-init.service
 systemctl enable reflector-init.service
 EOF

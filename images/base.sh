@@ -36,22 +36,11 @@ ExecStart=/usr/bin/pacman-key --populate
 WantedBy=multi-user.target
 EOF
 
-  # Add service for running reflector on first boot
-  cat <<EOF >"${MOUNT}/etc/systemd/system/reflector-init.service"
-[Unit]
-Description=Initializes mirrors for the VM
-After=network-online.target
-Wants=network-online.target
-Before=sshd.service cloud-final.service
-ConditionFirstBoot=yes
-
-[Service]
-Type=oneshot
-RemainAfterExit=yes
-ExecStart=reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
-
-[Install]
-WantedBy=multi-user.target
+  # Setup mirror list to Geo IP mirrors
+  cat <<EOF >"${MOUNT}/etc/pacman.d/mirrorlist"
+Server = https://geo.mirror.pkgbuild.com/\$repo/os/\$arch
+Server = https://mirror.rackspace.com/archlinux/\$repo/os/\$arch
+Server = https://mirror.leaseweb.net/archlinux/\$repo/os/\$arch
 EOF
 
   # enabling important services
@@ -63,7 +52,6 @@ systemctl enable systemd-resolved
 systemctl enable systemd-timesyncd
 systemctl enable systemd-time-wait-sync
 systemctl enable pacman-init.service
-systemctl enable reflector-init.service
 EOF
 
   # GRUB

@@ -7,10 +7,7 @@ PACKAGES=()
 SERVICES=()
 
 function pre() {
-  local NEWUSER="arch"
-  arch-chroot "${MOUNT}" /usr/bin/useradd -m -U "${NEWUSER}"
-  echo -e "${NEWUSER}\n${NEWUSER}" | arch-chroot "${MOUNT}" /usr/bin/passwd "${NEWUSER}"
-  echo "${NEWUSER} ALL=(ALL) NOPASSWD: ALL" >"${MOUNT}/etc/sudoers.d/${NEWUSER}"
+  new_user_pass_same_as_name_and_vagrant_sshkey "arch"
 
   cat <<EOF >"${MOUNT}/etc/systemd/network/80-dhcp.network"
 [Match]

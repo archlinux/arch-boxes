@@ -14,9 +14,9 @@ EOF
   chmod 440 "${MOUNT}/etc/sudoers.d/${NEWUSER}"
 
   # setup network
-  cat <<EOF >"${MOUNT}/etc/systemd/network/eth0.network"
+  cat <<EOF >"${MOUNT}/etc/systemd/network/80-dhcp.network"
 [Match]
-Name=eth0
+Name=eth*
 
 [Network]
 DHCP=ipv4

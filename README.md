@@ -28,9 +28,9 @@ You'll need the following dependencies:
 * libisoburn
 
 ### How to build this
-The official builds are done in our Arch Linux GitLab CI and can be built locally by running:
+The official builds are done in our Arch Linux GitLab CI and can be built locally by running (as root):
 
-    ./build-host.sh
+    ./build.sh
 
 # Releases
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-# build-inside-vm.sh builds the images (cloud image, vagrant boxes)
+# Build virtual machine images (cloud image, vagrant boxes)
 
 # nounset: "Treat unset variables and parameters [...] as an error when performing parameter expansion."
 # errexit: "Exit immediately if [...] command exits with a non-zero status."

@@ -31,7 +31,7 @@ shfmt:
   script:
     - echo "BUILD_VERSION=$(date +%Y%m%d).$CI_JOB_ID" > build.env
     - export $(< build.env)
-    - ./build-inside-vm.sh "${BUILD_VERSION}"
+    - ./build.sh "${BUILD_VERSION}"
   after_script:
     - echo "image_size_megabytes{image=\"basic\"} $(du -m output/*basic*qcow2)" > metrics.txt
     - echo "image_size_megabytes{image=\"cloudimg\"} $(du -m output/*cloudimg*qcow2)" >> metrics.txt

@@ -125,6 +125,55 @@ test-cloudimg-qemu-bios:
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 pacman -Q bat tmux tree; do sleep 1; done"
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 test -f /runcmd_successful ; do sleep 1; done"
 
+test-basic-qemu-uefi-x64:
+  stage: test
+  tags:
+    - fast-single-thread
+  variables:
+    SSHPASS: arch
+  before_script:
+    - pacman -Syu --needed --noconfirm qemu-headless edk2-ovmf sshpass
+  script:
+    - cp /usr/share/edk2-ovmf/x64/OVMF_VARS.fd ./
+    - qemu-system-x86_64 -m 512 -net nic -net user,hostfwd=tcp::2222-:22 -drive file=$(ls output/Arch-Linux-x86_64-basic-*.qcow2),if=virtio -drive if=pflash,format=raw,unit=0,file=/usr/share/edk2-ovmf/x64/OVMF_CODE.fd,read-only=on -drive if=pflash,format=raw,unit=1,file=OVMF_VARS.fd -nographic &
+    - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 sudo true; do sleep 1; done"
+
+test-cloudimg-qemu-uefi-x64:
+  stage: test
+  tags:
+    - fast-single-thread
+  variables:
+    SSHPASS: passw0rd
+  before_script:
+    - pacman -Syu --needed --noconfirm qemu-headless edk2-ovmf cdrtools sshpass
+  script:
+    - |
+      cat > user-data <<EOF
+      #cloud-config
+      password: '${SSHPASS}'
+      chpasswd: { expire: False }
+      ssh_pwauth: True
+      packages:
+        - tmux
+        - tree
+      runcmd:
+        - [ echo, 'Install more packages using runcmd.' ]
+        - [ pacman, --noconfirm, -Syu, bat ]
+        - [ touch, /runcmd_successful ]
+      EOF
+    - |
+      cat > meta-data <<EOF
+      instance-id: iid-local01
+      local-hostname: cloudimg
+      EOF
+    - cat user-data meta-data
+    - genisoimage -output seed.iso -volid cidata -joliet -rock user-data meta-data
+    - cp /usr/share/edk2-ovmf/x64/OVMF_VARS.fd ./
+    - qemu-system-x86_64 -m 512 -net nic -net user,hostfwd=tcp::2222-:22 -drive file=$(ls output/Arch-Linux-x86_64-cloudimg-*.qcow2),if=virtio -drive file=seed.iso,if=virtio -drive if=pflash,format=raw,unit=0,file=/usr/share/edk2-ovmf/x64/OVMF_CODE.fd,read-only=on -drive if=pflash,format=raw,unit=1,file=OVMF_VARS.fd -nographic &
+    - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 true; do sleep 1; done"
+    - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 pacman -Q bat tmux tree; do sleep 1; done"
+    - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 test -f /runcmd_successful ; do sleep 1; done"
+
 publish:
   stage: publish
   tags:

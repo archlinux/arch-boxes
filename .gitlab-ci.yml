@@ -78,7 +78,7 @@ test-vagrant-boxes-format:
     - vagrant box add output/Arch-Linux-x86_64-virtualbox-*.box --name archlinux-vbox
     - vagrant box add output/Arch-Linux-x86_64-libvirt-*.box --name archlinux-libvirt
 
-test-basic-qemu:
+test-basic-qemu-bios:
   stage: test
   tags:
     - fast-single-thread
@@ -90,7 +90,7 @@ test-basic-qemu:
     - qemu-system-x86_64 -m 512 -net nic -net user,hostfwd=tcp::2222-:22 -drive file=$(ls output/Arch-Linux-x86_64-basic-*.qcow2),if=virtio -nographic &
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 sudo true; do sleep 1; done"
 
-test-cloudimg-qemu:
+test-cloudimg-qemu-bios:
   stage: test
   tags:
     - fast-single-thread

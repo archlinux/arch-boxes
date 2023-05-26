@@ -7,6 +7,10 @@ function pre() {
   # https://gitlab.archlinux.org/archlinux/arch-boxes/-/issues/117
   rm "${MOUNT}/etc/machine-id"
 
+  # ESP mountpoint
+  printf 'UUID=%s /efi vfat noauto,x-systemd.automount,x-systemd.idle-timeout=300,rw,relatime,fmask=0133,dmask=0022,utf8   0 2\n' "$(blkid -s UUID -o value "${LOOPDEV}p2")" >>"${MOUNT}/etc/fstab"
+
+  # Swap
   arch-chroot "${MOUNT}" /usr/bin/btrfs subvolume create /swap
   chattr +C "${MOUNT}/swap"
   chmod 0700 "${MOUNT}/swap"
@@ -56,6 +60,7 @@ EOF
 
   # GRUB
   arch-chroot "${MOUNT}" /usr/bin/grub-install --target=i386-pc "${LOOPDEV}"
+  arch-chroot "${MOUNT}" /usr/bin/grub-install --target=x86_64-efi --efi-directory=/efi --removable
   sed -i 's/^GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=1/' "${MOUNT}/etc/default/grub"
   # setup unpredictable kernel names
   sed -i 's/^GRUB_CMDLINE_LINUX=.*$/GRUB_CMDLINE_LINUX="net.ifnames=0"/' "${MOUNT}/etc/default/grub"

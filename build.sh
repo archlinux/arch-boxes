@@ -73,9 +73,6 @@ Include = mirrorlist
 
 [extra]
 Include = mirrorlist
-
-[community]
-Include = mirrorlist
 EOF
   echo "Server = ${MIRROR}" >mirrorlist
 

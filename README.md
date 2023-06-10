@@ -3,7 +3,7 @@
 
 Arch-boxes provides several different VM images.
 
-The images is built daily and released biweekly (via [GitLab CI schedule](https://gitlab.archlinux.org/archlinux/arch-boxes/-/pipeline_schedules)) and synced to the mirrors.
+The images is built daily and released fortnightly (via [GitLab CI schedule](https://gitlab.archlinux.org/archlinux/arch-boxes/-/pipeline_schedules)) and synced to the mirrors.
 
 ## Images
 

@@ -19,7 +19,7 @@ EOF
 Name=eth*
 
 [Network]
-DHCP=ipv4
+DHCP=yes
 EOF
 
   # install vagrant ssh key

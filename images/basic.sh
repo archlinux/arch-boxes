@@ -17,7 +17,7 @@ function pre() {
 Name=eth*
 
 [Network]
-DHCP=ipv4
+DHCP=yes
 EOF
 }
 

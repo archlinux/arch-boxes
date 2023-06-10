@@ -14,9 +14,7 @@ function pre() {
   arch-chroot "${MOUNT}" /usr/bin/btrfs subvolume create /swap
   chattr +C "${MOUNT}/swap"
   chmod 0700 "${MOUNT}/swap"
-  fallocate -l 512M "${MOUNT}/swap/swapfile"
-  chmod 0600 "${MOUNT}/swap/swapfile"
-  mkswap -U clear "${MOUNT}/swap/swapfile"
+  arch-chroot "${MOUNT}" /usr/bin/btrfs filesystem mkswapfile --size 512m --uuid clear /swap/swapfile
   echo -e "/swap/swapfile none swap defaults 0 0" >>"${MOUNT}/etc/fstab"
 
   arch-chroot "${MOUNT}" /usr/bin/systemd-firstboot --locale=C.UTF-8 --timezone=UTC --hostname=archlinux --keymap=us

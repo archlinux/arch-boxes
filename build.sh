@@ -99,6 +99,7 @@ function image_cleanup() {
 
   sync -f "${MOUNT}/etc/os-release"
   fstrim --verbose "${MOUNT}"
+  fstrim --verbose "${MOUNT}/efi"
 }
 
 # Helper function: wait until a given loop device has settled

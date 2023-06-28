@@ -18,7 +18,7 @@ function pre() {
   echo -e "/swap/swapfile none swap defaults 0 0" >>"${MOUNT}/etc/fstab"
 
   arch-chroot "${MOUNT}" /usr/bin/systemd-firstboot --locale=C.UTF-8 --timezone=UTC --hostname=archlinux --keymap=us
-  ln -sf /run/systemd/resolve/stub-resolv.conf "${MOUNT}/etc/resolv.conf"
+  ln -sf ../run/systemd/resolve/stub-resolv.conf "${MOUNT}/etc/resolv.conf"
 
   # Setup pacman-init.service for clean pacman keyring initialization
   cat <<EOF >"${MOUNT}/etc/systemd/system/pacman-init.service"

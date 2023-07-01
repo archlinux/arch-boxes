@@ -178,6 +178,7 @@ publish:
   stage: publish
   tags:
     - secure
+    - docker
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule" && $SCHEDULED_PUBLISH == "TRUE"
   before_script:
@@ -199,6 +200,7 @@ cleanup:
   needs: []
   tags:
     - secure
+    - docker
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule" && $CLEANUP_PACKAGE_REGISTRY == "TRUE"
   before_script:

@@ -7,9 +7,6 @@ function pre() {
   # https://gitlab.archlinux.org/archlinux/arch-boxes/-/issues/117
   rm "${MOUNT}/etc/machine-id"
 
-  # ESP mountpoint
-  printf 'UUID=%s /efi vfat noauto,x-systemd.automount,x-systemd.idle-timeout=300,rw,relatime,fmask=0133,dmask=0022,utf8   0 2\n' "$(blkid -s UUID -o value "${LOOPDEV}p2")" >>"${MOUNT}/etc/fstab"
-
   # Swap
   arch-chroot "${MOUNT}" /usr/bin/btrfs subvolume create /swap
   chattr +C "${MOUNT}/swap"

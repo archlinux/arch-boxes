@@ -27,7 +27,7 @@ shfmt:
 .build:
   stage: build
   before_script:
-    - pacman -Syu --needed --noconfirm gptfdisk btrfs-progs dosfstools arch-install-scripts qemu-headless jq
+    - pacman -Syu --needed --noconfirm gptfdisk btrfs-progs dosfstools arch-install-scripts qemu-img jq
   script:
     - echo "BUILD_VERSION=$(date +%Y%m%d).$CI_JOB_ID" > build.env
     - export $(< build.env)
@@ -85,7 +85,7 @@ test-basic-qemu-bios:
   variables:
     SSHPASS: arch
   before_script:
-    - pacman -Syu --needed --noconfirm qemu-headless sshpass
+    - pacman -Syu --needed --noconfirm qemu-base sshpass
   script:
     - qemu-system-x86_64 -m 512 -net nic -net user,hostfwd=tcp::2222-:22 -drive file=$(ls output/Arch-Linux-x86_64-basic-*.qcow2),if=virtio -nographic &
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 sudo true; do sleep 1; done"
@@ -97,7 +97,7 @@ test-cloudimg-qemu-bios:
   variables:
     SSHPASS: passw0rd
   before_script:
-    - pacman -Syu --needed --noconfirm qemu-headless cdrtools sshpass
+    - pacman -Syu --needed --noconfirm qemu-base cdrtools sshpass
   script:
     - |
       cat > user-data <<EOF
@@ -132,7 +132,7 @@ test-basic-qemu-uefi-x64:
   variables:
     SSHPASS: arch
   before_script:
-    - pacman -Syu --needed --noconfirm qemu-headless edk2-ovmf sshpass
+    - pacman -Syu --needed --noconfirm qemu-base edk2-ovmf sshpass
   script:
     - cp /usr/share/edk2-ovmf/x64/OVMF_VARS.fd ./
     - qemu-system-x86_64 -m 512 -net nic -net user,hostfwd=tcp::2222-:22 -drive file=$(ls output/Arch-Linux-x86_64-basic-*.qcow2),if=virtio -drive if=pflash,format=raw,unit=0,file=/usr/share/edk2-ovmf/x64/OVMF_CODE.fd,read-only=on -drive if=pflash,format=raw,unit=1,file=OVMF_VARS.fd -nographic &
@@ -145,7 +145,7 @@ test-cloudimg-qemu-uefi-x64:
   variables:
     SSHPASS: passw0rd
   before_script:
-    - pacman -Syu --needed --noconfirm qemu-headless edk2-ovmf cdrtools sshpass
+    - pacman -Syu --needed --noconfirm qemu-base edk2-ovmf cdrtools sshpass
   script:
     - |
       cat > user-data <<EOF

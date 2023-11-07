@@ -14,6 +14,7 @@ function pre() {
 
   cat <<EOF >"${MOUNT}/etc/systemd/network/80-dhcp.network"
 [Match]
+Name=en*
 Name=eth*
 
 [Network]

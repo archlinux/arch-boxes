@@ -191,8 +191,8 @@ publish:
       done
     - vagrant cloud auth login --check
     - vagrant cloud box show archlinux/archlinux
-    - vagrant cloud publish archlinux/archlinux "${BUILD_VERSION}" libvirt output/Arch-Linux-x86_64-libvirt-*.box --release -f
-    - vagrant cloud publish archlinux/archlinux "${BUILD_VERSION}" virtualbox output/Arch-Linux-x86_64-virtualbox-*.box --release -f
+    - vagrant cloud publish archlinux/archlinux "${BUILD_VERSION}" libvirt output/Arch-Linux-x86_64-libvirt-*.box --release --no-direct-upload -f
+    - vagrant cloud publish archlinux/archlinux "${BUILD_VERSION}" virtualbox output/Arch-Linux-x86_64-virtualbox-*.box --release --no-direct-upload -f
 
 cleanup:
   stage: cleanup

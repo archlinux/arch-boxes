@@ -7,6 +7,7 @@ stages:
   - test
   - publish
   - cleanup
+  - report
 
 shellcheck:
   stage: lint
@@ -209,3 +210,14 @@ cleanup:
       for id in $(curl --silent --fail --show-error "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages?per_page=100&order_by=created_at&sort=asc" | jq '.[] | select(.created_at | split("T")[0] | . < (now-60*60*24*90|strflocaltime("%Y-%m-%d"))) | .id'); do
         curl --silent --fail --show-error --request DELETE --header "JOB-TOKEN: ${CI_JOB_TOKEN}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/${id}"
       done
+
+issue-bot:
+  stage: report
+  tags:
+    - secure
+    - docker
+  image: registry.gitlab.com/gitlab-org/distribution/issue-bot:latest
+  script: /issue-bot
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      when: on_failure

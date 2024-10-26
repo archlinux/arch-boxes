@@ -6,7 +6,7 @@ DISK_SIZE=""
 # cloud-guest-utils package
 # [1] https://cloudinit.readthedocs.io/en/latest/topics/modules.html#growpart
 PACKAGES=(cloud-init cloud-guest-utils)
-SERVICES=(cloud-init-local.service cloud-init.service cloud-config.service cloud-final.service)
+SERVICES=(cloud-init-main.service cloud-init-local.service cloud-init-network.service cloud-config.service cloud-final.service)
 
 function pre() {
   sed -Ei 's/^(GRUB_CMDLINE_LINUX_DEFAULT=.*)"$/\1 console=tty0 console=ttyS0,115200"/' "${MOUNT}/etc/default/grub"

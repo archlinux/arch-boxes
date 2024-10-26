@@ -78,6 +78,8 @@ EOF
 
   # We use the hosts package cache
   pacstrap -c -C pacman.conf -K -M "${MOUNT}" base linux grub openssh sudo btrfs-progs dosfstools efibootmgr
+  # Workaround for https://gitlab.archlinux.org/archlinux/arch-install-scripts/-/issues/56
+  gpgconf --homedir "${MOUNT}/etc/pacman.d/gnupg" --kill gpg-agent
   cp mirrorlist "${MOUNT}/etc/pacman.d/"
 }
 

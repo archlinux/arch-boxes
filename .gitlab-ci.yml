@@ -42,6 +42,8 @@ shfmt:
     name: "output"
     paths:
       - "output/*"
+      # Workaround until https://gitlab.com/gitlab-org/gitlab/-/issues/352644 is sorted
+      - build.env
     expire_in: 2d
     reports:
       metrics: metrics.txt
@@ -186,7 +188,9 @@ publish:
     - pacman -Syu --needed --noconfirm vagrant
   script:
     - |
-      for file in output/*; do
+      shopt -s extglob
+      # The libvirt-executor image is not meant for external consumption!
+      for file in output/!(*libvirt-executor*); do
           base="$(basename "${file}")"
           curl -sSf --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${file}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/images/v${BUILD_VERSION}/${base}"
       done

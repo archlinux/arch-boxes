@@ -42,6 +42,8 @@ shfmt:
     name: "output"
     paths:
       - "output/*"
+      # Workaround until https://gitlab.com/gitlab-org/gitlab/-/issues/352644 is sorted
+      - build.env
     expire_in: 2d
     reports:
       metrics: metrics.txt

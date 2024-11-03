@@ -208,7 +208,7 @@ cleanup:
   script:
     - |
       for id in $(curl --silent --fail --show-error "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages?per_page=100&order_by=created_at&sort=asc" | jq '.[] | select(.created_at | split("T")[0] | . < (now-60*60*24*90|strflocaltime("%Y-%m-%d"))) | .id'); do
-        curl --silent --fail --show-error --request DELETE --header "JOB-TOKEN: ${CI_JOB_TOKEN}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/${id}"
+        curl --silent --fail --show-error --request DELETE --header "PRIVATE-TOKEN: ${GITLAB_PROJECT_TOKEN}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/${id}"
       done
 
 issue-bot:

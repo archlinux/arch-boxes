@@ -17,6 +17,9 @@ function pre() {
 Name=en*
 Name=eth*
 
+[Link]
+RequiredForOnline=routable
+
 [Network]
 DHCP=yes
 EOF

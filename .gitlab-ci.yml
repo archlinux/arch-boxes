@@ -98,7 +98,7 @@ test-basic-qemu-bios:
         -device virtserialport,chardev=qga0,name=org.qemu.guest_agent.0
         -nographic &
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 sudo true; do sleep 1; done"
-    - 'echo "{\"execute\": \"guest-network-get-interfaces\"}" | socat -t0 -,ignoreeof unix-connect:/tmp/qga.sock | jq -e "any(.return.[]; .name == \"lo\")"'
+    - 'echo "{\"execute\": \"guest-network-get-interfaces\"}" | socat -T0 -,ignoreeof unix-connect:/tmp/qga.sock | jq -e "any(.return.[]; .name == \"lo\")"'
 
 test-cloudimg-qemu-bios:
   stage: test
@@ -141,7 +141,7 @@ test-cloudimg-qemu-bios:
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 true; do sleep 1; done"
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 pacman -Q bat tmux tree; do sleep 1; done"
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 test -f /runcmd_successful ; do sleep 1; done"
-    - 'echo "{\"execute\": \"guest-network-get-interfaces\"}" | socat -t0 -,ignoreeof unix-connect:/tmp/qga.sock | jq -e "any(.return.[]; .name == \"lo\")"'
+    - 'echo "{\"execute\": \"guest-network-get-interfaces\"}" | socat -T0 -,ignoreeof unix-connect:/tmp/qga.sock | jq -e "any(.return.[]; .name == \"lo\")"'
 
 test-basic-qemu-uefi-x64:
   stage: test
@@ -163,7 +163,7 @@ test-basic-qemu-uefi-x64:
         -device virtserialport,chardev=qga0,name=org.qemu.guest_agent.0
         -nographic &
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 sudo true; do sleep 1; done"
-    - 'echo "{\"execute\": \"guest-network-get-interfaces\"}" | socat -t0 -,ignoreeof unix-connect:/tmp/qga.sock | jq -e "any(.return.[]; .name == \"lo\")"'
+    - 'echo "{\"execute\": \"guest-network-get-interfaces\"}" | socat -T0 -,ignoreeof unix-connect:/tmp/qga.sock | jq -e "any(.return.[]; .name == \"lo\")"'
 
 test-cloudimg-qemu-uefi-x64:
   stage: test
@@ -209,7 +209,7 @@ test-cloudimg-qemu-uefi-x64:
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 true; do sleep 1; done"
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 pacman -Q bat tmux tree; do sleep 1; done"
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 test -f /runcmd_successful ; do sleep 1; done"
-    - 'echo "{\"execute\": \"guest-network-get-interfaces\"}" | socat -t0 -,ignoreeof unix-connect:/tmp/qga.sock | jq -e "any(.return.[]; .name == \"lo\")"'
+    - 'echo "{\"execute\": \"guest-network-get-interfaces\"}" | socat -T0 -,ignoreeof unix-connect:/tmp/qga.sock | jq -e "any(.return.[]; .name == \"lo\")"'
 
 publish:
   stage: publish

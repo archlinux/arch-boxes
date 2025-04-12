@@ -219,15 +219,25 @@ publish:
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule" && $SCHEDULED_PUBLISH == "TRUE"
   before_script:
-    - pacman -Syu --needed --noconfirm vagrant
+    - pacman -Syu --needed --noconfirm vagrant jq
   script:
+    - set -o pipefail
+    - shopt -s extglob
     - |
-      shopt -s extglob
       # The libvirt-executor image is not meant for external consumption!
       for file in output/!(*libvirt-executor*); do
           base="$(basename "${file}")"
           curl -sSf --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${file}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/images/v${BUILD_VERSION}/${base}"
       done
+    - >
+      VAGRANT_CLOUD_TOKEN=$(curl --silent --fail --show-error \
+        --header "Content-Type: application/x-www-form-urlencoded" \
+        --data-urlencode "client_id=${HCP_CLIENT_ID}" \
+        --data-urlencode "client_secret=${HCP_CLIENT_SECRET}" \
+        --data-urlencode "grant_type=client_credentials" \
+        --data-urlencode "audience=https://api.hashicorp.cloud" \
+        "https://auth.idp.hashicorp.com/oauth2/token" | jq -r .access_token)
+    - export VAGRANT_CLOUD_TOKEN
     - vagrant cloud auth login --check
     - vagrant cloud box show archlinux/archlinux
     - vagrant cloud publish archlinux/archlinux "${BUILD_VERSION}" libvirt output/Arch-Linux-x86_64-libvirt-*.box --release --no-direct-upload -f

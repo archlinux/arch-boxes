@@ -35,6 +35,7 @@ shfmt:
   after_script:
     - echo "image_size_megabytes{image=\"basic\"} $(du -m output/*basic*qcow2)" > metrics.txt
     - echo "image_size_megabytes{image=\"cloudimg\"} $(du -m output/*cloudimg*qcow2)" >> metrics.txt
+    - echo "image_size_megabytes{image=\"libvirt-executor\"} $(du -m output/*libvirt-executor*qcow2)" >> metrics.txt
   artifacts:
     name: "output"
     paths:

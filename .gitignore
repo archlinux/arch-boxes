@@ -1,5 +1,4 @@
 packer_cache/
-*.box
 *.swp
 output-*
 .vscode

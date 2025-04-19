@@ -7,9 +7,6 @@ The images are built daily and released fortnightly (via [GitLab CI schedule](ht
 
 ## Images
 
-### Vagrant
-Vagrant images for the VirtualBox and Libvirt provider are released to [Vagrant Cloud](https://app.vagrantup.com/archlinux/boxes/archlinux).
-
 ### QCOW2 images
 At the time of writing we offer two different QCOW2 images. The images are synced to the mirrors under the `images` directory, e.g.: https://geo.mirror.pkgbuild.com/images/.
 

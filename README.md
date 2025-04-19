@@ -21,8 +21,13 @@ The cloud image is meant to be used in "the cloud" and comes with [`cloud-init`]
 ### Dependencies
 You'll need the following dependencies:
 
-* qemu
-* libisoburn
+* arch-install-scripts
+* btrfs-progs
+* curl
+* dosfstools
+* gptfdisk
+* jq
+* qemu-img
 
 ### How to build this
 The official builds are done in our Arch Linux GitLab CI and can be built locally by running (as root):

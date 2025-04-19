@@ -7,7 +7,7 @@ DISK_SIZE=""
 # - disk setup[2] requires the sgdisk package
 # [1] https://cloudinit.readthedocs.io/en/latest/reference/modules.html#growpart
 # [2] https://cloudinit.readthedocs.io/en/latest/reference/modules.html#disk-setup
-PACKAGES=(cloud-init cloud-guest-utils sgdisk)
+PACKAGES=(cloud-init cloud-guest-utils gptfdisk)
 SERVICES=(cloud-init-main.service cloud-init-local.service cloud-init-network.service cloud-config.service cloud-final.service)
 
 function pre() {

@@ -5,6 +5,7 @@ stages:
   - lint
   - build
   - test
+  - publish
   - cleanup
   - report
 
@@ -200,6 +201,22 @@ test-cloudimg-qemu-uefi-x64:
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 pacman -Q bat tmux tree; do sleep 1; done"
     - timeout 15m sh -c "while ! sshpass -e ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no arch@localhost -p 2222 test -f /runcmd_successful ; do sleep 1; done"
     - 'echo "{\"execute\": \"guest-network-get-interfaces\"}" | socat -T0 -,ignoreeof unix-connect:/tmp/qga.sock | jq -e "any(.return.[]; .name == \"lo\")"'
+
+publish:
+  stage: publish
+  tags:
+    - secure
+    - docker
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $SCHEDULED_PUBLISH == "TRUE"
+  script:
+    - shopt -s extglob
+    - |
+      # The libvirt-executor image is not meant for external consumption!
+      for file in output/!(*libvirt-executor*); do
+          base="$(basename "${file}")"
+          curl -sSf --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${file}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/images/v${BUILD_VERSION}/${base}"
+      done
 
 cleanup:
   stage: cleanup

@@ -1,5 +1,7 @@
 #!/bin/bash
 # Build virtual machine images (basic image, cloud image etc.)
+# IMAGES="cloud-image,basic" ./build.sh
+# ./build.sh to build all images
 
 # nounset: "Treat unset variables and parameters [...] as an error when performing parameter expansion."
 # errexit: "Exit immediately if [...] command exits with a non-zero status."
@@ -198,7 +200,32 @@ function main() {
     build_version="${1}"
   fi
 
-  for image in "${ORIG_PWD}/images/"!(base).sh; do
+  # Determine which image scripts to use
+  local image_scripts=()
+  if [ -n "${IMAGES:-}" ]; then
+    IFS=',' read -ra user_images <<< "$IMAGES"
+    for img in "${user_images[@]}"; do
+      if [[ "$img" == "base" ]]; then
+        echo "Error: 'base' image cannot be selected for execution." >&2
+        exit 2
+      fi
+      script_path="${ORIG_PWD}/images/${img}.sh"
+      if [ ! -f "$script_path" ]; then
+        echo "Error: Image script '$img' does not exist at $script_path" >&2
+        exit 2
+      fi
+      image_scripts+=("$script_path")
+    done
+  else
+    # Default: all images except base.sh
+    shopt -s nullglob
+    for image in "${ORIG_PWD}/images/"!(base).sh; do
+      image_scripts+=("$image")
+    done
+    shopt -u nullglob
+  fi
+
+  for image in "${image_scripts[@]}"; do
     # shellcheck source=/dev/null
     source "${image}"
     create_image "${IMAGE_NAME}" pre post

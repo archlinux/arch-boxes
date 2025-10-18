@@ -58,7 +58,7 @@ function setup_disk() {
   wait_until_settled "${LOOPDEV}"
   mkfs.fat -F 32 -S 4096 "${LOOPDEV}p2"
   mkfs.btrfs "${LOOPDEV}p3"
-  mount -o compress-force=zstd "${LOOPDEV}p3" "${MOUNT}"
+  mount -o compress=zstd:1 "${LOOPDEV}p3" "${MOUNT}"
   mount --mkdir "${LOOPDEV}p2" "${MOUNT}/efi"
 }
 
@@ -120,7 +120,7 @@ function mount_image() {
   LOOPDEV=$(losetup --find --partscan --show "${1:-${IMAGE}}")
   # Partscan is racy
   wait_until_settled "${LOOPDEV}"
-  mount -o compress-force=zstd "${LOOPDEV}p3" "${MOUNT}"
+  mount -o compress=zstd:1 "${LOOPDEV}p3" "${MOUNT}"
   # Setup bind mount to package cache
   mount --bind "/var/cache/pacman/pkg" "${MOUNT}/var/cache/pacman/pkg"
 }

@@ -35,11 +35,10 @@ ExecStart=/usr/bin/pacman-key --populate
 WantedBy=multi-user.target
 EOF
 
-  # Setup mirror list to Geo IP mirrors
-  cat <<EOF >"${MOUNT}/etc/pacman.d/mirrorlist"
-Server = https://geo.mirror.pkgbuild.com/\$repo/os/\$arch
-Server = https://mirror.rackspace.com/archlinux/\$repo/os/\$arch
-Server = https://mirror.leaseweb.net/archlinux/\$repo/os/\$arch
+  # Setup mirror list to worldwide mirrors
+  cat <<'EOF' >"${MOUNT}/etc/pacman.d/mirrorlist"
+Server = https://fastly.mirror.pkgbuild.com/$repo/os/$arch
+Server = https://geo.mirror.pkgbuild.com/$repo/os/$arch
 EOF
 
   # enabling important services

@@ -1,6 +1,3 @@
-default:
-  image: "archlinux:latest"
-
 stages:
   - lint
   - build

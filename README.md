@@ -8,7 +8,7 @@ The images are built daily and released fortnightly (via [GitLab CI schedule](ht
 ## Images
 
 ### QCOW2 images
-At the time of writing we offer two different QCOW2 images. The images are synced to the mirrors under the `images` directory, e.g.: https://geo.mirror.pkgbuild.com/images/.
+At the time of writing we offer two different QCOW2 images. The images are synced to the mirrors under the `images` directory, e.g.: https://fastly.mirror.pkgbuild.com/images/.
 
 #### Basic image
 The basic image is meant for local usage and comes preconfigured with the user `arch` (password: `arch`) and sshd running.

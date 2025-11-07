@@ -8,7 +8,7 @@ shopt -s extglob
 readonly DEFAULT_DISK_SIZE="2G"
 readonly IMAGE="image.img"
 # shellcheck disable=SC2016
-readonly MIRROR='https://geo.mirror.pkgbuild.com/$repo/os/$arch'
+readonly MIRROR='https://fastly.mirror.pkgbuild.com/$repo/os/$arch'
 
 function init() {
   readonly ORIG_PWD="${PWD}"

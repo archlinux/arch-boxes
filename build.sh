@@ -67,6 +67,7 @@ function bootstrap() {
   cat <<EOF >pacman.conf
 [options]
 Architecture = auto
+SigLevel = DatabaseOptional
 
 [core]
 Include = mirrorlist

@@ -1,3 +1,9 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
 stages:
   - lint
   - build
@@ -49,18 +55,19 @@ build:
   extends: .build
   tags:
     - vm
-  except:
-    - master@archlinux/arch-boxes
-    - schedules@archlinux/arch-boxes
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
 
 build:secure:
   extends: .build
   tags:
     - secure
     - vm
-  only:
-    - master@archlinux/arch-boxes
-    - schedules@archlinux/arch-boxes
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "schedule"
   script:
     - !reference [.build, script]
     - gpg --import < <(echo "${GPG_PRIVATE_KEY}")
